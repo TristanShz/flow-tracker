@@ -13,7 +13,10 @@ type UseCase struct {
 }
 
 func (s UseCase) Execute(command Command) error {
-	lastSession := s.sessionRepository.FindLastSession()
+	lastSession, err := s.sessionRepository.FindLastSession()
+	if err != nil {
+		return err
+	}
 
 	if lastSession != nil && lastSession.EndTime.IsZero() {
 		return ErrSessionAlreadyStarted

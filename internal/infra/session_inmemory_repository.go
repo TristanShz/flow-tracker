@@ -33,7 +33,7 @@ func (r *InMemorySessionRepository) FindByStartTime(startTime time.Time) *sessio
 	return &r.Sessions[index]
 }
 
-func (r *InMemorySessionRepository) FindAllByProject(project string) []session.Session {
+func (r *InMemorySessionRepository) FindAllByProject(project string) ([]session.Session, error) {
 	sessions := []session.Session{}
 
 	for _, session := range r.Sessions {
@@ -42,13 +42,13 @@ func (r *InMemorySessionRepository) FindAllByProject(project string) []session.S
 		}
 	}
 
-	return sessions
+	return sessions, nil
 }
 
-func (r *InMemorySessionRepository) FindLastSession() *session.Session {
+func (r *InMemorySessionRepository) FindLastSession() (*session.Session, error) {
 	if len(r.Sessions) == 0 {
-		return nil
+		return nil, nil
 	}
 
-	return &r.Sessions[len(r.Sessions)-1]
+	return &r.Sessions[len(r.Sessions)-1], nil
 }

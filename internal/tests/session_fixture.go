@@ -51,7 +51,7 @@ func (s *SessionFixture) ThenSessionWithGivenStartTimeShouldBeSaved(expectedStar
 }
 
 func (s *SessionFixture) ThenSessionShouldBeStopped() {
-	got := s.SessionRepository.FindLastSession()
+	got, _ := s.SessionRepository.FindLastSession()
 
 	if got.EndTime.IsZero() {
 		s.T.Errorf("Found not stopped session '%v'", got.PrettyString())
