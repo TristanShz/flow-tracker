@@ -1,16 +1,16 @@
-package entry
+package session
 
 import (
 	"time"
 )
 
-type Entry struct {
+type Session struct {
 	StartTime time.Time
 	EndTime   time.Time
 	Project   string
 	Tags      []string
 }
 
-func (e Entry) Duration() time.Duration {
+func (e Session) Duration() time.Duration {
 	return e.EndTime.Sub(e.StartTime).Round(time.Second)
 }

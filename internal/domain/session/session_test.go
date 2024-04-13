@@ -1,4 +1,4 @@
-package entry
+package session
 
 import (
 	"testing"
@@ -8,12 +8,12 @@ import (
 func TestEntry_Duration(t *testing.T) {
 	tests := []struct {
 		name string
-		e    Entry
+		e    Session
 		want time.Duration
 	}{
 		{
 			name: "test",
-			e: Entry{
+			e: Session{
 				StartTime: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				EndTime:   time.Date(2020, 1, 1, 0, 0, 1, 0, time.UTC),
 			},

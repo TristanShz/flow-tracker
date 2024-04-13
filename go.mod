@@ -1,4 +1,4 @@
-module github.com/tristansch1/flow
+module github.com/TristanSch1/flow
 
 go 1.22.2
 
