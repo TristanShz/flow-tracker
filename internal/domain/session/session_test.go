@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func TestEntry_Duration(t *testing.T) {
+func TestSession_Duration(t *testing.T) {
 	tests := []struct {
 		name string
 		e    Session

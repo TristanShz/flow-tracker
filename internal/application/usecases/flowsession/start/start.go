@@ -1,4 +1,4 @@
-package startflowsession
+package start
 
 import (
 	"errors"
@@ -13,9 +13,9 @@ type UseCase struct {
 }
 
 func (s UseCase) Execute(command Command) error {
-	lastProjectSession := s.sessionRepository.FindLastProjectSession(command.Project)
+	lastSession := s.sessionRepository.FindLastSession()
 
-	if lastProjectSession != nil && lastProjectSession.EndTime.IsZero() {
+	if lastSession != nil && lastSession.EndTime.IsZero() {
 		return ErrSessionAlreadyStarted
 	}
 

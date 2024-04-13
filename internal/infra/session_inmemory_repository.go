@@ -1,6 +1,9 @@
 package infra
 
 import (
+	"slices"
+	"time"
+
 	"github.com/TristanSch1/flow/internal/domain/session"
 )
 
@@ -8,9 +11,26 @@ type InMemorySessionRepository struct {
 	Sessions []session.Session
 }
 
-func (r *InMemorySessionRepository) Save(session session.Session) error {
-	r.Sessions = append(r.Sessions, session)
+func (r *InMemorySessionRepository) Save(s session.Session) error {
+	startedSessionIndex := slices.IndexFunc(r.Sessions, func(s session.Session) bool {
+		return s.StartTime.Equal(s.StartTime)
+	})
+
+	if startedSessionIndex == -1 {
+		r.Sessions = append(r.Sessions, s)
+	} else {
+		r.Sessions[startedSessionIndex] = s
+	}
+
 	return nil
+}
+
+func (r *InMemorySessionRepository) FindByStartTime(startTime time.Time) *session.Session {
+	index := slices.IndexFunc(r.Sessions, func(s session.Session) bool {
+		return s.StartTime.Equal(startTime)
+	})
+
+	return &r.Sessions[index]
 }
 
 func (r *InMemorySessionRepository) FindAllByProject(project string) []session.Session {
@@ -25,12 +45,10 @@ func (r *InMemorySessionRepository) FindAllByProject(project string) []session.S
 	return sessions
 }
 
-func (r *InMemorySessionRepository) FindLastProjectSession(project string) *session.Session {
-	allProjectSessions := r.FindAllByProject(project)
-
-	if len(allProjectSessions) == 0 {
+func (r *InMemorySessionRepository) FindLastSession() *session.Session {
+	if len(r.Sessions) == 0 {
 		return nil
 	}
 
-	return &allProjectSessions[len(allProjectSessions)-1]
+	return &r.Sessions[len(r.Sessions)-1]
 }

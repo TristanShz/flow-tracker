@@ -1,4 +1,4 @@
-package startflowsession
+package start
 
 type Command struct {
 	Project string
