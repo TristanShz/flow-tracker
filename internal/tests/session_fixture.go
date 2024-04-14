@@ -50,7 +50,7 @@ func (s *SessionFixture) WhenStartingFlowSession(command start.Command) {
 }
 
 func (s *SessionFixture) WhenStoppingFlowSession() {
-	err := s.StopFlowSessionUseCase.Execute()
+	_, err := s.StopFlowSessionUseCase.Execute()
 	if err != nil {
 		s.ThrownError = err
 	}

@@ -5,6 +5,7 @@ import (
 	"os"
 
 	app "github.com/TristanSch1/flow/internal/application/usecases"
+	"github.com/TristanSch1/flow/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -14,13 +15,13 @@ func stopCmd(app *app.App) *cobra.Command {
 		Short:                 "Stop flow session",
 		DisableFlagsInUseLine: true,
 		Run: func(cmd *cobra.Command, _ []string) {
-			err := app.StopFlowSessionUseCase.Execute()
+			duration, err := app.StopFlowSessionUseCase.Execute()
 			if err != nil {
 				fmt.Printf("%v", err)
 				os.Exit(1)
 			}
 
-			fmt.Printf("Flow session stopped")
+			fmt.Printf("Flow session stopped, you were in the flow for %v", utils.GreenText(duration.String()))
 		},
 	}
 }
