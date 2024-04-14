@@ -2,10 +2,12 @@ package tests
 
 import (
 	"errors"
+	"reflect"
 	"slices"
 	"testing"
 	"time"
 
+	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/allsessionsreport"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/status"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stop"
@@ -22,9 +24,11 @@ type SessionFixture struct {
 	StopFlowSessionUseCase   stop.UseCase
 	FlowSessionStatusUseCase status.UseCase
 	ListProjectsUseCase      list.UseCase
+	FlowSessionReportUseCase allsessionsreport.UseCase
 	ThrownError              error
 	FlowSessionStatus        status.SessionStatus
 	Projects                 []string
+	SessionsReport           allsessionsreport.AllSessionsReport
 }
 
 func (s *SessionFixture) GivenNowIs(t time.Time) {
@@ -65,6 +69,23 @@ func (s *SessionFixture) WhenGettingListOfProjects() {
 	}
 
 	s.Projects = projects
+}
+
+func (s *SessionFixture) WhenUserSeesFlowSessionsReport(command allsessionsreport.Command) {
+	report, err := s.FlowSessionReportUseCase.Execute(command)
+	if err != nil {
+		s.ThrownError = err
+	}
+
+	s.SessionsReport = report
+}
+
+func (s SessionFixture) ThenUserShouldSeeReport(expectedReport allsessionsreport.AllSessionsReport) {
+	got := s.SessionsReport
+
+	if !reflect.DeepEqual(got, expectedReport) {
+		s.T.Errorf("Expected report '%v', but got '%v'", expectedReport, got)
+	}
 }
 
 func (s *SessionFixture) ThenProjectsShouldBe(projects []string) {
@@ -116,6 +137,7 @@ func GetSessionFixture(t *testing.T) SessionFixture {
 	startFlowSession := start.NewStartFlowSessionUseCase(sessionRepository, dateProvider)
 	stopFlowSession := stop.NewStopSessionUseCase(sessionRepository, dateProvider)
 	flowSessionStatus := status.NewFlowSessionStatusUseCase(sessionRepository, dateProvider)
+	flowSessionsReport := allsessionsreport.NewFlowSessionsReportUseCase(sessionRepository)
 
 	listProjects := list.NewListProjectsUseCase(sessionRepository)
 
@@ -126,6 +148,7 @@ func GetSessionFixture(t *testing.T) SessionFixture {
 		StartFlowSessionUseCase:  startFlowSession,
 		StopFlowSessionUseCase:   stopFlowSession,
 		FlowSessionStatusUseCase: flowSessionStatus,
+		FlowSessionReportUseCase: flowSessionsReport,
 		ListProjectsUseCase:      listProjects,
 	}
 }

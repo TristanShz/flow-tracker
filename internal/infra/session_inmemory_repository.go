@@ -25,12 +25,12 @@ func (r *InMemorySessionRepository) Save(s session.Session) error {
 	return nil
 }
 
-func (r *InMemorySessionRepository) FindByStartTime(startTime time.Time) *session.Session {
+func (r *InMemorySessionRepository) FindByStartTime(startTime time.Time) session.Session {
 	index := slices.IndexFunc(r.Sessions, func(s session.Session) bool {
 		return s.StartTime.Equal(startTime)
 	})
 
-	return &r.Sessions[index]
+	return r.Sessions[index]
 }
 
 func (r *InMemorySessionRepository) FindAllByProject(project string) ([]session.Session, error) {

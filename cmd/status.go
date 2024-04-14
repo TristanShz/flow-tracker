@@ -10,8 +10,9 @@ import (
 
 func statusCmd(app *app.App) *cobra.Command {
 	return &cobra.Command{
-		Use:   "status",
-		Short: "Show the current flow session status",
+		Use:                   "status",
+		Short:                 "Show the current flow session status",
+		DisableFlagsInUseLine: true,
 		Run: func(cmd *cobra.Command, _ []string) {
 			status, err := app.FlowSessionStatusUseCase.Execute()
 			if err != nil {

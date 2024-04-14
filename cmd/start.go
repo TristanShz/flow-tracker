@@ -47,7 +47,7 @@ func startCmd(app *app.App) *cobra.Command {
 					fmt.Printf("%v", err)
 					os.Exit(1)
 				}
-				fmt.Printf("%v", strings.Join(projects, ", "))
+				fmt.Printf("Existing projects : %v", strings.Join(projects, ", "))
 				os.Exit(0)
 			}
 			command := start.Command{

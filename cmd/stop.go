@@ -10,8 +10,9 @@ import (
 
 func stopCmd(app *app.App) *cobra.Command {
 	return &cobra.Command{
-		Use:   "stop",
-		Short: "Stop flow session",
+		Use:                   "stop",
+		Short:                 "Stop flow session",
+		DisableFlagsInUseLine: true,
 		Run: func(cmd *cobra.Command, _ []string) {
 			err := app.StopFlowSessionUseCase.Execute()
 			if err != nil {
