@@ -5,6 +5,8 @@ import (
 	"os"
 
 	app "github.com/TristanSch1/flow/internal/application/usecases"
+	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/allsessionsreport"
+	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/projectsessionsreport"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/status"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stop"
@@ -37,9 +39,19 @@ func initializeApp() *app.App {
 	stopFlowSessionUseCase := stop.NewStopSessionUseCase(sessionRepository, dateProvider)
 	flowSessionStatusUseCase := status.NewFlowSessionStatusUseCase(sessionRepository, dateProvider)
 
+	allSessionsReportUseCase := allsessionsreport.NewFlowSessionsReportUseCase(sessionRepository)
+	projectSessionsReportUseCase := projectsessionsreport.NewProjectSessionsReportUseCase(sessionRepository)
+
 	listProjectsUseCase := list.NewListProjectsUseCase(sessionRepository)
 
-	return app.NewApp(startFlowSessionUseCase, stopFlowSessionUseCase, flowSessionStatusUseCase, listProjectsUseCase)
+	return app.NewApp(
+		startFlowSessionUseCase,
+		stopFlowSessionUseCase,
+		flowSessionStatusUseCase,
+		listProjectsUseCase,
+		allSessionsReportUseCase,
+		projectSessionsReportUseCase,
+	)
 }
 
 func Execute() {
@@ -48,6 +60,7 @@ func Execute() {
 	rootCmd.AddCommand(startCmd(app))
 	rootCmd.AddCommand(stopCmd(app))
 	rootCmd.AddCommand(statusCmd(app))
+	rootCmd.AddCommand(reportCmd(app))
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

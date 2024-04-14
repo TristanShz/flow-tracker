@@ -1,6 +1,7 @@
 package allsessionsreport
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/TristanSch1/flow/internal/application"
@@ -15,6 +16,17 @@ type AllSessionsReport struct {
 	Projects         map[string]time.Duration
 	Total            time.Duration
 	NumberOfSessions int
+}
+
+func (r AllSessionsReport) PrettyPrint() string {
+	result := "All Sessions Report:\n"
+	result += "Projects:\n"
+	for project, duration := range r.Projects {
+		result += fmt.Sprintf("- %s: %s\n", project, duration.String())
+	}
+	result += fmt.Sprintf("Total duration: %s\n", r.Total.String())
+	result += fmt.Sprintf("Total number of sessions: %d\n", r.NumberOfSessions)
+	return result
 }
 
 func (s UseCase) Execute() (AllSessionsReport, error) {
