@@ -6,6 +6,7 @@ import (
 
 	"github.com/TristanSch1/flow/internal/application"
 	"github.com/TristanSch1/flow/internal/domain/sessionsreport"
+	"github.com/TristanSch1/flow/utils"
 )
 
 type UseCase struct {
@@ -19,10 +20,10 @@ type AllSessionsReport struct {
 }
 
 func (r AllSessionsReport) PrettyPrint() string {
-	result := "All Flow Sessions Report:\n\n"
+	result := utils.HeaderStyle.Render("All Flow Sessions Report:\n\n")
 	result += "Projects:\n"
 	for project, duration := range r.Projects {
-		result += fmt.Sprintf("- %s: %s\n", project, duration.String())
+		result += fmt.Sprintf("~ %s: %s\n", project, duration.String())
 	}
 	result += fmt.Sprintf("Total flow time: %s\n", r.Total.String())
 	result += fmt.Sprintf("Number of sessions: %d\n", r.NumberOfSessions)

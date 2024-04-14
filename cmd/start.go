@@ -9,6 +9,7 @@ import (
 
 	app "github.com/TristanSch1/flow/internal/application/usecases"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
+	"github.com/TristanSch1/flow/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -50,9 +51,16 @@ func startCmd(app *app.App) *cobra.Command {
 				fmt.Printf("Existing projects : %v", strings.Join(projects, ", "))
 				os.Exit(0)
 			}
+
+			tags := []string{}
+
+			for _, tag := range args[1:] {
+				tagWithoutPrefix, _ := strings.CutPrefix(tag, "+")
+				tags = append(tags, tagWithoutPrefix)
+			}
 			command := start.Command{
 				Project: args[0],
-				Tags:    args[1:],
+				Tags:    tags,
 			}
 
 			err := app.StartFlowSessionUseCase.Execute(command)
@@ -61,7 +69,15 @@ func startCmd(app *app.App) *cobra.Command {
 				os.Exit(1)
 			}
 
-			fmt.Printf("Starting flow session for the project %v at %v", command.Project, time.Now().Format(time.Kitchen))
+			text := fmt.Sprintf("Starting flow session for the project %v", utils.PurpleText(command.Project))
+
+			if len(command.Tags) > 0 {
+				text += fmt.Sprintf(" [%v]", utils.YellowText(strings.Join(command.Tags, ", ")))
+			}
+
+			text += fmt.Sprintf(" at %v", utils.GreenText(time.Now().Format(time.Kitchen)))
+
+			fmt.Println(text)
 		},
 	}
 }
