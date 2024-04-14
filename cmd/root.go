@@ -12,7 +12,7 @@ import (
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stop"
 	"github.com/TristanSch1/flow/internal/application/usecases/project/list"
 	"github.com/TristanSch1/flow/internal/infra"
-	"github.com/TristanSch1/flow/internal/infra/fs"
+	"github.com/TristanSch1/flow/internal/infra/filesystem"
 	"github.com/spf13/cobra"
 )
 
@@ -30,7 +30,7 @@ func initializeApp() *app.App {
 		return nil
 	}
 
-	sessionRepository := &fs.FileSystemSessionRepository{
+	sessionRepository := &filesystem.FileSystemSessionRepository{
 		FlowFolderPath: homePath,
 	}
 	dateProvider := &infra.RealDateProvider{}

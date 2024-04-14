@@ -12,6 +12,7 @@ const (
 )
 
 type Session struct {
+	Id        string
 	StartTime time.Time
 	EndTime   time.Time
 	Project   string
