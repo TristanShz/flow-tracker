@@ -3,6 +3,8 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"os"
+	"time"
 
 	app "github.com/TristanSch1/flow/internal/application/usecases"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
@@ -28,7 +30,10 @@ func startCmd(app *app.App) *cobra.Command {
 			err := app.StartFlowSessionUseCase.Execute(command)
 			if err != nil {
 				fmt.Printf("%v", err)
+				os.Exit(1)
 			}
+
+			fmt.Printf("Starting flow session for the project %v at %v", command.Project, time.Now().Format(time.Kitchen))
 		},
 	}
 }
