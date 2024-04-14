@@ -1,6 +1,7 @@
 package status
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -18,10 +19,16 @@ func (s *UseCase) Execute() (string, error) {
 		return "", err
 	}
 
+	if lastSession == nil {
+		return "", ErrNoCurrentSession
+	}
+
 	duration := s.dateProvider.GetNow().Sub(lastSession.StartTime).Round(time.Second)
 
 	return fmt.Sprintf("You're in the flow for %v", duration.String()), nil
 }
+
+var ErrNoCurrentSession = errors.New("there is no flow session in progress")
 
 func NewFlowSessionStatusUseCase(sessionRepository application.SessionRepository, dateProvider application.DateProvider) UseCase {
 	return UseCase{

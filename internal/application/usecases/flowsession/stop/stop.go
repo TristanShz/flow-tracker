@@ -28,7 +28,7 @@ func (s UseCase) Execute() error {
 	return nil
 }
 
-var ErrNoCurrentSession = errors.New("there are no flow sessions in progress")
+var ErrNoCurrentSession = errors.New("there is no flow session in progress")
 
 func NewStopSessionUseCase(sessionRepository application.SessionRepository, dateProvider application.DateProvider) UseCase {
 	return UseCase{

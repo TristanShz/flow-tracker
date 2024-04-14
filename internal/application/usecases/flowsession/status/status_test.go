@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/status"
 	"github.com/TristanSch1/flow/internal/domain/session"
 	"github.com/TristanSch1/flow/internal/tests"
 )
@@ -22,4 +23,12 @@ func TestFlowSessionStatus_Success(t *testing.T) {
 	f.WhenUserSeesTheCurrentSessionStatus()
 
 	f.ThenUserShouldSee("You're in the flow for 1h0m0s")
+}
+
+func TestFlowSessionStatus_NoCurrentSession(t *testing.T) {
+	f := tests.GetSessionFixture(t)
+
+	f.WhenUserSeesTheCurrentSessionStatus()
+
+	f.ThenErrorShouldBe(status.ErrNoCurrentSession)
 }
