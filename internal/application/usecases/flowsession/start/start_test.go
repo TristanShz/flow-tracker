@@ -21,7 +21,11 @@ func TestStartFlowSession_Success(t *testing.T) {
 
 	f.WhenStartingFlowSession(command)
 
-	f.ThenSessionWithGivenStartTimeShouldBeSaved(time.Date(2024, time.April, 13, 17, 20, 0, 0, time.UTC))
+	f.ThenSessionShouldBeSaved(session.Session{
+		StartTime: time.Date(2024, time.April, 13, 17, 20, 0, 0, time.UTC),
+		Project:   "Flow",
+		Tags:      []string{"start"},
+	})
 }
 
 func TestStartFlowSession_AlreadyStarted(t *testing.T) {

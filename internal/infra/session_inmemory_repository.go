@@ -52,3 +52,41 @@ func (r *InMemorySessionRepository) FindLastSession() (*session.Session, error) 
 
 	return &r.Sessions[len(r.Sessions)-1], nil
 }
+
+func (r *InMemorySessionRepository) FindAllSessions() ([]session.Session, error) {
+	return r.Sessions, nil
+}
+
+func (r *InMemorySessionRepository) FindAllProjects() ([]string, error) {
+	sessions, _ := r.FindAllSessions()
+
+	projects := []string{}
+
+	for _, session := range sessions {
+		if slices.Contains(projects, session.Project) {
+			continue
+		}
+
+		projects = append(projects, session.Project)
+	}
+
+	return projects, nil
+}
+
+func (r *InMemorySessionRepository) FindAllProjectTags(project string) ([]string, error) {
+	sessionsForProject, _ := r.FindAllByProject(project)
+
+	tags := []string{}
+
+	for _, session := range sessionsForProject {
+		for _, tag := range session.Tags {
+			if slices.Contains(tags, tag) {
+				continue
+			}
+
+			tags = append(tags, tag)
+		}
+	}
+
+	return tags, nil
+}

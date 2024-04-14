@@ -8,6 +8,7 @@ import (
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/status"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stop"
+	"github.com/TristanSch1/flow/internal/application/usecases/project/list"
 	"github.com/TristanSch1/flow/internal/infra"
 	"github.com/TristanSch1/flow/internal/infra/fs"
 	"github.com/spf13/cobra"
@@ -28,7 +29,7 @@ func initializeApp() *app.App {
 	}
 
 	sessionRepository := &fs.FileSystemSessionRepository{
-		FlowPath: homePath,
+		FlowFolderPath: homePath,
 	}
 	dateProvider := &infra.RealDateProvider{}
 
@@ -36,7 +37,9 @@ func initializeApp() *app.App {
 	stopFlowSessionUseCase := stop.NewStopSessionUseCase(sessionRepository, dateProvider)
 	flowSessionStatusUseCase := status.NewFlowSessionStatusUseCase(sessionRepository, dateProvider)
 
-	return app.NewApp(startFlowSessionUseCase, stopFlowSessionUseCase, flowSessionStatusUseCase)
+	listProjectsUseCase := list.NewListProjectsUseCase(sessionRepository)
+
+	return app.NewApp(startFlowSessionUseCase, stopFlowSessionUseCase, flowSessionStatusUseCase, listProjectsUseCase)
 }
 
 func Execute() {
