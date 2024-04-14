@@ -19,7 +19,8 @@ func statusCmd(app *app.App) *cobra.Command {
 				os.Exit(1)
 			}
 
-			fmt.Printf("%v", status)
+			fmt.Printf("Current session :\n %v \n", status.Session.PrettyString())
+			fmt.Printf("%v", status.StatusText)
 		},
 	}
 }

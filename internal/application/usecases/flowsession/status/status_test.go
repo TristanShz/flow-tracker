@@ -22,7 +22,11 @@ func TestFlowSessionStatus_Success(t *testing.T) {
 
 	f.WhenUserSeesTheCurrentSessionStatus()
 
-	f.ThenUserShouldSee("You're in the flow for 1h0m0s")
+	f.ThenUserShouldSee(session.Session{
+		StartTime: time.Date(2024, time.April, 14, 11, 26, 0, 0, time.UTC),
+		Project:   "Flow",
+		Tags:      []string{"status"},
+	}, "You're in the flow for 1h0m0s")
 }
 
 func TestFlowSessionStatus_NoCurrentSession(t *testing.T) {

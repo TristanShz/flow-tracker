@@ -20,7 +20,7 @@ type SessionFixture struct {
 	StopFlowSessionUseCase   stop.UseCase
 	FlowSessionStatusUseCase status.UseCase
 	ThrownError              error
-	FlowSessionStatus        string
+	FlowSessionStatus        status.SessionStatus
 }
 
 func (s *SessionFixture) GivenNowIs(t time.Time) {
@@ -54,11 +54,15 @@ func (s *SessionFixture) WhenUserSeesTheCurrentSessionStatus() {
 	s.FlowSessionStatus = status
 }
 
-func (s *SessionFixture) ThenUserShouldSee(status string) {
+func (s *SessionFixture) ThenUserShouldSee(session session.Session, statusText string) {
 	got := s.FlowSessionStatus
 
-	if got != status {
-		s.T.Errorf("Expected '%v', but got '%v'", status, got)
+	if got.StatusText != statusText {
+		s.T.Errorf("Expected SessionStatus.StatusText '%v', but got '%v'", statusText, got.StatusText)
+	}
+
+	if !got.Session.Equals(session) {
+		s.T.Errorf("Expected SessionStatus.Session '%v', but got '%v'", session.PrettyString(), got.Session.PrettyString())
 	}
 }
 
