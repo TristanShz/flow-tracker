@@ -6,6 +6,11 @@ import (
 	"time"
 )
 
+const (
+	FlowingStatus = "FLOWING"
+	EndedStatus   = "ENDED"
+)
+
 type Session struct {
 	StartTime time.Time
 	EndTime   time.Time
@@ -20,4 +25,12 @@ func (s Session) Duration() time.Duration {
 func (s Session) PrettyString() string {
 	return fmt.Sprintf("Session:\n  StartTime: %s\n  EndTime: %s\n  Project: %s\n  Tags: %s\n",
 		s.StartTime, s.EndTime, s.Project, strings.Join(s.Tags, ", "))
+}
+
+func (s Session) Status() string {
+	if s.EndTime.IsZero() {
+		return FlowingStatus
+	}
+
+	return EndedStatus
 }

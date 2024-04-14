@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/TristanSch1/flow/internal/application"
+	"github.com/TristanSch1/flow/internal/domain/session"
 )
 
 type UseCase struct {
@@ -19,7 +20,7 @@ func (s *UseCase) Execute() (string, error) {
 		return "", err
 	}
 
-	if lastSession == nil {
+	if lastSession == nil || lastSession.Status() != session.FlowingStatus {
 		return "", ErrNoCurrentSession
 	}
 

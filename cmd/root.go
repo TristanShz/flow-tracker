@@ -6,6 +6,7 @@ import (
 
 	app "github.com/TristanSch1/flow/internal/application/usecases"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
+	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/status"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stop"
 	"github.com/TristanSch1/flow/internal/infra"
 	"github.com/TristanSch1/flow/internal/infra/fs"
@@ -33,8 +34,9 @@ func initializeApp() *app.App {
 
 	startFlowSessionUseCase := start.NewStartFlowSessionUseCase(sessionRepository, dateProvider)
 	stopFlowSessionUseCase := stop.NewStopSessionUseCase(sessionRepository, dateProvider)
+	flowSessionStatusUseCase := status.NewFlowSessionStatusUseCase(sessionRepository, dateProvider)
 
-	return app.NewApp(startFlowSessionUseCase, stopFlowSessionUseCase)
+	return app.NewApp(startFlowSessionUseCase, stopFlowSessionUseCase, flowSessionStatusUseCase)
 }
 
 func Execute() {
@@ -42,6 +44,7 @@ func Execute() {
 
 	rootCmd.AddCommand(startCmd(app))
 	rootCmd.AddCommand(stopCmd(app))
+	rootCmd.AddCommand(statusCmd(app))
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
