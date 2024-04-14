@@ -1,4 +1,4 @@
-package allsessionsreport
+package projectsessionsreport
 
 import (
 	"time"
@@ -11,30 +11,28 @@ type UseCase struct {
 	sessionRepository application.SessionRepository
 }
 
-type AllSessionsReport struct {
-	Projects         map[string]time.Duration
+type ProjectSessionReport struct {
 	Total            time.Duration
 	NumberOfSessions int
 }
 
-func (s UseCase) Execute() (AllSessionsReport, error) {
-	sessions, err := s.sessionRepository.FindAllSessions()
+func (s UseCase) Execute(command Command) (ProjectSessionReport, error) {
+	sessions, err := s.sessionRepository.FindAllByProject(command.Project)
 	if err != nil {
-		return AllSessionsReport{}, err
+		return ProjectSessionReport{}, err
 	}
 
 	sessionsReport := sessionsreport.SessionsReport{
 		Sessions: sessions,
 	}
 
-	return AllSessionsReport{
-		Projects:         sessionsReport.ProjectsReport(),
+	return ProjectSessionReport{
 		Total:            sessionsReport.TotalDuration(),
 		NumberOfSessions: len(sessions),
 	}, nil
 }
 
-func NewFlowSessionsReportUseCase(sessionRepository application.SessionRepository) UseCase {
+func NewProjectSessionsReportUseCase(sessionRepository application.SessionRepository) UseCase {
 	return UseCase{
 		sessionRepository: sessionRepository,
 	}

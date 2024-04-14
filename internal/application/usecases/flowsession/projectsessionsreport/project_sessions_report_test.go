@@ -1,15 +1,15 @@
-package allsessionsreport_test
+package projectsessionsreport_test
 
 import (
 	"testing"
 	"time"
 
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/allsessionsreport"
+	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/projectsessionsreport"
 	"github.com/TristanSch1/flow/internal/domain/session"
 	"github.com/TristanSch1/flow/internal/tests"
 )
 
-func TestFlowSessionsReport_Globsl_Success(t *testing.T) {
+func TestProjectSessionsReport_Success(t *testing.T) {
 	f := tests.GetSessionFixture(t)
 
 	f.GivenSomeSessions([]session.Session{{
@@ -29,28 +29,23 @@ func TestFlowSessionsReport_Globsl_Success(t *testing.T) {
 		Tags:      []string{"report-usecase"},
 	}})
 
-	f.WhenUserSeesAllSessionsReport()
+	f.WhenUserSeesProjectSessionsReport(projectsessionsreport.Command{Project: "Flow"})
 
-	f.ThenUserShouldSeeAllSessionsReport(
-		allsessionsreport.AllSessionsReport{
-			Projects: map[string]time.Duration{
-				"MyTodo": 3*time.Hour + 0*time.Minute + 0*time.Second,
-				"Flow":   3*time.Hour + 0*time.Minute + 30*time.Second,
-			},
-			Total:            6*time.Hour + 0*time.Minute + 30*time.Second,
-			NumberOfSessions: 3,
+	f.ThenUserShouldSeeProjectSessionsReport(
+		projectsessionsreport.ProjectSessionReport{
+			Total:            3*time.Hour + 0*time.Minute + 30*time.Second,
+			NumberOfSessions: 2,
 		},
 	)
 }
 
-func TestAllSessionsReport_NoSessions(t *testing.T) {
+func TestProjectSessionsReport_NoSessions(t *testing.T) {
 	f := tests.GetSessionFixture(t)
 
-	f.WhenUserSeesAllSessionsReport()
+	f.WhenUserSeesProjectSessionsReport(projectsessionsreport.Command{Project: "Flow"})
 
-	f.ThenUserShouldSeeAllSessionsReport(
-		allsessionsreport.AllSessionsReport{
-			Projects:         map[string]time.Duration{},
+	f.ThenUserShouldSeeProjectSessionsReport(
+		projectsessionsreport.ProjectSessionReport{
 			Total:            0,
 			NumberOfSessions: 0,
 		},
