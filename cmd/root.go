@@ -32,7 +32,7 @@ func initializeApp() *app.App {
 	dateProvider := &infra.RealDateProvider{}
 
 	startFlowSessionUseCase := start.NewStartFlowSessionUseCase(sessionRepository, dateProvider)
-	stopFlowSessionUseCase := stop.NewStopSessionUseCase(sessionRepository)
+	stopFlowSessionUseCase := stop.NewStopSessionUseCase(sessionRepository, dateProvider)
 
 	return app.NewApp(startFlowSessionUseCase, stopFlowSessionUseCase)
 }

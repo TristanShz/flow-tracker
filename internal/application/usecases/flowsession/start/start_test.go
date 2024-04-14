@@ -12,7 +12,7 @@ import (
 func TestStartFlowSession_Success(t *testing.T) {
 	f := tests.GetSessionFixture(t)
 
-	f.GivenPredefinedStartTime(time.Date(2024, time.April, 13, 17, 20, 0, 0, time.UTC))
+	f.GivenNowIs(time.Date(2024, time.April, 13, 17, 20, 0, 0, time.UTC))
 
 	command := start.Command{
 		Project: "Flow",

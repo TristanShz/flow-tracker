@@ -6,21 +6,24 @@ import (
 	"time"
 
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
+	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/status"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stop"
 	"github.com/TristanSch1/flow/internal/domain/session"
 	"github.com/TristanSch1/flow/internal/infra"
 )
 
 type SessionFixture struct {
-	T                 *testing.T
-	SessionRepository *infra.InMemorySessionRepository
-	DateProvider      *infra.StubDateProvider
-	StartFlowSession  start.UseCase
-	StopFlowSession   stop.UseCase
-	ThrownError       error
+	T                        *testing.T
+	SessionRepository        *infra.InMemorySessionRepository
+	DateProvider             *infra.StubDateProvider
+	StartFlowSessionUseCase  start.UseCase
+	StopFlowSessionUseCase   stop.UseCase
+	FlowSessionStatusUseCase status.UseCase
+	ThrownError              error
+	FlowSessionStatus        string
 }
 
-func (s *SessionFixture) GivenPredefinedStartTime(t time.Time) {
+func (s *SessionFixture) GivenNowIs(t time.Time) {
 	s.DateProvider.Now = t
 }
 
@@ -29,16 +32,33 @@ func (s *SessionFixture) GivenSomeSessions(sessions []session.Session) {
 }
 
 func (s *SessionFixture) WhenStartingFlowSession(command start.Command) {
-	err := s.StartFlowSession.Execute(command)
+	err := s.StartFlowSessionUseCase.Execute(command)
 	if err != nil {
 		s.ThrownError = err
 	}
 }
 
 func (s *SessionFixture) WhenStoppingFlowSession() {
-	err := s.StopFlowSession.Execute()
+	err := s.StopFlowSessionUseCase.Execute()
 	if err != nil {
 		s.ThrownError = err
+	}
+}
+
+func (s *SessionFixture) WhenUserSeesTheCurrentSessionStatus() {
+	status, err := s.FlowSessionStatusUseCase.Execute()
+	if err != nil {
+		s.ThrownError = err
+	}
+
+	s.FlowSessionStatus = status
+}
+
+func (s *SessionFixture) ThenUserShouldSee(status string) {
+	got := s.FlowSessionStatus
+
+	if got != status {
+		s.T.Errorf("Expected '%v', but got '%v'", status, got)
 	}
 }
 
@@ -66,16 +86,18 @@ func (s *SessionFixture) ThenErrorShouldBe(e error) {
 
 func GetSessionFixture(t *testing.T) SessionFixture {
 	sessionRepository := &infra.InMemorySessionRepository{}
-	dateProvider := &infra.StubDateProvider{}
+	dateProvider := infra.NewStubDateProvider()
 
 	startFlowSession := start.NewStartFlowSessionUseCase(sessionRepository, dateProvider)
-	stopFlowSession := stop.NewStopSessionUseCase(sessionRepository)
+	stopFlowSession := stop.NewStopSessionUseCase(sessionRepository, dateProvider)
+	flowSessionStatus := status.NewFlowSessionStatusUseCase(sessionRepository, dateProvider)
 
 	return SessionFixture{
-		T:                 t,
-		SessionRepository: sessionRepository,
-		DateProvider:      dateProvider,
-		StartFlowSession:  startFlowSession,
-		StopFlowSession:   stopFlowSession,
+		T:                        t,
+		SessionRepository:        sessionRepository,
+		DateProvider:             dateProvider,
+		StartFlowSessionUseCase:  startFlowSession,
+		StopFlowSessionUseCase:   stopFlowSession,
+		FlowSessionStatusUseCase: flowSessionStatus,
 	}
 }

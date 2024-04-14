@@ -2,13 +2,13 @@ package stop
 
 import (
 	"errors"
-	"time"
 
 	"github.com/TristanSch1/flow/internal/application"
 )
 
 type UseCase struct {
 	sessionRepository application.SessionRepository
+	dateProvider      application.DateProvider
 }
 
 func (s UseCase) Execute() error {
@@ -21,7 +21,7 @@ func (s UseCase) Execute() error {
 		return ErrNoCurrentSession
 	}
 
-	lastSession.EndTime = time.Now()
+	lastSession.EndTime = s.dateProvider.GetNow()
 
 	s.sessionRepository.Save(*lastSession)
 
@@ -30,8 +30,9 @@ func (s UseCase) Execute() error {
 
 var ErrNoCurrentSession = errors.New("there are no flow sessions in progress")
 
-func NewStopSessionUseCase(sessionRepository application.SessionRepository) UseCase {
+func NewStopSessionUseCase(sessionRepository application.SessionRepository, dateProvider application.DateProvider) UseCase {
 	return UseCase{
 		sessionRepository: sessionRepository,
+		dateProvider:      dateProvider,
 	}
 }
