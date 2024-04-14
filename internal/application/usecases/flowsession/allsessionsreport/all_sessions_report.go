@@ -19,13 +19,13 @@ type AllSessionsReport struct {
 }
 
 func (r AllSessionsReport) PrettyPrint() string {
-	result := "All Sessions Report:\n"
+	result := "All Flow Sessions Report:\n\n"
 	result += "Projects:\n"
 	for project, duration := range r.Projects {
 		result += fmt.Sprintf("- %s: %s\n", project, duration.String())
 	}
-	result += fmt.Sprintf("Total duration: %s\n", r.Total.String())
-	result += fmt.Sprintf("Total number of sessions: %d\n", r.NumberOfSessions)
+	result += fmt.Sprintf("Total flow time: %s\n", r.Total.String())
+	result += fmt.Sprintf("Number of sessions: %d\n", r.NumberOfSessions)
 	return result
 }
 
