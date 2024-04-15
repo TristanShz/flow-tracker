@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	app "github.com/TristanSch1/flow/internal/application/usecases"
@@ -27,22 +28,24 @@ var rootCmd = &cobra.Command{
 func initializeApp() *app.App {
 	homePath, err := os.UserHomeDir()
 	if err != nil {
-		return nil
+		log.Fatal(err)
 	}
 
-	sessionRepository := &filesystem.FileSystemSessionRepository{
-		FlowFolderPath: homePath,
+	sessionRepository, err := filesystem.NewFileSystemSessionRepository(homePath)
+	if err != nil {
+		log.Fatal(err)
 	}
 	dateProvider := &infra.RealDateProvider{}
+	idProvider := &infra.RealIDProvider{}
 
-	startFlowSessionUseCase := start.NewStartFlowSessionUseCase(sessionRepository, dateProvider)
-	stopFlowSessionUseCase := stop.NewStopSessionUseCase(sessionRepository, dateProvider)
-	flowSessionStatusUseCase := status.NewFlowSessionStatusUseCase(sessionRepository, dateProvider)
+	startFlowSessionUseCase := start.NewStartFlowSessionUseCase(&sessionRepository, dateProvider, idProvider)
+	stopFlowSessionUseCase := stop.NewStopSessionUseCase(&sessionRepository, dateProvider)
+	flowSessionStatusUseCase := status.NewFlowSessionStatusUseCase(&sessionRepository, dateProvider)
 
-	allSessionsReportUseCase := allsessionsreport.NewFlowSessionsReportUseCase(sessionRepository)
-	projectSessionsReportUseCase := projectsessionsreport.NewProjectSessionsReportUseCase(sessionRepository)
+	allSessionsReportUseCase := allsessionsreport.NewFlowSessionsReportUseCase(&sessionRepository)
+	projectSessionsReportUseCase := projectsessionsreport.NewProjectSessionsReportUseCase(&sessionRepository)
 
-	listProjectsUseCase := list.NewListProjectsUseCase(sessionRepository)
+	listProjectsUseCase := list.NewListProjectsUseCase(&sessionRepository)
 
 	return app.NewApp(
 		startFlowSessionUseCase,

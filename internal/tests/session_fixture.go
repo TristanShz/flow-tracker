@@ -153,8 +153,9 @@ func (s *SessionFixture) ThenErrorShouldBe(e error) {
 func GetSessionFixture(t *testing.T) SessionFixture {
 	sessionRepository := &infra.InMemorySessionRepository{}
 	dateProvider := infra.NewStubDateProvider()
+	idProvider := &infra.StubIDProvider{}
 
-	startFlowSession := start.NewStartFlowSessionUseCase(sessionRepository, dateProvider)
+	startFlowSession := start.NewStartFlowSessionUseCase(sessionRepository, dateProvider, idProvider)
 	stopFlowSession := stop.NewStopSessionUseCase(sessionRepository, dateProvider)
 	flowSessionStatus := status.NewFlowSessionStatusUseCase(sessionRepository, dateProvider)
 	flowSessionsReport := allsessionsreport.NewFlowSessionsReportUseCase(sessionRepository)

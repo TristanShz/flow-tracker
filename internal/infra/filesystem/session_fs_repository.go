@@ -18,6 +18,19 @@ type FileSystemSessionRepository struct {
 	FlowFolderPath string
 }
 
+func NewFileSystemSessionRepository(flowFolderPath string) (FileSystemSessionRepository, error) {
+	path := filepath.Join(flowFolderPath, FlowFolderName)
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		if err := os.MkdirAll(path, 0777); err != nil {
+			return FileSystemSessionRepository{}, err
+		}
+	}
+
+	return FileSystemSessionRepository{
+		FlowFolderPath: flowFolderPath,
+	}, nil
+}
+
 func (r *FileSystemSessionRepository) getFlowPath() string {
 	return filepath.Join(r.FlowFolderPath, FlowFolderName)
 }
@@ -31,19 +44,7 @@ func (r *FileSystemSessionRepository) getSessionFileName(s session.Session) stri
 	return s.Id + ".json"
 }
 
-func (r *FileSystemSessionRepository) checkForExistingFlowFolderOrCreate() error {
-	if _, err := os.Stat(r.getFlowPath()); os.IsNotExist(err) {
-		if err := os.MkdirAll(r.getFlowPath(), 0777); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 func (r *FileSystemSessionRepository) Save(sessionToSave session.Session) error {
-	r.checkForExistingFlowFolderOrCreate()
-
 	sessions, err := r.FindAllSessions()
 	if err != nil {
 		return err
@@ -65,6 +66,12 @@ func (r *FileSystemSessionRepository) Save(sessionToSave session.Session) error 
 		return marshaledErr
 	}
 
+	if _, err := os.Stat(r.getSessionFolderPath()); os.IsNotExist(err) {
+		if err := os.MkdirAll(r.getSessionFolderPath(), 0777); err != nil {
+			return err
+		}
+	}
+
 	fullPath := filepath.Join(r.getSessionFolderPath(), r.getSessionFileName(sessionToSave))
 	saveErr := os.WriteFile(fullPath, marshaled, 0666)
 
@@ -76,8 +83,6 @@ func (r *FileSystemSessionRepository) Save(sessionToSave session.Session) error 
 }
 
 func (r *FileSystemSessionRepository) FindAllSessions() ([]session.Session, error) {
-	sessions := []session.Session{}
-
 	dir, err := os.Open(r.getFlowPath())
 	if err != nil {
 		return nil, err
@@ -89,24 +94,39 @@ func (r *FileSystemSessionRepository) FindAllSessions() ([]session.Session, erro
 		return nil, err
 	}
 
+	sessions := []session.Session{}
+
 	for _, fileInfo := range fileInfos {
 		if fileInfo.IsDir() {
-			// TODO: Ici on arrive dans le dossier correspodant a un jour, il faut lire tout les fichiers dedans
 			continue
 		}
 
-		filePath := filepath.Join(r.getFlowPath(), fileInfo.Name())
-		file, err := os.ReadFile(filePath)
+		folderPath := filepath.Join(r.getFlowPath(), fileInfo.Name())
+		folder, err := os.Open(folderPath)
 		if err != nil {
 			return nil, err
 		}
 
-		var sessionData session.Session
-		if err := json.Unmarshal(file, &sessionData); err != nil {
+		sessionFileInfos, err := folder.Readdir(-1)
+		if err != nil {
 			return nil, err
 		}
 
-		sessions = append(sessions, sessionData)
+		for _, sessionFileInfo := range sessionFileInfos {
+			if sessionFileInfo.IsDir() {
+				continue
+			}
+			file, err := os.ReadFile(sessionFileInfo.Name())
+			if err != nil {
+				return nil, err
+			}
+			var sessionData session.Session
+			if err := json.Unmarshal(file, &sessionData); err != nil {
+				return nil, err
+			}
+
+			sessions = append(sessions, sessionData)
+		}
 	}
 
 	return sessions, nil

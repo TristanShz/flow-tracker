@@ -10,6 +10,7 @@ import (
 type UseCase struct {
 	sessionRepository application.SessionRepository
 	dateProvider      application.DateProvider
+	idProvider        application.IDProvider
 }
 
 func (s UseCase) Execute(command Command) error {
@@ -23,6 +24,7 @@ func (s UseCase) Execute(command Command) error {
 	}
 
 	session := session.Session{
+		Id:        s.idProvider.Provide(),
 		StartTime: s.dateProvider.GetNow(),
 		Project:   command.Project,
 		Tags:      command.Tags,
@@ -35,9 +37,14 @@ func (s UseCase) Execute(command Command) error {
 
 var ErrSessionAlreadyStarted = errors.New("there is already a session in progress")
 
-func NewStartFlowSessionUseCase(sessionRepository application.SessionRepository, dateProvider application.DateProvider) UseCase {
+func NewStartFlowSessionUseCase(
+	sessionRepository application.SessionRepository,
+	dateProvider application.DateProvider,
+	idProvider application.IDProvider,
+) UseCase {
 	return UseCase{
 		sessionRepository: sessionRepository,
 		dateProvider:      dateProvider,
+		idProvider:        idProvider,
 	}
 }
