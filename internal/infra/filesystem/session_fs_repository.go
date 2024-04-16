@@ -2,6 +2,8 @@ package filesystem
 
 import (
 	"encoding/json"
+	"io/fs"
+	"log"
 	"os"
 	"path/filepath"
 	"slices"
@@ -82,7 +84,7 @@ func (r *FileSystemSessionRepository) Save(sessionToSave session.Session) error 
 	return nil
 }
 
-func (r *FileSystemSessionRepository) FindAllSessions() ([]session.Session, error) {
+func (r *FileSystemSessionRepository) readFlowFolder() ([]fs.FileInfo, error) {
 	dir, err := os.Open(r.getFlowPath())
 	if err != nil {
 		return nil, err
@@ -92,6 +94,15 @@ func (r *FileSystemSessionRepository) FindAllSessions() ([]session.Session, erro
 	fileInfos, err := dir.Readdir(-1)
 	if err != nil {
 		return nil, err
+	}
+
+	return fileInfos, nil
+}
+
+func (r *FileSystemSessionRepository) FindAllSessions() ([]session.Session, error) {
+	fileInfos, err := r.readFlowFolder()
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	sessions := []session.Session{}
