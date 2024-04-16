@@ -2,12 +2,14 @@ package filesystem
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
 	"slices"
-	"time"
+	"sort"
+	"strconv"
 
 	"github.com/TristanSch1/flow/internal/domain/session"
 )
@@ -37,51 +39,8 @@ func (r *FileSystemSessionRepository) getFlowPath() string {
 	return filepath.Join(r.FlowFolderPath, FlowFolderName)
 }
 
-func (r *FileSystemSessionRepository) getSessionFolderPath() string {
-	todaysDate := time.Now().Format("02012006")
-	return filepath.Join(r.getFlowPath(), todaysDate)
-}
-
 func (r *FileSystemSessionRepository) getSessionFileName(s session.Session) string {
 	return s.Id + ".json"
-}
-
-func (r *FileSystemSessionRepository) Save(sessionToSave session.Session) error {
-	sessions, err := r.FindAllSessions()
-	if err != nil {
-		return err
-	}
-
-	startedSessionIndex := slices.IndexFunc(sessions, func(s session.Session) bool {
-		return s.Equals(sessionToSave)
-	})
-
-	if startedSessionIndex == -1 {
-		sessions = append(sessions, sessionToSave)
-	} else {
-		sessions[startedSessionIndex] = sessionToSave
-	}
-
-	marshaled, marshaledErr := json.Marshal(sessions)
-
-	if marshaledErr != nil {
-		return marshaledErr
-	}
-
-	if _, err := os.Stat(r.getSessionFolderPath()); os.IsNotExist(err) {
-		if err := os.MkdirAll(r.getSessionFolderPath(), 0777); err != nil {
-			return err
-		}
-	}
-
-	fullPath := filepath.Join(r.getSessionFolderPath(), r.getSessionFileName(sessionToSave))
-	saveErr := os.WriteFile(fullPath, marshaled, 0666)
-
-	if saveErr != nil {
-		return saveErr
-	}
-
-	return nil
 }
 
 func (r *FileSystemSessionRepository) readFlowFolder() ([]fs.FileInfo, error) {
@@ -99,6 +58,32 @@ func (r *FileSystemSessionRepository) readFlowFolder() ([]fs.FileInfo, error) {
 	return fileInfos, nil
 }
 
+func (r *FileSystemSessionRepository) Save(sessionToSave session.Session) error {
+	marshaled, marshaledErr := json.Marshal(sessionToSave)
+
+	if marshaledErr != nil {
+		return marshaledErr
+	}
+
+	fullPath := filepath.Join(r.getFlowPath(), r.getSessionFileName(sessionToSave))
+	saveErr := os.WriteFile(fullPath, marshaled, 0666)
+
+	if saveErr != nil {
+		return saveErr
+	}
+
+	return nil
+}
+
+func (r *FileSystemSessionRepository) rawFileToSession(raw []byte) (*session.Session, error) {
+	var sessionData session.Session
+	if err := json.Unmarshal(raw, &sessionData); err != nil {
+		return nil, err
+	}
+
+	return &sessionData, nil
+}
+
 func (r *FileSystemSessionRepository) FindAllSessions() ([]session.Session, error) {
 	fileInfos, err := r.readFlowFolder()
 	if err != nil {
@@ -112,32 +97,16 @@ func (r *FileSystemSessionRepository) FindAllSessions() ([]session.Session, erro
 			continue
 		}
 
-		folderPath := filepath.Join(r.getFlowPath(), fileInfo.Name())
-		folder, err := os.Open(folderPath)
+		file, err := os.ReadFile(fileInfo.Name())
 		if err != nil {
 			return nil, err
 		}
 
-		sessionFileInfos, err := folder.Readdir(-1)
-		if err != nil {
-			return nil, err
+		session, convertErr := r.rawFileToSession(file)
+		if convertErr != nil {
+			return nil, convertErr
 		}
-
-		for _, sessionFileInfo := range sessionFileInfos {
-			if sessionFileInfo.IsDir() {
-				continue
-			}
-			file, err := os.ReadFile(sessionFileInfo.Name())
-			if err != nil {
-				return nil, err
-			}
-			var sessionData session.Session
-			if err := json.Unmarshal(file, &sessionData); err != nil {
-				return nil, err
-			}
-
-			sessions = append(sessions, sessionData)
-		}
+		sessions = append(sessions, *session)
 	}
 
 	return sessions, nil
@@ -161,15 +130,52 @@ func (r *FileSystemSessionRepository) FindAllByProject(project string) ([]sessio
 }
 
 func (r *FileSystemSessionRepository) FindLastSession() (*session.Session, error) {
-	sessions, err := r.FindAllSessions()
+	fileInfos, err := r.readFlowFolder()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fileNames := []string{}
+
+	for _, fileInfo := range fileInfos {
+		if !fileInfo.IsDir() {
+			fileNames = append(fileNames, fileInfo.Name())
+		}
+	}
+
+	if len(fileNames) == 0 {
+		return nil, nil
+	}
+
+	sort.Slice(fileNames, func(i, j int) bool {
+		numI, err := strconv.ParseInt(fileNames[i], 10, 64)
+		if err != nil {
+			fmt.Println("Error when converting file name to integer:", err)
+			return false
+		}
+		numJ, err := strconv.ParseInt(fileNames[j], 10, 64)
+		if err != nil {
+			fmt.Println("Error when converting file name to integer:", err)
+			return false
+		}
+		return numI > numJ
+	})
+	lastSessionFileName := fileNames[0]
+
+	lastSessionFilePath := filepath.Join(r.getFlowPath(), lastSessionFileName)
+
+	fileData, err := os.ReadFile(lastSessionFilePath)
 	if err != nil {
 		return nil, err
 	}
 
-	if len(sessions) == 0 {
-		return nil, nil
+	session, convertErr := r.rawFileToSession(fileData)
+
+	if convertErr != nil {
+		return nil, convertErr
 	}
-	return &sessions[len(sessions)-1], nil
+
+	return session, nil
 }
 
 func (r *FileSystemSessionRepository) FindAllProjects() ([]string, error) {
