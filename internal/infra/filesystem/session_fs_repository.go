@@ -2,7 +2,6 @@ package filesystem
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/fs"
 	"log"
 	"os"
@@ -99,12 +98,12 @@ func (r *FileSystemSessionRepository) FindAllSessions() ([]session.Session, erro
 
 		file, err := os.ReadFile(fileInfo.Name())
 		if err != nil {
-			return nil, err
+			log.Fatalf("Error while reading file %v", fileInfo.Name())
 		}
 
 		session, convertErr := r.rawFileToSession(file)
 		if convertErr != nil {
-			return nil, convertErr
+			log.Fatalf("Invalid session data for file : %v", fileInfo.Name())
 		}
 		sessions = append(sessions, *session)
 	}
@@ -115,7 +114,7 @@ func (r *FileSystemSessionRepository) FindAllSessions() ([]session.Session, erro
 func (r *FileSystemSessionRepository) FindAllByProject(project string) ([]session.Session, error) {
 	allSessions, err := r.FindAllSessions()
 	if err != nil {
-		return nil, err
+		log.Fatalf("Error while reading all session files : %v", err)
 	}
 
 	sessions := []session.Session{}
@@ -150,13 +149,11 @@ func (r *FileSystemSessionRepository) FindLastSession() (*session.Session, error
 	sort.Slice(fileNames, func(i, j int) bool {
 		numI, err := strconv.ParseInt(fileNames[i], 10, 64)
 		if err != nil {
-			fmt.Println("Error when converting file name to integer:", err)
-			return false
+			log.Fatal("Error when converting file name to integer:", err)
 		}
 		numJ, err := strconv.ParseInt(fileNames[j], 10, 64)
 		if err != nil {
-			fmt.Println("Error when converting file name to integer:", err)
-			return false
+			log.Fatal("Error when converting file name to integer:", err)
 		}
 		return numI > numJ
 	})
@@ -166,13 +163,13 @@ func (r *FileSystemSessionRepository) FindLastSession() (*session.Session, error
 
 	fileData, err := os.ReadFile(lastSessionFilePath)
 	if err != nil {
-		return nil, err
+		log.Fatalf("Error while reading file %v", lastSessionFilePath)
 	}
 
 	session, convertErr := r.rawFileToSession(fileData)
 
 	if convertErr != nil {
-		return nil, convertErr
+		log.Fatalf("Invalid session data for file : %v", lastSessionFilePath)
 	}
 
 	return session, nil
