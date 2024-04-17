@@ -9,6 +9,7 @@ import (
 	"slices"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/TristanSch1/flow/internal/domain/session"
 )
@@ -21,17 +22,17 @@ type FileSystemSessionRepository struct {
 	FlowFolderPath string
 }
 
-func NewFileSystemSessionRepository(flowFolderPath string) (FileSystemSessionRepository, error) {
+func NewFileSystemSessionRepository(flowFolderPath string) FileSystemSessionRepository {
 	path := filepath.Join(flowFolderPath, FlowFolderName)
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		if err := os.MkdirAll(path, 0777); err != nil {
-			return FileSystemSessionRepository{}, err
+			log.Fatal("Error while creating .flow folder : ", err)
 		}
 	}
 
 	return FileSystemSessionRepository{
 		FlowFolderPath: flowFolderPath,
-	}, nil
+	}
 }
 
 func (r *FileSystemSessionRepository) getFlowPath() string {
@@ -96,9 +97,10 @@ func (r *FileSystemSessionRepository) FindAllSessions() ([]session.Session, erro
 			continue
 		}
 
-		file, err := os.ReadFile(fileInfo.Name())
+		filePath := filepath.Join(r.getFlowPath(), fileInfo.Name())
+		file, err := os.ReadFile(filePath)
 		if err != nil {
-			log.Fatalf("Error while reading file %v", fileInfo.Name())
+			log.Fatalf("Error while reading file %v : '%v'", fileInfo.Name(), err)
 		}
 
 		session, convertErr := r.rawFileToSession(file)
@@ -138,7 +140,8 @@ func (r *FileSystemSessionRepository) FindLastSession() (*session.Session, error
 
 	for _, fileInfo := range fileInfos {
 		if !fileInfo.IsDir() {
-			fileNames = append(fileNames, fileInfo.Name())
+			before, _ := strings.CutSuffix(fileInfo.Name(), ".json")
+			fileNames = append(fileNames, before)
 		}
 	}
 
@@ -157,9 +160,9 @@ func (r *FileSystemSessionRepository) FindLastSession() (*session.Session, error
 		}
 		return numI > numJ
 	})
-	lastSessionFileName := fileNames[0]
+	lastSessionFile := fileNames[0] + ".json"
 
-	lastSessionFilePath := filepath.Join(r.getFlowPath(), lastSessionFileName)
+	lastSessionFilePath := filepath.Join(r.getFlowPath(), lastSessionFile)
 
 	fileData, err := os.ReadFile(lastSessionFilePath)
 	if err != nil {
