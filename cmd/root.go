@@ -31,7 +31,7 @@ func initializeApp() *app.App {
 		log.Fatal(err)
 	}
 
-	sessionRepository, err := filesystem.NewFileSystemSessionRepository(homePath)
+	sessionRepository := filesystem.NewFileSystemSessionRepository(homePath)
 	if err != nil {
 		log.Fatal(err)
 	}
