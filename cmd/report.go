@@ -5,7 +5,6 @@ import (
 	"os"
 
 	app "github.com/TristanSch1/flow/internal/application/usecases"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/projectsessionsreport"
 	"github.com/spf13/cobra"
 )
 
@@ -17,21 +16,21 @@ func reportCmd(app *app.App) *cobra.Command {
 			projectFlag, _ := cmd.Flags().GetString("project")
 
 			if projectFlag != "" {
-				report, err := app.ProjectSessionsReportUseCase.Execute(projectsessionsreport.Command{Project: projectFlag})
+				report, err := app.ViewSessionsReportUseCase.Execute()
 				if err != nil {
 					fmt.Printf("%v", err)
 					os.Exit(1)
 				}
 
-				fmt.Println(report.PrettyPrint())
+				fmt.Println(report.TotalDuration())
 			} else {
-				report, err := app.AllSessionsReportUseCase.Execute()
+				report, err := app.ViewSessionsReportUseCase.Execute()
 				if err != nil {
 					fmt.Printf("%v", err)
 					os.Exit(1)
 				}
 
-				fmt.Println(report.PrettyPrint())
+				fmt.Println(report.TotalDuration())
 			}
 		},
 	}

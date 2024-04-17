@@ -6,11 +6,10 @@ import (
 	"os"
 
 	app "github.com/TristanSch1/flow/internal/application/usecases"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/allsessionsreport"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/projectsessionsreport"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/status"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stop"
+	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/viewsessionsreport"
 	"github.com/TristanSch1/flow/internal/application/usecases/project/list"
 	"github.com/TristanSch1/flow/internal/infra"
 	"github.com/TristanSch1/flow/internal/infra/filesystem"
@@ -42,8 +41,7 @@ func initializeApp() *app.App {
 	stopFlowSessionUseCase := stop.NewStopSessionUseCase(&sessionRepository, dateProvider)
 	flowSessionStatusUseCase := status.NewFlowSessionStatusUseCase(&sessionRepository, dateProvider)
 
-	allSessionsReportUseCase := allsessionsreport.NewFlowSessionsReportUseCase(&sessionRepository)
-	projectSessionsReportUseCase := projectsessionsreport.NewProjectSessionsReportUseCase(&sessionRepository)
+	viewSessionsReportUseCase := viewsessionsreport.NewViewSessionsReportUseCase(&sessionRepository)
 
 	listProjectsUseCase := list.NewListProjectsUseCase(&sessionRepository)
 
@@ -52,8 +50,7 @@ func initializeApp() *app.App {
 		stopFlowSessionUseCase,
 		flowSessionStatusUseCase,
 		listProjectsUseCase,
-		allSessionsReportUseCase,
-		projectSessionsReportUseCase,
+		viewSessionsReportUseCase,
 	)
 }
 

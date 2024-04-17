@@ -1,6 +1,7 @@
 package sessionsreport
 
 import (
+	"reflect"
 	"time"
 
 	"github.com/TristanSch1/flow/internal/domain/session"
@@ -8,6 +9,10 @@ import (
 
 type SessionsReport struct {
 	Sessions []session.Session
+}
+
+func (s SessionsReport) Equals(report SessionsReport) bool {
+	return reflect.DeepEqual(s, report)
 }
 
 func (s SessionsReport) TotalDuration() time.Duration {

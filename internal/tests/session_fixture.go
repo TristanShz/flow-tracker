@@ -7,31 +7,29 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/allsessionsreport"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/projectsessionsreport"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/status"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stop"
+	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/viewsessionsreport"
 	"github.com/TristanSch1/flow/internal/application/usecases/project/list"
 	"github.com/TristanSch1/flow/internal/domain/session"
+	"github.com/TristanSch1/flow/internal/domain/sessionsreport"
 	"github.com/TristanSch1/flow/internal/infra"
 )
 
 type SessionFixture struct {
-	T                            *testing.T
-	SessionRepository            *infra.InMemorySessionRepository
-	DateProvider                 *infra.StubDateProvider
-	StartFlowSessionUseCase      start.UseCase
-	StopFlowSessionUseCase       stop.UseCase
-	FlowSessionStatusUseCase     status.UseCase
-	ListProjectsUseCase          list.UseCase
-	FlowSessionReportUseCase     allsessionsreport.UseCase
-	ProjectSessionsReportUseCase projectsessionsreport.UseCase
-	ThrownError                  error
-	FlowSessionStatus            status.SessionStatus
-	Projects                     []string
-	AllSessionsReport            allsessionsreport.AllSessionsReport
-	ProjectSessionsReport        projectsessionsreport.ProjectSessionReport
+	T                         *testing.T
+	SessionRepository         *infra.InMemorySessionRepository
+	DateProvider              *infra.StubDateProvider
+	StartFlowSessionUseCase   start.UseCase
+	StopFlowSessionUseCase    stop.UseCase
+	FlowSessionStatusUseCase  status.UseCase
+	ListProjectsUseCase       list.UseCase
+	ViewSessionsReportUseCase viewsessionsreport.UseCase
+	ThrownError               error
+	FlowSessionStatus         status.SessionStatus
+	Projects                  []string
+	SessionsReport            sessionsreport.SessionsReport
 }
 
 func (s *SessionFixture) GivenNowIs(t time.Time) {
@@ -74,34 +72,17 @@ func (s *SessionFixture) WhenGettingListOfProjects() {
 	s.Projects = projects
 }
 
-func (s *SessionFixture) WhenUserSeesAllSessionsReport() {
-	report, err := s.FlowSessionReportUseCase.Execute()
+func (s *SessionFixture) WhenUserSeesSessionsReport() {
+	report, err := s.ViewSessionsReportUseCase.Execute()
 	if err != nil {
 		s.ThrownError = err
 	}
 
-	s.AllSessionsReport = report
+	s.SessionsReport = report
 }
 
-func (s *SessionFixture) WhenUserSeesProjectSessionsReport(command projectsessionsreport.Command) {
-	report, err := s.ProjectSessionsReportUseCase.Execute(command)
-	if err != nil {
-		s.ThrownError = err
-	}
-
-	s.ProjectSessionsReport = report
-}
-
-func (s SessionFixture) ThenUserShouldSeeAllSessionsReport(expectedReport allsessionsreport.AllSessionsReport) {
-	got := s.AllSessionsReport
-
-	if !reflect.DeepEqual(got, expectedReport) {
-		s.T.Errorf("Expected report '%v', but got '%v'", expectedReport, got)
-	}
-}
-
-func (s SessionFixture) ThenUserShouldSeeProjectSessionsReport(expectedReport projectsessionsreport.ProjectSessionReport) {
-	got := s.ProjectSessionsReport
+func (s SessionFixture) ThenUserShouldSeeSessionsReport(expectedReport sessionsreport.SessionsReport) {
+	got := s.SessionsReport
 
 	if !reflect.DeepEqual(got, expectedReport) {
 		s.T.Errorf("Expected report '%v', but got '%v'", expectedReport, got)
@@ -158,20 +139,18 @@ func GetSessionFixture(t *testing.T) SessionFixture {
 	startFlowSession := start.NewStartFlowSessionUseCase(sessionRepository, dateProvider, idProvider)
 	stopFlowSession := stop.NewStopSessionUseCase(sessionRepository, dateProvider)
 	flowSessionStatus := status.NewFlowSessionStatusUseCase(sessionRepository, dateProvider)
-	flowSessionsReport := allsessionsreport.NewFlowSessionsReportUseCase(sessionRepository)
-	projectSessionsReport := projectsessionsreport.NewProjectSessionsReportUseCase(sessionRepository)
+	viewSessionsReport := viewsessionsreport.NewViewSessionsReportUseCase(sessionRepository)
 
 	listProjects := list.NewListProjectsUseCase(sessionRepository)
 
 	return SessionFixture{
-		T:                            t,
-		SessionRepository:            sessionRepository,
-		DateProvider:                 dateProvider,
-		StartFlowSessionUseCase:      startFlowSession,
-		StopFlowSessionUseCase:       stopFlowSession,
-		FlowSessionStatusUseCase:     flowSessionStatus,
-		FlowSessionReportUseCase:     flowSessionsReport,
-		ProjectSessionsReportUseCase: projectSessionsReport,
-		ListProjectsUseCase:          listProjects,
+		T:                         t,
+		SessionRepository:         sessionRepository,
+		DateProvider:              dateProvider,
+		StartFlowSessionUseCase:   startFlowSession,
+		StopFlowSessionUseCase:    stopFlowSession,
+		FlowSessionStatusUseCase:  flowSessionStatus,
+		ListProjectsUseCase:       listProjects,
+		ViewSessionsReportUseCase: viewSessionsReport,
 	}
 }
