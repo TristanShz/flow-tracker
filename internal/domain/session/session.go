@@ -32,6 +32,9 @@ func (s Session) GetFormattedEndTime() string {
 }
 
 func (s Session) Duration() time.Duration {
+	if s.EndTime.IsZero() {
+		return 0
+	}
 	return s.EndTime.Sub(s.StartTime).Round(time.Second)
 }
 

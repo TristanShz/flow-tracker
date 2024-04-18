@@ -19,6 +19,13 @@ func TestSession_Duration(t *testing.T) {
 			},
 			want: time.Second,
 		},
+		{
+			name: "without end time",
+			e: Session{
+				StartTime: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+			},
+			want: 0,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
