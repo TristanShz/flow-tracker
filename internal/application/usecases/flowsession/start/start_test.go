@@ -1,6 +1,7 @@
 package start_test
 
 import (
+	"strconv"
 	"testing"
 	"time"
 
@@ -12,7 +13,8 @@ import (
 func TestStartFlowSession_Success(t *testing.T) {
 	f := tests.GetSessionFixture(t)
 
-	f.GivenNowIs(time.Date(2024, time.April, 13, 17, 20, 0, 0, time.UTC))
+	startTime := time.Date(2024, time.April, 13, 17, 20, 0, 0, time.UTC)
+	f.GivenNowIs(startTime)
 
 	command := start.Command{
 		Project: "Flow",
@@ -22,6 +24,7 @@ func TestStartFlowSession_Success(t *testing.T) {
 	f.WhenStartingFlowSession(command)
 
 	f.ThenSessionShouldBeSaved(session.Session{
+		Id:        strconv.FormatInt(startTime.Unix(), 10),
 		StartTime: time.Date(2024, time.April, 13, 17, 20, 0, 0, time.UTC),
 		Project:   "Flow",
 		Tags:      []string{"start"},
@@ -32,6 +35,7 @@ func TestStartFlowSession_AlreadyStarted(t *testing.T) {
 	f := tests.GetSessionFixture(t)
 
 	f.GivenSomeSessions([]session.Session{{
+		Id:        "1",
 		StartTime: time.Date(2024, time.April, 13, 17, 20, 0, 0, time.UTC),
 		Project:   "Flow",
 		Tags:      []string{"start"},
