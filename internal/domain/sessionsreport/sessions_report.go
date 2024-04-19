@@ -7,6 +7,11 @@ import (
 	"github.com/TristanSch1/flow/internal/domain/session"
 )
 
+const (
+	FormatByDay     = "by-day"
+	FormatByProject = "by-project"
+)
+
 type SessionsReport struct {
 	Sessions []session.Session
 }
@@ -15,25 +20,22 @@ func (s SessionsReport) Equals(report SessionsReport) bool {
 	return reflect.DeepEqual(s, report)
 }
 
-func (s SessionsReport) TotalDuration() time.Duration {
+func (s SessionsReport) Duration(sessions []session.Session) time.Duration {
 	totalDuration := time.Second * 0
-	for _, session := range s.Sessions {
+	for _, session := range sessions {
 		totalDuration += session.Duration()
 	}
-
 	return totalDuration
 }
 
-func (s SessionsReport) ProjectsReport() map[string]time.Duration {
-	projectsReport := make(map[string]time.Duration)
-	for _, session := range s.Sessions {
-		_, ok := projectsReport[session.Project]
+func (s SessionsReport) TotalDuration() time.Duration {
+	return s.Duration(s.Sessions)
+}
 
-		if ok {
-			projectsReport[session.Project] += session.Duration()
-		} else {
-			projectsReport[session.Project] = session.Duration()
-		}
+func (s SessionsReport) SplitSessionsByProject() map[string][]session.Session {
+	projectsReport := make(map[string][]session.Session)
+	for _, session := range s.Sessions {
+		projectsReport[session.Project] = append(projectsReport[session.Project], session)
 	}
 
 	return projectsReport

@@ -18,9 +18,15 @@ func (s UseCase) Execute(
 		return err
 	}
 
-	presenter.Show(sessionsreport.SessionsReport{
+	sessionsReport := sessionsreport.SessionsReport{
 		Sessions: sessions,
-	})
+	}
+
+	if command.format == sessionsreport.FormatByDay {
+		presenter.ShowByDay(sessionsReport)
+	} else {
+		presenter.ShowByProject(sessionsReport)
+	}
 
 	return nil
 }

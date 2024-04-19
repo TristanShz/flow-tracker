@@ -10,7 +10,7 @@ import (
 
 type SessionsReportCLIPresenter struct{}
 
-func (s SessionsReportCLIPresenter) Show(sessionsReport sessionsreport.SessionsReport) {
+func (s SessionsReportCLIPresenter) ShowByDay(sessionsReport sessionsreport.SessionsReport) {
 	sessionsByDay := sessionsReport.SplitSessionsByDay()
 	text := "Sessions Report\n\n"
 
@@ -25,6 +25,21 @@ func (s SessionsReportCLIPresenter) Show(sessionsReport sessionsreport.SessionsR
 				utils.PurpleText(session.Project),
 				utils.YellowText(strings.Join(session.Tags, ", ")),
 			)
+		}
+
+	}
+
+	fmt.Println(text)
+}
+
+func (s SessionsReportCLIPresenter) ShowByProject(sessionsReport sessionsreport.SessionsReport) {
+	sessionsByProject := sessionsReport.SplitSessionsByProject()
+	text := "Sessions Report\n\n"
+
+	for project, sessions := range sessionsByProject {
+		text += fmt.Sprintf("%v - %v\n", utils.YellowText(project), utils.GreenText(sessionsReport.Duration(sessions).String()))
+		for range sessions {
+			text += ""
 		}
 
 	}

@@ -83,11 +83,12 @@ func TestSessionsReport_TotalDuration(t *testing.T) {
 	}
 }
 
-func TestSessionsReport_SplitByDay(t *testing.T) {
+func TestSessionsReport_SplitBy(t *testing.T) {
 	tests := []struct {
-		want map[time.Time][]session.Session
-		name string
-		e    sessionsreport.SessionsReport
+		wantByDays     map[time.Time][]session.Session
+		wantByProjects map[string][]session.Session
+		name           string
+		e              sessionsreport.SessionsReport
 	}{
 		{
 			name: "Two sessions on the same day",
@@ -107,8 +108,24 @@ func TestSessionsReport_SplitByDay(t *testing.T) {
 					},
 				},
 			},
-			want: map[time.Time][]session.Session{
+			wantByDays: map[time.Time][]session.Session{
 				time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC): {
+					{
+						StartTime: time.Date(2020, 1, 1, 8, 0, 0, 0, time.UTC),
+						EndTime:   time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC),
+						Project:   "my-todo",
+						Tags:      []string{"add-todo"},
+					},
+					{
+						StartTime: time.Date(2020, 1, 1, 12, 0, 0, 0, time.UTC),
+						EndTime:   time.Date(2020, 1, 1, 12, 50, 0, 0, time.UTC),
+						Project:   "my-todo",
+						Tags:      []string{"add-todo"},
+					},
+				},
+			},
+			wantByProjects: map[string][]session.Session{
+				"my-todo": {
 					{
 						StartTime: time.Date(2020, 1, 1, 8, 0, 0, 0, time.UTC),
 						EndTime:   time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC),
@@ -135,8 +152,17 @@ func TestSessionsReport_SplitByDay(t *testing.T) {
 					},
 				},
 			},
-			want: map[time.Time][]session.Session{
+			wantByDays: map[time.Time][]session.Session{
 				time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC): {
+					{
+						StartTime: time.Date(2020, 1, 1, 8, 0, 0, 0, time.UTC),
+						Project:   "my-todo",
+						Tags:      []string{"add-todo"},
+					},
+				},
+			},
+			wantByProjects: map[string][]session.Session{
+				"my-todo": {
 					{
 						StartTime: time.Date(2020, 1, 1, 8, 0, 0, 0, time.UTC),
 						Project:   "my-todo",
@@ -150,10 +176,11 @@ func TestSessionsReport_SplitByDay(t *testing.T) {
 			e: sessionsreport.SessionsReport{
 				Sessions: []session.Session{},
 			},
-			want: map[time.Time][]session.Session{},
+			wantByDays:     map[time.Time][]session.Session{},
+			wantByProjects: map[string][]session.Session{},
 		},
 		{
-			name: "Two sessions on different days",
+			name: "Two sessions on different days for different projects",
 			e: sessionsreport.SessionsReport{
 				Sessions: []session.Session{
 					{
@@ -166,11 +193,11 @@ func TestSessionsReport_SplitByDay(t *testing.T) {
 						Id:        "2",
 						StartTime: time.Date(2020, 1, 2, 12, 0, 0, 0, time.UTC),
 						EndTime:   time.Date(2020, 1, 2, 10, 0, 0, 0, time.UTC),
-						Project:   "my-todo",
+						Project:   "flow",
 					},
 				},
 			},
-			want: map[time.Time][]session.Session{
+			wantByDays: map[time.Time][]session.Session{
 				time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC): {
 					{
 						Id:        "1",
@@ -184,7 +211,25 @@ func TestSessionsReport_SplitByDay(t *testing.T) {
 						Id:        "2",
 						StartTime: time.Date(2020, 1, 2, 12, 0, 0, 0, time.UTC),
 						EndTime:   time.Date(2020, 1, 2, 10, 0, 0, 0, time.UTC),
+						Project:   "flow",
+					},
+				},
+			},
+			wantByProjects: map[string][]session.Session{
+				"my-todo": {
+					{
+						Id:        "1",
+						StartTime: time.Date(2020, 1, 1, 8, 0, 0, 0, time.UTC),
+						EndTime:   time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC),
 						Project:   "my-todo",
+					},
+				},
+				"flow": {
+					{
+						Id:        "2",
+						StartTime: time.Date(2020, 1, 2, 12, 0, 0, 0, time.UTC),
+						EndTime:   time.Date(2020, 1, 2, 10, 0, 0, 0, time.UTC),
+						Project:   "flow",
 					},
 				},
 			},
@@ -193,8 +238,12 @@ func TestSessionsReport_SplitByDay(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.e.SplitSessionsByDay(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Entry.SplitSessionsByDay() = %v, want %v", got, tt.want)
+			if got := tt.e.SplitSessionsByDay(); !reflect.DeepEqual(got, tt.wantByDays) {
+				t.Errorf("Entry.SplitSessionsByDays() = %v, want %v", got, tt.wantByDays)
+			}
+
+			if got := tt.e.SplitSessionsByProject(); !reflect.DeepEqual(got, tt.wantByProjects) {
+				t.Errorf("Entry.SplitSessionsByProjects() = %v, want %v", got, tt.wantByProjects)
 			}
 		})
 	}

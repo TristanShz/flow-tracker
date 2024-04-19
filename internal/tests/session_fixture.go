@@ -21,7 +21,11 @@ type TestPresenter struct {
 	SessionsReport sessionsreport.SessionsReport
 }
 
-func (tp *TestPresenter) Show(sessionReport sessionsreport.SessionsReport) {
+func (tp *TestPresenter) ShowByDay(sessionReport sessionsreport.SessionsReport) {
+	tp.SessionsReport = sessionReport
+}
+
+func (tp *TestPresenter) ShowByProject(sessionReport sessionsreport.SessionsReport) {
 	tp.SessionsReport = sessionReport
 }
 
