@@ -52,5 +52,5 @@ func (s Session) Status() string {
 }
 
 func (s Session) Equals(session Session) bool {
-	return s.StartTime.Equal(session.StartTime)
+	return s.Id == session.Id
 }

@@ -77,7 +77,7 @@ func TestSessionsReport_TotalDuration(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := tt.e.TotalDuration(); got != tt.want {
-				t.Errorf("Entry.Duration() = %v, want %v", got, tt.want)
+				t.Errorf("Entry.TotalDuration() = %v, want %v", got, tt.want)
 			}
 		})
 	}
