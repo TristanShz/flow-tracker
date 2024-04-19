@@ -34,7 +34,8 @@ func reportCmd(app *app.App) *cobra.Command {
 		},
 	}
 
-	command.PersistentFlags().String("project", "", "get a report for all flow sessions of given project")
+	command.Flags().StringP("project", "p", "", "get a report for all flow sessions of given project")
+	command.Flags().StringP("format", "f", "by-day", "Specify the format of the report. Possible values: by-day, by-project, total-duration")
 
 	return command
 }

@@ -38,3 +38,14 @@ func (s SessionsReport) ProjectsReport() map[string]time.Duration {
 
 	return projectsReport
 }
+
+func (s SessionsReport) SplitSessionsByDay() map[time.Time][]session.Session {
+	sessionMap := make(map[time.Time][]session.Session)
+
+	for _, session := range s.Sessions {
+		day := session.StartTime.Truncate(24 * time.Hour)
+		sessionMap[day] = append(sessionMap[day], session)
+	}
+
+	return sessionMap
+}
