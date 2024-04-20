@@ -11,12 +11,12 @@ import (
 type SessionsReportCLIPresenter struct{}
 
 func (s SessionsReportCLIPresenter) ShowByDay(sessionsReport sessionsreport.SessionsReport) {
-	sessionsByDay := sessionsReport.SplitSessionsByDay()
+	byDayReport := sessionsReport.GetByDayReport()
 	text := "Sessions Report\n\n"
 
-	for day, sessions := range sessionsByDay {
-		text += fmt.Sprintf("%v :\n", utils.GreenText(day.Format("2006-01-02")))
-		for _, session := range sessions {
+	for _, dayReport := range byDayReport {
+		text += fmt.Sprintf("%v :\n", utils.GreenText(dayReport.Day.Format("2006-01-02")))
+		for _, session := range dayReport.Sessions {
 			text += fmt.Sprintf(
 				"    From %v to %v %v %v [%v]\n",
 				utils.GreenText(session.StartTime.Format("15:04:05")),
@@ -33,13 +33,13 @@ func (s SessionsReportCLIPresenter) ShowByDay(sessionsReport sessionsreport.Sess
 }
 
 func (s SessionsReportCLIPresenter) ShowByProject(sessionsReport sessionsreport.SessionsReport) {
-	sessionsByProject := sessionsReport.SplitSessionsByProject()
+	byProjectReport := sessionsReport.GetByProjectReport()
 	text := "Sessions Report\n\n"
 
-	for project, sessions := range sessionsByProject {
-		text += fmt.Sprintf("%v - %v\n", utils.YellowText(project), utils.GreenText(sessionsReport.Duration(sessions).String()))
-		for range sessions {
-			text += ""
+	for _, report := range byProjectReport {
+		text += fmt.Sprintf("%v - %v\n", utils.YellowText(report.Project), utils.GreenText(report.TotalDuration.String()))
+		for tag, duration := range report.DurationByTag {
+			text += fmt.Sprintf("    %v -> %v\n", utils.YellowText(tag), utils.GreenText(duration.String()))
 		}
 
 	}
