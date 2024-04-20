@@ -17,15 +17,16 @@ import (
 )
 
 type TestPresenter struct {
-	SessionsReport sessionsreport.SessionsReport
+	SessionsReportByDay     sessionsreport.SessionsReport
+	SessionsReportByProject sessionsreport.SessionsReport
 }
 
 func (tp *TestPresenter) ShowByDay(sessionReport sessionsreport.SessionsReport) {
-	tp.SessionsReport = sessionReport
+	tp.SessionsReportByDay = sessionReport
 }
 
 func (tp *TestPresenter) ShowByProject(sessionReport sessionsreport.SessionsReport) {
-	tp.SessionsReport = sessionReport
+	tp.SessionsReportByProject = sessionReport
 }
 
 type SessionFixture struct {
@@ -93,8 +94,14 @@ func (s *SessionFixture) WhenUserSeesSessionsReport(
 	}
 }
 
-func (s SessionFixture) ThenUserShouldSeeSessionsReport(expectedReport sessionsreport.SessionsReport) {
-	got := s.SessionsReportPresenter.SessionsReport
+func (s SessionFixture) ThenUserShouldSeeSessionsReport(expectedReport sessionsreport.SessionsReport, expectedFormat string) {
+	var got sessionsreport.SessionsReport
+	if expectedFormat == sessionsreport.FormatByDay {
+		got = s.SessionsReportPresenter.SessionsReportByDay
+	}
+	if expectedFormat == sessionsreport.FormatByProject {
+		got = s.SessionsReportPresenter.SessionsReportByProject
+	}
 
 	if !got.Equals(expectedReport) {
 		s.T.Errorf("Expected report '%v', but got '%v'", expectedReport, got)
