@@ -2,7 +2,6 @@ package tests
 
 import (
 	"errors"
-	"reflect"
 	"slices"
 	"testing"
 	"time"
@@ -97,7 +96,7 @@ func (s *SessionFixture) WhenUserSeesSessionsReport(
 func (s SessionFixture) ThenUserShouldSeeSessionsReport(expectedReport sessionsreport.SessionsReport) {
 	got := s.SessionsReportPresenter.SessionsReport
 
-	if !reflect.DeepEqual(got, expectedReport) {
+	if !got.Equals(expectedReport) {
 		s.T.Errorf("Expected report '%v', but got '%v'", expectedReport, got)
 	}
 }

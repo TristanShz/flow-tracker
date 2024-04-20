@@ -10,31 +10,37 @@ import (
 	"github.com/TristanSch1/flow/internal/tests"
 )
 
-func TestViewSessionsReport_NoArgs_Success(t *testing.T) {
+var sessionsForTest = []session.Session{{
+	StartTime: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
+	EndTime:   time.Date(2024, time.April, 14, 13, 12, 0, 0, time.UTC),
+	Project:   "MyTodo",
+	Tags:      []string{"add-todo"},
+}, {
+	StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
+	EndTime:   time.Date(2024, time.April, 14, 15, 12, 0, 0, time.UTC),
+	Project:   "Flow",
+	Tags:      []string{"start-usecase"},
+}, {
+	StartTime: time.Date(2024, time.April, 14, 16, 24, 0, 0, time.UTC),
+	EndTime:   time.Date(2024, time.April, 14, 18, 24, 30, 0, time.UTC),
+	Project:   "Flow",
+	Tags:      []string{"report-usecase"},
+}}
+
+func TestViewSessionsReport(t *testing.T) {
 	f := tests.GetSessionFixture(t)
 
-	f.GivenSomeSessions([]session.Session{{
-		StartTime: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
-		EndTime:   time.Date(2024, time.April, 14, 13, 12, 0, 0, time.UTC),
-		Project:   "MyTodo",
-		Tags:      []string{"add-todo"},
-	}, {
-		StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
-		EndTime:   time.Date(2024, time.April, 14, 15, 12, 0, 0, time.UTC),
-		Project:   "Flow",
-		Tags:      []string{"start-usecase"},
-	}, {
-		StartTime: time.Date(2024, time.April, 14, 16, 24, 0, 0, time.UTC),
-		EndTime:   time.Date(2024, time.April, 14, 18, 24, 30, 0, time.UTC),
-		Project:   "Flow",
-		Tags:      []string{"report-usecase"},
-	}})
-
-	f.WhenUserSeesSessionsReport(viewsessionsreport.Command{})
-
-	f.ThenUserShouldSeeSessionsReport(
-		sessionsreport.SessionsReport{
-			Sessions: []session.Session{
+	tests := []struct {
+		name          string
+		command       viewsessionsreport.Command
+		givenSessions []session.Session
+		want          sessionsreport.SessionsReport
+	}{
+		{
+			name:          "No arguments given",
+			command:       viewsessionsreport.Command{},
+			givenSessions: sessionsForTest,
+			want: sessionsreport.NewSessionsReport([]session.Session{
 				{
 					StartTime: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
 					EndTime:   time.Date(2024, time.April, 14, 13, 12, 0, 0, time.UTC),
@@ -51,16 +57,43 @@ func TestViewSessionsReport_NoArgs_Success(t *testing.T) {
 					Project:   "Flow",
 					Tags:      []string{"report-usecase"},
 				},
+			}),
+		},
+		{
+			name:          "No arguments and no sessions",
+			command:       viewsessionsreport.Command{},
+			givenSessions: []session.Session{},
+			want:          sessionsreport.NewSessionsReport([]session.Session{}),
+		},
+		{
+			name: "Project argument given",
+			command: viewsessionsreport.Command{
+				Project: "Flow",
 			},
+			givenSessions: sessionsForTest,
+			want: sessionsreport.NewSessionsReport([]session.Session{
+				{
+					StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 15, 12, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"start-usecase"},
+				}, {
+					StartTime: time.Date(2024, time.April, 14, 16, 24, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 18, 24, 30, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"report-usecase"},
+				},
+			}),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f.GivenSomeSessions(tt.givenSessions)
+
+			f.WhenUserSeesSessionsReport(tt.command)
+
+			f.ThenUserShouldSeeSessionsReport(tt.want)
 		})
-}
-
-func TestAllSessionsReport_NoSessions(t *testing.T) {
-	f := tests.GetSessionFixture(t)
-
-	f.WhenUserSeesSessionsReport(viewsessionsreport.Command{})
-
-	f.ThenUserShouldSeeSessionsReport(
-		sessionsreport.SessionsReport{},
-	)
+	}
 }

@@ -16,8 +16,12 @@ type SessionsReport struct {
 	Sessions []session.Session
 }
 
+func NewSessionsReport(sessions []session.Session) SessionsReport {
+	return SessionsReport{Sessions: sessions}
+}
+
 func (s SessionsReport) Equals(report SessionsReport) bool {
-	return reflect.DeepEqual(s, report)
+	return reflect.DeepEqual(s.Sessions, report.Sessions)
 }
 
 func (s SessionsReport) Duration(sessions []session.Session) time.Duration {
