@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# Flow CLI commands
+# Commands
 
 ## `flow start [project] [tags]`
 

@@ -36,7 +36,7 @@ func (s SessionsReport) Equals(report SessionsReport) bool {
 }
 
 func (s SessionsReport) GetByDayReport() []DayReport {
-	dayReports := make([]DayReport, 0)
+	dayReports := []DayReport{}
 	sessionsByDay := s.splitSessionsByDay()
 	for day, sessions := range sessionsByDay {
 		dayReports = append(dayReports, DayReport{Day: day, Sessions: sessions})
@@ -45,7 +45,7 @@ func (s SessionsReport) GetByDayReport() []DayReport {
 }
 
 func (s SessionsReport) GetByProjectReport() []ProjectReport {
-	projectReports := make([]ProjectReport, 0)
+	projectReports := []ProjectReport{}
 
 	sessionsByProject := s.splitSessionsByProject()
 	for project, sessions := range sessionsByProject {

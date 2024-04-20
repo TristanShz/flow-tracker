@@ -206,11 +206,11 @@ func TestSessionsReport_Formats(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := tt.e.GetByDayReport(); !reflect.DeepEqual(got, tt.wantByDays) {
-				t.Errorf("Entry.SplitSessionsByDays() = %v, want %v", got, tt.wantByDays)
+				t.Errorf("SessionsReport.GetByDayReport() = %v, want %v", got, tt.wantByDays)
 			}
 
 			if got := tt.e.GetByProjectReport(); !reflect.DeepEqual(got, tt.wantByProjects) {
-				t.Errorf("Entry.SplitSessionsByProjects() = %v, want %v", got, tt.wantByProjects)
+				t.Errorf("SessionsReport.GetByProjectReport() = %v, want %v", got, tt.wantByProjects)
 			}
 		})
 	}
