@@ -37,11 +37,12 @@ func (s SessionsReportCLIPresenter) ShowByProject(sessionsReport sessionsreport.
 	text := "Sessions Report\n\n"
 
 	for _, report := range byProjectReport {
-		text += fmt.Sprintf("%v - %v\n", utils.YellowText(report.Project), utils.GreenText(report.TotalDuration.String()))
+		text += fmt.Sprintf("%v - %v\n", utils.PurpleText(report.Project), utils.GreenText(report.TotalDuration.String()))
 		for tag, duration := range report.DurationByTag {
-			text += fmt.Sprintf("    %v -> %v\n", utils.YellowText(tag), utils.GreenText(duration.String()))
+			text += fmt.Sprintf("    [%v] -> %v\n", utils.YellowText(tag), utils.GreenText(duration.String()))
 		}
 
+		text += "\n"
 	}
 
 	fmt.Println(text)
