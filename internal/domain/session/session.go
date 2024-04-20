@@ -54,3 +54,12 @@ func (s Session) Status() string {
 func (s Session) Equals(session Session) bool {
 	return s.Id == session.Id
 }
+
+func (s Session) HasTag(tag string) bool {
+	for _, t := range s.Tags {
+		if t == tag {
+			return true
+		}
+	}
+	return false
+}

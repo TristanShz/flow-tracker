@@ -2,12 +2,65 @@ package sessionsreport_test
 
 import (
 	"reflect"
+	"slices"
 	"testing"
 	"time"
 
 	"github.com/TristanSch1/flow/internal/domain/session"
 	"github.com/TristanSch1/flow/internal/domain/sessionsreport"
 )
+
+var sessionsReportTest = sessionsreport.NewSessionsReport([]session.Session{
+	{
+		Id:        "1",
+		StartTime: time.Date(2020, 1, 1, 8, 0, 0, 0, time.UTC),
+		EndTime:   time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC),
+		Project:   "my-todo",
+		Tags:      []string{"add-todo"},
+	},
+	{
+		Id:        "2",
+		StartTime: time.Date(2020, 1, 1, 12, 0, 0, 0, time.UTC),
+		EndTime:   time.Date(2020, 1, 1, 13, 0, 0, 0, time.UTC),
+		Project:   "my-todo",
+		Tags:      []string{"add-todo"},
+	},
+	{
+		Id:        "3",
+		StartTime: time.Date(2020, 1, 2, 7, 0, 0, 0, time.UTC),
+		EndTime:   time.Date(2020, 1, 2, 9, 0, 0, 0, time.UTC),
+		Project:   "my-todo",
+		Tags:      []string{"add-todo"},
+	},
+	{
+		Id:        "4",
+		StartTime: time.Date(2020, 1, 2, 12, 0, 0, 0, time.UTC),
+		EndTime:   time.Date(2020, 1, 2, 18, 0, 0, 0, time.UTC),
+		Project:   "my-todo",
+		Tags:      []string{"add-todo", "remove-todo"},
+	},
+	{
+		Id:        "5",
+		StartTime: time.Date(2020, 1, 2, 20, 0, 0, 0, time.UTC),
+		EndTime:   time.Date(2020, 1, 2, 21, 0, 0, 0, time.UTC),
+		Project:   "flow",
+		Tags:      []string{"start-usecase"},
+	},
+	{
+		Id:        "6",
+		StartTime: time.Date(2020, 1, 3, 8, 0, 0, 0, time.UTC),
+		EndTime:   time.Date(2020, 1, 3, 10, 0, 0, 0, time.UTC),
+		Project:   "flow",
+		Tags:      []string{"start-usecase"},
+	},
+	{
+		Id:        "7",
+		StartTime: time.Date(2020, 1, 3, 12, 0, 0, 0, time.UTC),
+		EndTime:   time.Date(2020, 1, 3, 13, 0, 0, 0, time.UTC),
+		Project:   "flow",
+		Tags:      []string{"start-usecase", "stop-usecase"},
+	},
+})
 
 func TestSessionsReport_TotalDuration(t *testing.T) {
 	tests := []struct {
@@ -17,59 +70,51 @@ func TestSessionsReport_TotalDuration(t *testing.T) {
 	}{
 		{
 			name: "test",
-			e: sessionsreport.SessionsReport{
-				Sessions: []session.Session{
-					{
-						StartTime: time.Date(2020, 1, 1, 8, 0, 0, 0, time.UTC),
-						EndTime:   time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC),
-						Project:   "my-todo",
-						Tags:      []string{"add-todo"},
-					},
-					{
-						StartTime: time.Date(2020, 1, 1, 12, 0, 0, 0, time.UTC),
-						EndTime:   time.Date(2020, 1, 1, 12, 50, 0, 0, time.UTC),
-						Project:   "my-todo",
-						Tags:      []string{"add-todo"},
-					},
+			e: sessionsreport.NewSessionsReport([]session.Session{
+				{
+					StartTime: time.Date(2020, 1, 1, 8, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC),
+					Project:   "my-todo",
+					Tags:      []string{"add-todo"},
 				},
-			},
+				{
+					StartTime: time.Date(2020, 1, 1, 12, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2020, 1, 1, 12, 50, 0, 0, time.UTC),
+					Project:   "my-todo",
+					Tags:      []string{"add-todo"},
+				},
+			}),
 			want: 2*time.Hour + 50*time.Minute,
 		},
 		{
 			name: "One session without EndTime",
-			e: sessionsreport.SessionsReport{
-				Sessions: []session.Session{
-					{
-						StartTime: time.Date(2020, 1, 1, 8, 0, 0, 0, time.UTC),
-						Project:   "my-todo",
-						Tags:      []string{"add-todo"},
-					},
+			e: sessionsreport.NewSessionsReport([]session.Session{
+				{
+					StartTime: time.Date(2020, 1, 1, 8, 0, 0, 0, time.UTC),
+					Project:   "my-todo",
+					Tags:      []string{"add-todo"},
 				},
-			},
+			}),
 			want: 0,
 		},
 		{
 			name: "No sessions",
-			e: sessionsreport.SessionsReport{
-				Sessions: []session.Session{},
-			},
+			e:    sessionsreport.NewSessionsReport([]session.Session{}),
 			want: 0,
 		},
 		{
 			name: "One with EndTime and one without",
-			e: sessionsreport.SessionsReport{
-				Sessions: []session.Session{
-					{
-						StartTime: time.Date(2020, 1, 1, 8, 0, 0, 0, time.UTC),
-						EndTime:   time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC),
-						Project:   "my-todo",
-					},
-					{
-						StartTime: time.Date(2020, 1, 1, 12, 0, 0, 0, time.UTC),
-						Project:   "my-todo",
-					},
+			e: sessionsreport.NewSessionsReport([]session.Session{
+				{
+					StartTime: time.Date(2020, 1, 1, 8, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC),
+					Project:   "my-todo",
 				},
-			},
+				{
+					StartTime: time.Date(2020, 1, 1, 12, 0, 0, 0, time.UTC),
+					Project:   "my-todo",
+				},
+			}),
 			want: 2 * time.Hour,
 		},
 	}
@@ -92,22 +137,20 @@ func TestSessionsReport_SplitBy(t *testing.T) {
 	}{
 		{
 			name: "Two sessions on the same day",
-			e: sessionsreport.SessionsReport{
-				Sessions: []session.Session{
-					{
-						StartTime: time.Date(2020, 1, 1, 8, 0, 0, 0, time.UTC),
-						EndTime:   time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC),
-						Project:   "my-todo",
-						Tags:      []string{"add-todo"},
-					},
-					{
-						StartTime: time.Date(2020, 1, 1, 12, 0, 0, 0, time.UTC),
-						EndTime:   time.Date(2020, 1, 1, 12, 50, 0, 0, time.UTC),
-						Project:   "my-todo",
-						Tags:      []string{"add-todo"},
-					},
+			e: sessionsreport.NewSessionsReport([]session.Session{
+				{
+					StartTime: time.Date(2020, 1, 1, 8, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC),
+					Project:   "my-todo",
+					Tags:      []string{"add-todo"},
 				},
-			},
+				{
+					StartTime: time.Date(2020, 1, 1, 12, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2020, 1, 1, 12, 50, 0, 0, time.UTC),
+					Project:   "my-todo",
+					Tags:      []string{"add-todo"},
+				},
+			}),
 			wantByDays: map[time.Time][]session.Session{
 				time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC): {
 					{
@@ -143,15 +186,13 @@ func TestSessionsReport_SplitBy(t *testing.T) {
 		},
 		{
 			name: "One session without EndTime",
-			e: sessionsreport.SessionsReport{
-				Sessions: []session.Session{
-					{
-						StartTime: time.Date(2020, 1, 1, 8, 0, 0, 0, time.UTC),
-						Project:   "my-todo",
-						Tags:      []string{"add-todo"},
-					},
+			e: sessionsreport.NewSessionsReport([]session.Session{
+				{
+					StartTime: time.Date(2020, 1, 1, 8, 0, 0, 0, time.UTC),
+					Project:   "my-todo",
+					Tags:      []string{"add-todo"},
 				},
-			},
+			}),
 			wantByDays: map[time.Time][]session.Session{
 				time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC): {
 					{
@@ -172,31 +213,27 @@ func TestSessionsReport_SplitBy(t *testing.T) {
 			},
 		},
 		{
-			name: "No sessions",
-			e: sessionsreport.SessionsReport{
-				Sessions: []session.Session{},
-			},
+			name:           "No sessions",
+			e:              sessionsreport.NewSessionsReport([]session.Session{}),
 			wantByDays:     map[time.Time][]session.Session{},
 			wantByProjects: map[string][]session.Session{},
 		},
 		{
 			name: "Two sessions on different days for different projects",
-			e: sessionsreport.SessionsReport{
-				Sessions: []session.Session{
-					{
-						Id:        "1",
-						StartTime: time.Date(2020, 1, 1, 8, 0, 0, 0, time.UTC),
-						EndTime:   time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC),
-						Project:   "my-todo",
-					},
-					{
-						Id:        "2",
-						StartTime: time.Date(2020, 1, 2, 12, 0, 0, 0, time.UTC),
-						EndTime:   time.Date(2020, 1, 2, 10, 0, 0, 0, time.UTC),
-						Project:   "flow",
-					},
+			e: sessionsreport.NewSessionsReport([]session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2020, 1, 1, 8, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC),
+					Project:   "my-todo",
 				},
-			},
+				{
+					Id:        "2",
+					StartTime: time.Date(2020, 1, 2, 12, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2020, 1, 2, 10, 0, 0, 0, time.UTC),
+					Project:   "flow",
+				},
+			}),
 			wantByDays: map[time.Time][]session.Session{
 				time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC): {
 					{
@@ -244,6 +281,31 @@ func TestSessionsReport_SplitBy(t *testing.T) {
 
 			if got := tt.e.SplitSessionsByProject(); !reflect.DeepEqual(got, tt.wantByProjects) {
 				t.Errorf("Entry.SplitSessionsByProjects() = %v, want %v", got, tt.wantByProjects)
+			}
+		})
+	}
+}
+
+func TestSessionsReport_FindUniqueTags(t *testing.T) {
+	tests := []struct {
+		name string
+		e    sessionsreport.SessionsReport
+		want []string
+	}{
+		{
+			name: "test",
+			e:    sessionsReportTest,
+			want: []string{"add-todo", "remove-todo", "start-usecase", "stop-usecase"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.e.FindUniqueTags(tt.e.Sessions)
+			slices.Sort(got)
+			slices.Sort(tt.want)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Entry.FindUniqueTags() = %v, want %v", got, tt.want)
 			}
 		})
 	}

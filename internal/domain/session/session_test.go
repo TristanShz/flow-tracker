@@ -117,3 +117,49 @@ func TestSession_GetFormattedStartTime(t *testing.T) {
 		t.Errorf("Entry.GetFormattedEndTime() = %v, want %v", got, want)
 	}
 }
+
+func TestSession_HasTag(t *testing.T) {
+	tests := []struct {
+		name string
+		e    session.Session
+		want bool
+	}{
+		{
+			name: "Session with one tag",
+			e: session.Session{
+				Id:        "1",
+				StartTime: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+				Project:   "my-todo",
+				Tags:      []string{"tag"},
+			},
+			want: true,
+		},
+		{
+			name: "Session with multiple tags",
+			e: session.Session{
+				Id:        "1",
+				StartTime: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+				Project:   "my-todo",
+				Tags:      []string{"add-todo", "remove-todo", "tag"},
+			},
+			want: true,
+		},
+		{
+			name: "Session without tag",
+			e: session.Session{
+				Id:        "1",
+				StartTime: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+				Project:   "my-todo",
+			},
+			want: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.e.HasTag("tag"); got != tt.want {
+				t.Errorf("Entry.HasTag() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

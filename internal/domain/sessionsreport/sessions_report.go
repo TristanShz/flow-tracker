@@ -55,3 +55,34 @@ func (s SessionsReport) SplitSessionsByDay() map[time.Time][]session.Session {
 
 	return sessionMap
 }
+
+func (s SessionsReport) FindUniqueTags(sessions []session.Session) []string {
+	tags := make(map[string]bool)
+	for _, session := range sessions {
+		for _, tag := range session.Tags {
+			tags[tag] = true
+		}
+	}
+	uniqueTags := make([]string, 0, len(tags))
+	for tag := range tags {
+		uniqueTags = append(uniqueTags, tag)
+	}
+	return uniqueTags
+}
+
+func (s SessionsReport) DurationByTag(sessions []session.Session) map[string]time.Duration {
+	tags := s.FindUniqueTags(sessions)
+
+	tagsDuration := make(map[string]time.Duration)
+	for _, tag := range tags {
+		tagDuration := time.Second * 0
+		for _, session := range sessions {
+			if session.HasTag(tag) {
+				tagDuration += session.Duration()
+			}
+		}
+		tagsDuration[tag] = tagDuration
+	}
+
+	return tagsDuration
+}
