@@ -15,7 +15,7 @@ func (s SessionsReportCLIPresenter) ShowByDay(sessionsReport sessionsreport.Sess
 	text := "Sessions Report\n\n"
 
 	for _, dayReport := range byDayReport {
-		text += fmt.Sprintf("%v :\n", utils.TimeColor(dayReport.Day.Format("Mon, 02 Jan 2006")))
+		text += fmt.Sprintf("%v :\n", utils.HeaderStyle.Render(dayReport.Day.Format("Mon, 02 Jan 2006")))
 		for _, session := range dayReport.Sessions {
 			text += fmt.Sprintf(
 				"    From %v to %v %v %v [%v]\n",
@@ -27,6 +27,7 @@ func (s SessionsReportCLIPresenter) ShowByDay(sessionsReport sessionsreport.Sess
 			)
 		}
 
+		text += "\n"
 	}
 
 	fmt.Println(text)

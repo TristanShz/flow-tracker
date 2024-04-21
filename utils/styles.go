@@ -10,7 +10,7 @@ const (
 
 var HeaderStyle = lipgloss.NewStyle().
 	Bold(true).
-	Foreground(Purple)
+	Underline(true)
 
 func ProjectColor(text string) string {
 	return lipgloss.NewStyle().Foreground(Purple).Render(text)
