@@ -116,11 +116,11 @@ func (s *SessionFixture) ThenProjectsShouldBe(projects []string) {
 	}
 }
 
-func (s *SessionFixture) ThenUserShouldSee(session session.Session, statusText string) {
+func (s *SessionFixture) ThenUserShouldSee(session session.Session, duration time.Duration) {
 	got := s.FlowSessionStatus
 
-	if got.StatusText != statusText {
-		s.T.Errorf("Expected SessionStatus.StatusText '%v', but got '%v'", statusText, got.StatusText)
+	if got.Duration != duration {
+		s.T.Errorf("Expected SessionStatus.StatusText '%v', but got '%v'", duration, got.Duration)
 	}
 
 	if !got.Session.Equals(session) {

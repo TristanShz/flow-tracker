@@ -69,13 +69,13 @@ func startCmd(app *app.App) *cobra.Command {
 				os.Exit(1)
 			}
 
-			text := fmt.Sprintf("Starting flow session for the project %v", utils.PurpleText(command.Project))
+			text := fmt.Sprintf("Starting flow session for the project %v", utils.ProjectColor(command.Project))
 
 			if len(command.Tags) > 0 {
-				text += fmt.Sprintf(" [%v]", utils.YellowText(strings.Join(command.Tags, ", ")))
+				text += fmt.Sprintf(" [%v]", utils.TagColor(strings.Join(command.Tags, ", ")))
 			}
 
-			text += fmt.Sprintf(" at %v", utils.GreenText(time.Now().Format(time.Kitchen)))
+			text += fmt.Sprintf(" at %v", utils.TimeColor(time.Now().Format(time.Kitchen)))
 
 			fmt.Println(text)
 		},

@@ -3,8 +3,10 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	app "github.com/TristanSch1/flow/internal/application/usecases"
+	"github.com/TristanSch1/flow/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -20,8 +22,11 @@ func statusCmd(app *app.App) *cobra.Command {
 				os.Exit(1)
 			}
 
-			fmt.Printf("Current session :\n %v \n", status.Session.PrettyString())
-			fmt.Printf("%v", status.StatusText)
+			fmt.Println("Current session:")
+			fmt.Printf("  Start at: %v\n", utils.TimeColor(status.Session.StartTime.Format("2006-01-02 15:04:05")))
+			fmt.Printf("  Project: %v\n", utils.ProjectColor(status.Session.Project))
+			fmt.Printf("  Tags: [%v]\n", utils.TagColor(strings.Join(status.Session.Tags, ", ")))
+			fmt.Printf("You're in the flow for %v", status.Duration.String())
 		},
 	}
 }

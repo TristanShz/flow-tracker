@@ -12,14 +12,14 @@ var HeaderStyle = lipgloss.NewStyle().
 	Bold(true).
 	Foreground(Purple)
 
-func PurpleText(text string) string {
+func ProjectColor(text string) string {
 	return lipgloss.NewStyle().Foreground(Purple).Render(text)
 }
 
-func GreenText(text string) string {
+func TimeColor(text string) string {
 	return lipgloss.NewStyle().Foreground(Green).Render(text)
 }
 
-func YellowText(text string) string {
+func TagColor(text string) string {
 	return lipgloss.NewStyle().Foreground(Yellow).Render(text)
 }

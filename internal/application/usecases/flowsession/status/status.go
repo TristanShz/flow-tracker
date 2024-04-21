@@ -2,7 +2,6 @@ package status
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/TristanSch1/flow/internal/application"
@@ -10,8 +9,8 @@ import (
 )
 
 type SessionStatus struct {
-	StatusText string
-	Session    session.Session
+	Session  session.Session
+	Duration time.Duration
 }
 
 type UseCase struct {
@@ -32,8 +31,8 @@ func (s *UseCase) Execute() (SessionStatus, error) {
 	duration := s.dateProvider.GetNow().Sub(lastSession.StartTime).Round(time.Second)
 
 	return SessionStatus{
-		Session:    *lastSession,
-		StatusText: fmt.Sprintf("You're in the flow for %v", duration.String()),
+		Session:  *lastSession,
+		Duration: duration,
 	}, nil
 }
 

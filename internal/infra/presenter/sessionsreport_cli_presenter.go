@@ -15,15 +15,15 @@ func (s SessionsReportCLIPresenter) ShowByDay(sessionsReport sessionsreport.Sess
 	text := "Sessions Report\n\n"
 
 	for _, dayReport := range byDayReport {
-		text += fmt.Sprintf("%v :\n", utils.GreenText(dayReport.Day.Format("2006-01-02")))
+		text += fmt.Sprintf("%v :\n", utils.TimeColor(dayReport.Day.Format("2006-01-02")))
 		for _, session := range dayReport.Sessions {
 			text += fmt.Sprintf(
 				"    From %v to %v %v %v [%v]\n",
-				utils.GreenText(session.StartTime.Format("15:04:05")),
-				utils.GreenText(session.EndTime.Format("15:04:05")),
+				utils.TimeColor(session.StartTime.Format("15:04:05")),
+				utils.TimeColor(session.EndTime.Format("15:04:05")),
 				session.Duration().String(),
-				utils.PurpleText(session.Project),
-				utils.YellowText(strings.Join(session.Tags, ", ")),
+				utils.ProjectColor(session.Project),
+				utils.TagColor(strings.Join(session.Tags, ", ")),
 			)
 		}
 
@@ -37,9 +37,9 @@ func (s SessionsReportCLIPresenter) ShowByProject(sessionsReport sessionsreport.
 	text := "Sessions Report\n\n"
 
 	for _, report := range byProjectReport {
-		text += fmt.Sprintf("%v - %v\n", utils.PurpleText(report.Project), utils.GreenText(report.TotalDuration.String()))
+		text += fmt.Sprintf("%v - %v\n", utils.ProjectColor(report.Project), utils.TimeColor(report.TotalDuration.String()))
 		for tag, duration := range report.DurationByTag {
-			text += fmt.Sprintf("    [%v] -> %v\n", utils.YellowText(tag), utils.GreenText(duration.String()))
+			text += fmt.Sprintf("    [%v] -> %v\n", utils.TagColor(tag), utils.TimeColor(duration.String()))
 		}
 
 		text += "\n"

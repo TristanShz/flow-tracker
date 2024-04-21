@@ -21,7 +21,7 @@ func stopCmd(app *app.App) *cobra.Command {
 				os.Exit(1)
 			}
 
-			fmt.Printf("Flow session stopped, you were in the flow for %v", utils.GreenText(duration.String()))
+			fmt.Printf("Flow session stopped, you were in the flow for %v", utils.TimeColor(duration.String()))
 		},
 	}
 }
