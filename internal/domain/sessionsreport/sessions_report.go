@@ -54,6 +54,7 @@ func (s SessionsReport) GetByDayReport() []DayReport {
 func (s SessionsReport) GetByProjectReport() []ProjectReport {
 	projectReports := []ProjectReport{}
 
+	// TODO: Find a way to always have correct order of projects
 	sessionsByProject := s.splitSessionsByProject()
 	for project, sessions := range sessionsByProject {
 		projectReports = append(projectReports, ProjectReport{
