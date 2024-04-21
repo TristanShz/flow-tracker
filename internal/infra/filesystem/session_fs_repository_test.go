@@ -150,6 +150,13 @@ func TestFindAllProjects(t *testing.T) {
 	repository.Save(session.Session{
 		Id:        "2",
 		StartTime: time.Date(2024, 4, 17, 21, 0, 0, 0, time.UTC),
+		EndTime:   time.Date(2024, 4, 17, 22, 0, 0, 0, time.UTC),
+		Project:   "MyTodo",
+	})
+
+	repository.Save(session.Session{
+		Id:        "3",
+		StartTime: time.Date(2024, 4, 17, 23, 0, 0, 0, time.UTC),
 		Project:   "MyTodo",
 	})
 

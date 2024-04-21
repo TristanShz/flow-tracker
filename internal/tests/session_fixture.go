@@ -124,7 +124,7 @@ func (s *SessionFixture) ThenUserShouldSee(session session.Session, duration tim
 	}
 
 	if !got.Session.Equals(session) {
-		s.T.Errorf("Expected SessionStatus.Session '%v', but got '%v'", session.PrettyString(), got.Session.PrettyString())
+		s.T.Errorf("Expected SessionStatus.Session '%v', but got '%v'", session, got.Session)
 	}
 }
 
@@ -140,7 +140,7 @@ func (s *SessionFixture) ThenSessionShouldBeStopped() {
 	got, _ := s.SessionRepository.FindLastSession()
 
 	if got.EndTime.IsZero() {
-		s.T.Errorf("Found not stopped session '%v'", got.PrettyString())
+		s.T.Errorf("Found not stopped session '%v'", got)
 	}
 }
 

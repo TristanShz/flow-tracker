@@ -163,3 +163,49 @@ func TestSession_HasTag(t *testing.T) {
 		})
 	}
 }
+
+func TestSession_Equals(t *testing.T) {
+	tests := []struct {
+		name  string
+		e     session.Session
+		given session.Session
+		want  bool
+	}{
+		{
+			name: "Same id",
+			e: session.Session{
+				Id:        "1",
+				StartTime: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+				Project:   "my-todo",
+			},
+			given: session.Session{
+				Id:        "1",
+				StartTime: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+				Project:   "my-todo",
+			},
+			want: true,
+		},
+		{
+			name: "Different id",
+			e: session.Session{
+				Id:        "1",
+				StartTime: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+				Project:   "my-todo",
+			},
+			given: session.Session{
+				Id:        "2",
+				StartTime: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+				Project:   "my-todo",
+			},
+			want: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.e.Equals(tt.given); got != tt.want {
+				t.Errorf("Entry.Equals() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

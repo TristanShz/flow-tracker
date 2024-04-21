@@ -1,8 +1,6 @@
 package session
 
 import (
-	"fmt"
-	"strings"
 	"time"
 )
 
@@ -36,11 +34,6 @@ func (s Session) Duration() time.Duration {
 		return 0
 	}
 	return s.EndTime.Sub(s.StartTime).Round(time.Second)
-}
-
-func (s Session) PrettyString() string {
-	return fmt.Sprintf("StartTime: %s\n EndTime: %s\n Project: %s\n Tags: %s\n",
-		s.GetFormattedStartTime(), s.GetFormattedEndTime(), s.Project, strings.Join(s.Tags, ", "))
 }
 
 func (s Session) Status() string {
