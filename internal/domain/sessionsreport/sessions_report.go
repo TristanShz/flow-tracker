@@ -2,6 +2,7 @@ package sessionsreport
 
 import (
 	"reflect"
+	"sort"
 	"time"
 
 	"github.com/TristanSch1/flow/internal/domain/session"
@@ -18,8 +19,8 @@ type DayReport struct {
 }
 
 type ProjectReport struct {
-	Project       string
 	DurationByTag map[string]time.Duration
+	Project       string
 	TotalDuration time.Duration
 }
 
@@ -28,6 +29,9 @@ type SessionsReport struct {
 }
 
 func NewSessionsReport(sessions []session.Session) SessionsReport {
+	sort.Slice(sessions, func(i, j int) bool {
+		return sessions[i].StartTime.Before(sessions[j].StartTime)
+	})
 	return SessionsReport{Sessions: sessions}
 }
 
@@ -41,6 +45,9 @@ func (s SessionsReport) GetByDayReport() []DayReport {
 	for day, sessions := range sessionsByDay {
 		dayReports = append(dayReports, DayReport{Day: day, Sessions: sessions})
 	}
+	sort.Slice(dayReports, func(i, j int) bool {
+		return dayReports[i].Day.Before(dayReports[j].Day)
+	})
 	return dayReports
 }
 
