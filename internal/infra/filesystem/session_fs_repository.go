@@ -214,6 +214,7 @@ func (r *FileSystemSessionRepository) FindAllProjectTags(project string) ([]stri
 }
 
 func (r *FileSystemSessionRepository) FindInTimeRange(timeRange application.TimeRange) ([]session.Session, error) {
+	// TODO: Optimize this function by reading only the files that are in the time range
 	allSessions, err := r.FindAllSessions()
 	if err != nil {
 		return nil, err
