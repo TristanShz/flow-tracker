@@ -16,20 +16,30 @@ func (s UseCase) Execute(
 ) error {
 	var sessions []session.Session
 
-	if command.Project == "" {
-		allSessions, err := s.sessionRepository.FindAllSessions()
+	if !command.From.IsZero() && !command.To.IsZero() {
+		sessionsInTimeRange, err := s.sessionRepository.FindInTimeRange(application.TimeRange{
+			From: command.From,
+			To:   command.To,
+		})
 		if err != nil {
 			return err
 		}
 
-		sessions = allSessions
-	} else {
+		sessions = sessionsInTimeRange
+	} else if command.Project != "" {
 		sessionsForProject, err := s.sessionRepository.FindAllByProject(command.Project)
 		if err != nil {
 			return err
 		}
 
 		sessions = sessionsForProject
+	} else {
+		allSessions, err := s.sessionRepository.FindAllSessions()
+		if err != nil {
+			return err
+		}
+
+		sessions = allSessions
 	}
 
 	sessionsReport := sessionsreport.SessionsReport{

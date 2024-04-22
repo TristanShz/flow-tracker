@@ -1,6 +1,15 @@
 package application
 
-import "github.com/TristanSch1/flow/internal/domain/session"
+import (
+	"time"
+
+	"github.com/TristanSch1/flow/internal/domain/session"
+)
+
+type TimeRange struct {
+	From time.Time
+	To   time.Time
+}
 
 type SessionRepository interface {
 	Save(session session.Session) error
@@ -9,4 +18,5 @@ type SessionRepository interface {
 	FindAllByProject(project string) ([]session.Session, error)
 	FindAllProjects() ([]string, error)
 	FindAllProjectTags(project string) ([]string, error)
+	FindInTimeRange(timeRange TimeRange) ([]session.Session, error)
 }

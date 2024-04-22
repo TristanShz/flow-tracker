@@ -4,6 +4,7 @@ import (
 	"slices"
 	"time"
 
+	"github.com/TristanSch1/flow/internal/application"
 	"github.com/TristanSch1/flow/internal/domain/session"
 )
 
@@ -89,4 +90,15 @@ func (r *InMemorySessionRepository) FindAllProjectTags(project string) ([]string
 	}
 
 	return tags, nil
+}
+
+func (r *InMemorySessionRepository) FindInTimeRange(timeRange application.TimeRange) ([]session.Session, error) {
+	sessions := []session.Session{}
+
+	for _, session := range r.Sessions {
+		if session.StartTime.After(timeRange.From) && session.EndTime.Before(timeRange.To) {
+			sessions = append(sessions, session)
+		}
+	}
+	return sessions, nil
 }
