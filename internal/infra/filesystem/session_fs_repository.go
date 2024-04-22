@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/TristanSch1/flow/internal/application"
 	"github.com/TristanSch1/flow/internal/domain/session"
 )
 
@@ -210,4 +211,20 @@ func (r *FileSystemSessionRepository) FindAllProjectTags(project string) ([]stri
 	}
 
 	return tags, nil
+}
+
+func (r *FileSystemSessionRepository) FindInTimeRange(timeRange application.TimeRange) ([]session.Session, error) {
+	allSessions, err := r.FindAllSessions()
+	if err != nil {
+		return nil, err
+	}
+
+	sessions := []session.Session{}
+
+	for _, session := range allSessions {
+		if session.StartTime.After(timeRange.From) && session.EndTime.Before(timeRange.To) {
+			sessions = append(sessions, session)
+		}
+	}
+	return sessions, nil
 }
