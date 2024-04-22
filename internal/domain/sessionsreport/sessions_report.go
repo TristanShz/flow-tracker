@@ -19,9 +19,10 @@ type DayReport struct {
 }
 
 type ProjectReport struct {
-	DurationByTag map[string]time.Duration
-	Project       string
-	TotalDuration time.Duration
+	DurationByTag      map[string]time.Duration
+	Project            string
+	TotalDuration      time.Duration
+	LastSessionEndTime time.Time
 }
 
 type SessionsReport struct {
@@ -54,15 +55,20 @@ func (s SessionsReport) GetByDayReport() []DayReport {
 func (s SessionsReport) GetByProjectReport() []ProjectReport {
 	projectReports := []ProjectReport{}
 
-	// TODO: Find a way to always have correct order of projects
 	sessionsByProject := s.splitSessionsByProject()
 	for project, sessions := range sessionsByProject {
+		lastSession := sessions[len(sessions)-1]
 		projectReports = append(projectReports, ProjectReport{
-			Project:       project,
-			DurationByTag: s.durationByTag(sessions),
-			TotalDuration: s.duration(sessions),
+			Project:            project,
+			DurationByTag:      s.durationByTag(sessions),
+			TotalDuration:      s.duration(sessions),
+			LastSessionEndTime: lastSession.EndTime,
 		})
 	}
+
+	sort.Slice(projectReports, func(i, j int) bool {
+		return projectReports[i].LastSessionEndTime.Before(projectReports[j].LastSessionEndTime)
+	})
 
 	return projectReports
 }

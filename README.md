@@ -2,7 +2,7 @@
 
 # Flow
 
-Flow is a CLI tool that helps you manage your time spent developing your projects. It is designed to be simple, fast and easy to use.
+Flow is a CLI tool that helps you manage your time spent developing your projects. It's designed to be simple, fast and easy to use.
 
 It is written in GO and uses File system to store the data.
 

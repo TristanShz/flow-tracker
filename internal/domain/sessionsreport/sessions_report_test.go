@@ -109,7 +109,8 @@ func TestSessionsReport_Formats(t *testing.T) {
 					DurationByTag: map[string]time.Duration{
 						"add-todo": 2*time.Hour + 50*time.Minute,
 					},
-					TotalDuration: 2*time.Hour + 50*time.Minute,
+					TotalDuration:      2*time.Hour + 50*time.Minute,
+					LastSessionEndTime: time.Date(2020, 1, 1, 12, 50, 0, 0, time.UTC),
 				},
 			},
 		},
@@ -150,7 +151,7 @@ func TestSessionsReport_Formats(t *testing.T) {
 			wantByProjects: []sessionsreport.ProjectReport{},
 		},
 		{
-			name: "Two sessions on different days for different projects",
+			name: "Multiple sessions on different days for different projects",
 			e: sessionsreport.NewSessionsReport([]session.Session{
 				{
 					Id:        "1",
@@ -162,6 +163,18 @@ func TestSessionsReport_Formats(t *testing.T) {
 					Id:        "2",
 					StartTime: time.Date(2020, 1, 2, 10, 0, 0, 0, time.UTC),
 					EndTime:   time.Date(2020, 1, 2, 12, 0, 0, 0, time.UTC),
+					Project:   "flow",
+				},
+				{
+					Id:        "3",
+					StartTime: time.Date(2020, 1, 3, 6, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2020, 1, 3, 12, 0, 0, 0, time.UTC),
+					Project:   "project",
+				},
+				{
+					Id:        "4",
+					StartTime: time.Date(2020, 2, 1, 10, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2020, 2, 1, 12, 0, 0, 0, time.UTC),
 					Project:   "flow",
 				},
 			}),
@@ -188,16 +201,47 @@ func TestSessionsReport_Formats(t *testing.T) {
 						},
 					},
 				},
+				{
+					Day: time.Date(2020, 1, 3, 0, 0, 0, 0, time.UTC),
+					Sessions: []session.Session{
+						{
+							Id:        "3",
+							StartTime: time.Date(2020, 1, 3, 6, 0, 0, 0, time.UTC),
+							EndTime:   time.Date(2020, 1, 3, 12, 0, 0, 0, time.UTC),
+							Project:   "project",
+						},
+					},
+				},
+				{
+					Day: time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
+					Sessions: []session.Session{
+						{
+							Id:        "4",
+							StartTime: time.Date(2020, 2, 1, 10, 0, 0, 0, time.UTC),
+							EndTime:   time.Date(2020, 2, 1, 12, 0, 0, 0, time.UTC),
+							Project:   "flow",
+						},
+					},
+				},
 			},
 			wantByProjects: []sessionsreport.ProjectReport{
 				{
-					Project:       "my-todo",
-					DurationByTag: map[string]time.Duration{},
-					TotalDuration: 2 * time.Hour,
-				}, {
-					Project:       "flow",
-					DurationByTag: map[string]time.Duration{},
-					TotalDuration: 2 * time.Hour,
+					Project:            "my-todo",
+					DurationByTag:      map[string]time.Duration{},
+					TotalDuration:      2 * time.Hour,
+					LastSessionEndTime: time.Date(2020, 1, 1, 10, 0, 0, 0, time.UTC),
+				},
+				{
+					Project:            "project",
+					DurationByTag:      map[string]time.Duration{},
+					TotalDuration:      6 * time.Hour,
+					LastSessionEndTime: time.Date(2020, 1, 3, 12, 0, 0, 0, time.UTC),
+				},
+				{
+					Project:            "flow",
+					DurationByTag:      map[string]time.Duration{},
+					TotalDuration:      4 * time.Hour,
+					LastSessionEndTime: time.Date(2020, 2, 1, 12, 0, 0, 0, time.UTC),
 				},
 			},
 		},
