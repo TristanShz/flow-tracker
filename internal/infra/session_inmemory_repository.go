@@ -88,17 +88,19 @@ func (r *InMemorySessionRepository) FindInTimeRange(timeRange application.TimeRa
 
 	for _, session := range r.Sessions {
 		if timeRange.Since.IsZero() && !timeRange.Until.IsZero() {
-			if session.EndTime.Before(timeRange.Until) {
+			if session.StartTime.Before(timeRange.Until) {
 				sessions = append(sessions, session)
 			}
 		} else if !timeRange.Since.IsZero() && timeRange.Until.IsZero() {
 			if session.StartTime.After(timeRange.Since) {
 				sessions = append(sessions, session)
 			}
-		} else {
-			if session.StartTime.After(timeRange.Since) && session.EndTime.Before(timeRange.Until) {
+		} else if !timeRange.Since.IsZero() && !timeRange.Until.IsZero() {
+			if session.StartTime.After(timeRange.Since) && session.StartTime.Before(timeRange.Until) {
 				sessions = append(sessions, session)
 			}
+		} else {
+			sessions = append(sessions, session)
 		}
 	}
 	return sessions

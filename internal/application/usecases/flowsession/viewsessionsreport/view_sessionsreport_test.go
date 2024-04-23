@@ -77,7 +77,6 @@ var sessionsForTest = []session.Session{
 	{
 		Id:        "10",
 		StartTime: time.Date(2024, time.April, 20, 14, 0, 0, 0, time.UTC),
-		EndTime:   time.Date(2024, time.April, 20, 16, 0, 0, 0, time.UTC),
 		Project:   "Pomodoro",
 		Tags:      []string{"pause-pomodoro"},
 	},
@@ -201,7 +200,6 @@ func TestViewSessionsReport(t *testing.T) {
 				{
 					Id:        "10",
 					StartTime: time.Date(2024, time.April, 20, 14, 0, 0, 0, time.UTC),
-					EndTime:   time.Date(2024, time.April, 20, 16, 0, 0, 0, time.UTC),
 					Project:   "Pomodoro",
 					Tags:      []string{"pause-pomodoro"},
 				},
