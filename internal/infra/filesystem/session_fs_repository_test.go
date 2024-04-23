@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/TristanSch1/flow/internal/application"
 	"github.com/TristanSch1/flow/internal/domain/session"
 	"github.com/TristanSch1/flow/internal/infra/filesystem"
 )
@@ -66,7 +67,7 @@ func TestFindAllSessions_Success(t *testing.T) {
 		Project:   "Flow",
 	})
 
-	got, _ := repository.FindAllSessions()
+	got := repository.FindAllSessions()
 
 	want := []session.Session{
 		{
@@ -93,7 +94,7 @@ func TestFindAllSessions_NoSessions_Success(t *testing.T) {
 
 	repository := filesystem.NewFileSystemSessionRepository(TestFolderPath)
 
-	got, _ := repository.FindAllSessions()
+	got := repository.FindAllSessions()
 
 	want := []session.Session{}
 
@@ -205,6 +206,131 @@ func TestFindAllProjectsTags(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got, _ := repository.FindAllProjectTags(tt.name); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FileSystemSessionRepository.FindAllProjectTags() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFindInTimeRange(t *testing.T) {
+	setup()
+	repository := filesystem.NewFileSystemSessionRepository(TestFolderPath)
+	repository.Save(session.Session{
+		Id:        "1",
+		StartTime: time.Date(2024, 4, 17, 19, 0, 0, 0, time.UTC),
+		EndTime:   time.Date(2024, 4, 17, 20, 0, 0, 0, time.UTC),
+		Project:   "Flow",
+		Tags:      []string{"tests", "integration"},
+	})
+	repository.Save(session.Session{
+		Id:        "2",
+		StartTime: time.Date(2024, 4, 17, 21, 0, 0, 0, time.UTC),
+		EndTime:   time.Date(2024, 4, 17, 23, 0, 0, 0, time.UTC),
+		Project:   "MyTodo",
+		Tags:      []string{"add-todo", "update-todo"},
+	})
+	repository.Save(session.Session{
+		Id:        "3",
+		StartTime: time.Date(2024, 4, 18, 21, 0, 0, 0, time.UTC),
+		Project:   "MyTodo",
+		Tags:      []string{"delete-todo"},
+	})
+
+	tests := []struct {
+		name string
+		args application.TimeRange
+		want []session.Session
+	}{
+		{
+			name: "All",
+			args: application.TimeRange{},
+			want: []session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, 4, 17, 19, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, 4, 17, 20, 0, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"tests", "integration"},
+				},
+				{
+					Id:        "2",
+					StartTime: time.Date(2024, 4, 17, 21, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, 4, 17, 23, 0, 0, 0, time.UTC),
+					Project:   "MyTodo",
+					Tags:      []string{"add-todo", "update-todo"},
+				},
+				{
+					Id:        "3",
+					StartTime: time.Date(2024, 4, 18, 21, 0, 0, 0, time.UTC),
+					Project:   "MyTodo",
+					Tags:      []string{"delete-todo"},
+				},
+			},
+		},
+		{
+			name: "Since",
+			args: application.TimeRange{
+				Since: time.Date(2024, 4, 17, 20, 0, 0, 0, time.UTC),
+			},
+			want: []session.Session{
+				{
+					Id:        "2",
+					StartTime: time.Date(2024, 4, 17, 21, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, 4, 17, 23, 0, 0, 0, time.UTC),
+					Project:   "MyTodo",
+					Tags:      []string{"add-todo", "update-todo"},
+				},
+				{
+					Id:        "3",
+					StartTime: time.Date(2024, 4, 18, 21, 0, 0, 0, time.UTC),
+					Project:   "MyTodo",
+					Tags:      []string{"delete-todo"},
+				},
+			},
+		},
+		{
+			name: "Until",
+			args: application.TimeRange{
+				Until: time.Date(2024, 4, 17, 20, 1, 0, 0, time.UTC),
+			},
+			want: []session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, 4, 17, 19, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, 4, 17, 20, 0, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"tests", "integration"},
+				},
+			},
+		},
+		{
+			name: "Since and Until",
+			args: application.TimeRange{
+				Since: time.Date(2024, 4, 17, 17, 0, 0, 0, time.UTC),
+				Until: time.Date(2024, 4, 17, 22, 0, 0, 0, time.UTC),
+			},
+			want: []session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, 4, 17, 19, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, 4, 17, 20, 0, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"tests", "integration"},
+				},
+				{
+					Id:        "2",
+					StartTime: time.Date(2024, 4, 17, 21, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, 4, 17, 23, 0, 0, 0, time.UTC),
+					Project:   "MyTodo",
+					Tags:      []string{"add-todo", "update-todo"},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got, _ := repository.FindInTimeRange(tt.args); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FileSystemSessionRepository.FindInTimeRange() = %v, want %v", got, tt.want)
 			}
 		})
 	}

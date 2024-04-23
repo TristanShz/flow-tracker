@@ -14,7 +14,7 @@ type TimeRange struct {
 type SessionRepository interface {
 	Save(session session.Session) error
 	FindLastSession() (*session.Session, error)
-	FindAllSessions() ([]session.Session, error)
+	FindAllSessions() []session.Session
 	FindAllByProject(project string) ([]session.Session, error)
 	FindAllProjects() ([]string, error)
 	FindAllProjectTags(project string) ([]string, error)

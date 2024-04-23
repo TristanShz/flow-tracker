@@ -34,10 +34,7 @@ func (s UseCase) Execute(
 
 		sessions = sessionsForProject
 	} else {
-		allSessions, err := s.sessionRepository.FindAllSessions()
-		if err != nil {
-			return err
-		}
+		allSessions := s.sessionRepository.FindAllSessions()
 
 		sessions = allSessions
 	}

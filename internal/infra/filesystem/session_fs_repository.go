@@ -85,7 +85,7 @@ func (r *FileSystemSessionRepository) rawFileToSession(raw []byte) (*session.Ses
 	return &sessionData, nil
 }
 
-func (r *FileSystemSessionRepository) FindAllSessions() ([]session.Session, error) {
+func (r *FileSystemSessionRepository) FindAllSessions() []session.Session {
 	fileInfos, err := r.readFlowFolder()
 	if err != nil {
 		log.Fatal(err)
@@ -111,14 +111,11 @@ func (r *FileSystemSessionRepository) FindAllSessions() ([]session.Session, erro
 		sessions = append(sessions, *session)
 	}
 
-	return sessions, nil
+	return sessions
 }
 
 func (r *FileSystemSessionRepository) FindAllByProject(project string) ([]session.Session, error) {
-	allSessions, err := r.FindAllSessions()
-	if err != nil {
-		log.Fatalf("Error while reading all session files : %v", err)
-	}
+	allSessions := r.FindAllSessions()
 
 	sessions := []session.Session{}
 
@@ -180,7 +177,7 @@ func (r *FileSystemSessionRepository) FindLastSession() (*session.Session, error
 }
 
 func (r *FileSystemSessionRepository) FindAllProjects() ([]string, error) {
-	sessions, _ := r.FindAllSessions()
+	sessions := r.FindAllSessions()
 
 	projects := []string{}
 
@@ -215,15 +212,24 @@ func (r *FileSystemSessionRepository) FindAllProjectTags(project string) ([]stri
 
 func (r *FileSystemSessionRepository) FindInTimeRange(timeRange application.TimeRange) ([]session.Session, error) {
 	// TODO: Optimize this function by reading only the files that are in the time range
-	allSessions, err := r.FindAllSessions()
-	if err != nil {
-		return nil, err
-	}
+	allSessions := r.FindAllSessions()
 
 	sessions := []session.Session{}
 
 	for _, session := range allSessions {
-		if session.StartTime.After(timeRange.Since) && session.EndTime.Before(timeRange.Until) {
+		if timeRange.Since.IsZero() && !timeRange.Until.IsZero() {
+			if session.StartTime.Before(timeRange.Until) {
+				sessions = append(sessions, session)
+			}
+		} else if !timeRange.Since.IsZero() && timeRange.Until.IsZero() {
+			if session.StartTime.After(timeRange.Since) {
+				sessions = append(sessions, session)
+			}
+		} else if !timeRange.Since.IsZero() && !timeRange.Until.IsZero() {
+			if session.StartTime.After(timeRange.Since) && session.StartTime.Before(timeRange.Until) {
+				sessions = append(sessions, session)
+			}
+		} else {
 			sessions = append(sessions, session)
 		}
 	}
