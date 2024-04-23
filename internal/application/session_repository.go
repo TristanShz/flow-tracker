@@ -7,8 +7,8 @@ import (
 )
 
 type TimeRange struct {
-	From time.Time
-	To   time.Time
+	Since time.Time
+	Until time.Time
 }
 
 type SessionRepository interface {

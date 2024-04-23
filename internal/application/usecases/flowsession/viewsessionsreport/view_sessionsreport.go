@@ -16,10 +16,10 @@ func (s UseCase) Execute(
 ) error {
 	var sessions []session.Session
 
-	if !command.From.IsZero() && !command.To.IsZero() {
+	if !command.Since.IsZero() && !command.Until.IsZero() {
 		sessionsInTimeRange, err := s.sessionRepository.FindInTimeRange(application.TimeRange{
-			From: command.From,
-			To:   command.To,
+			Since: command.Since,
+			Until: command.Until,
 		})
 		if err != nil {
 			return err

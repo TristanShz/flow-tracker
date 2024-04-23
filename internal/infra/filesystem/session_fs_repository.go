@@ -223,7 +223,7 @@ func (r *FileSystemSessionRepository) FindInTimeRange(timeRange application.Time
 	sessions := []session.Session{}
 
 	for _, session := range allSessions {
-		if session.StartTime.After(timeRange.From) && session.EndTime.Before(timeRange.To) {
+		if session.StartTime.After(timeRange.Since) && session.EndTime.Before(timeRange.Until) {
 			sessions = append(sessions, session)
 		}
 	}

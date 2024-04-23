@@ -3,8 +3,8 @@ package viewsessionsreport
 import "time"
 
 type Command struct {
-	From    time.Time
-	To      time.Time
+	Since   time.Time
+	Until   time.Time
 	Project string
 	Format  string
 }

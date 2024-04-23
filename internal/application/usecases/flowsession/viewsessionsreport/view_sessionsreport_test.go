@@ -167,8 +167,8 @@ func TestViewSessionsReport(t *testing.T) {
 		{
 			name: "View sessions of a given day",
 			command: viewsessionsreport.Command{
-				From: time.Date(2024, time.April, 14, 0, 0, 0, 0, time.UTC),
-				To:   time.Date(2024, time.April, 14, 23, 59, 59, 0, time.UTC),
+				Since: time.Date(2024, time.April, 14, 0, 0, 0, 0, time.UTC),
+				Until: time.Date(2024, time.April, 14, 23, 59, 59, 0, time.UTC),
 			},
 			givenSessions: sessionsForTest,
 			want: sessionsreport.NewSessionsReport([]session.Session{
