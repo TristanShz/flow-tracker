@@ -128,7 +128,7 @@ func (r *FileSystemSessionRepository) FindAllByProject(project string) []session
 	return sessions
 }
 
-func (r *FileSystemSessionRepository) FindLastSession() (*session.Session, error) {
+func (r *FileSystemSessionRepository) FindLastSession() *session.Session {
 	fileInfos, err := r.readFlowFolder()
 	if err != nil {
 		log.Fatal(err)
@@ -144,7 +144,7 @@ func (r *FileSystemSessionRepository) FindLastSession() (*session.Session, error
 	}
 
 	if len(fileNames) == 0 {
-		return nil, nil
+		return nil
 	}
 
 	sort.Slice(fileNames, func(i, j int) bool {
@@ -173,7 +173,7 @@ func (r *FileSystemSessionRepository) FindLastSession() (*session.Session, error
 		log.Fatalf("Invalid session data for file : %v", lastSessionFilePath)
 	}
 
-	return session, nil
+	return session
 }
 
 func (r *FileSystemSessionRepository) FindAllProjects() ([]string, error) {

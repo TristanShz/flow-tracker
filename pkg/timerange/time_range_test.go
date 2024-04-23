@@ -75,6 +75,10 @@ func TestTimeRange(t *testing.T) {
 			if got := tt.tr.JustUntil(); got != tt.wantJustUntil {
 				t.Errorf("TimeRange.JustUntil() = %v, want %v", got, tt.wantJustUntil)
 			}
+
+			if got := tt.tr.SinceAndUntil(); got != tt.wantSinceAndUntil {
+				t.Errorf("TimeRange.SinceAndUntil() = %v, want %v", got, tt.wantSinceAndUntil)
+			}
 		})
 	}
 }

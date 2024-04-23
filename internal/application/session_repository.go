@@ -7,7 +7,7 @@ import (
 
 type SessionRepository interface {
 	Save(session session.Session) error
-	FindLastSession() (*session.Session, error)
+	FindLastSession() *session.Session
 	FindAllSessions() []session.Session
 	FindAllByProject(project string) []session.Session
 	FindAllProjects() ([]string, error)

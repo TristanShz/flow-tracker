@@ -122,7 +122,7 @@ func TestFindLastSession_Success(t *testing.T) {
 		Project:   "Flow",
 	})
 
-	got, _ := repository.FindLastSession()
+	got := repository.FindLastSession()
 
 	want := session.Session{
 		Id:        "2",

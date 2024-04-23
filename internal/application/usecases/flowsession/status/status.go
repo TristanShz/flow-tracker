@@ -19,10 +19,7 @@ type UseCase struct {
 }
 
 func (s *UseCase) Execute() (SessionStatus, error) {
-	lastSession, err := s.sessionRepository.FindLastSession()
-	if err != nil {
-		return SessionStatus{}, err
-	}
+	lastSession := s.sessionRepository.FindLastSession()
 
 	if lastSession == nil || lastSession.Status() != session.FlowingStatus {
 		return SessionStatus{}, ErrNoCurrentSession

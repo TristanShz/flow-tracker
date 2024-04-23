@@ -9,37 +9,72 @@ import (
 	"github.com/TristanSch1/flow/internal/tests"
 )
 
-func TestFlowSessionStatus_Success(t *testing.T) {
-	f := tests.GetSessionFixture(t)
+func TestFlowSessionStatus(t *testing.T) {
+	testsTable := []struct {
+		name             string
+		givenSessions    []session.Session
+		givenNow         time.Time
+		expectedSession  session.Session
+		expectedDuration time.Duration
+		expectedError    error
+	}{
+		{
+			name: "Session is current",
+			givenSessions: []session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, time.April, 14, 11, 26, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"status"},
+				},
+			},
+			givenNow: time.Date(2024, time.April, 14, 12, 26, 0, 0, time.UTC),
+			expectedSession: session.Session{
+				Id:        "1",
+				StartTime: time.Date(2024, time.April, 14, 11, 26, 0, 0, time.UTC),
+				Project:   "Flow",
+				Tags:      []string{"status"},
+			},
+			expectedDuration: 1 * time.Hour,
+			expectedError:    nil,
+		},
+		{
+			name:             "No sessions",
+			givenSessions:    []session.Session{},
+			givenNow:         time.Date(2024, time.April, 14, 12, 26, 0, 0, time.UTC),
+			expectedSession:  session.Session{},
+			expectedDuration: 0,
+			expectedError:    status.ErrNoCurrentSession,
+		},
+		{
+			name: "No current session",
+			givenSessions: []session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, time.April, 14, 11, 26, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 12, 26, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"status"},
+				},
+			},
+			givenNow:         time.Date(2024, time.April, 14, 13, 26, 0, 0, time.UTC),
+			expectedSession:  session.Session{},
+			expectedDuration: 0,
+			expectedError:    status.ErrNoCurrentSession,
+		},
+	}
 
-	f.GivenSomeSessions([]session.Session{{
-		StartTime: time.Date(2024, time.April, 14, 11, 26, 0, 0, time.UTC),
-		Project:   "Flow",
-		Tags:      []string{"status"},
-	}})
-
-	f.GivenNowIs(time.Date(2024, time.April, 14, 12, 26, 0, 0, time.UTC))
-
-	f.WhenUserSeesTheCurrentSessionStatus()
-
-	f.ThenUserShouldSee(session.Session{
-		StartTime: time.Date(2024, time.April, 14, 11, 26, 0, 0, time.UTC),
-		Project:   "Flow",
-		Tags:      []string{"status"},
-	}, 1*time.Hour)
-}
-
-func TestFlowSessionStatus_NoCurrentSession(t *testing.T) {
-	f := tests.GetSessionFixture(t)
-
-	f.GivenSomeSessions([]session.Session{{
-		StartTime: time.Date(2024, time.April, 14, 11, 26, 0, 0, time.UTC),
-		EndTime:   time.Date(2024, time.April, 15, 11, 32, 0, 0, time.UTC),
-		Project:   "Flow",
-		Tags:      []string{"status"},
-	}})
-
-	f.WhenUserSeesTheCurrentSessionStatus()
-
-	f.ThenErrorShouldBe(status.ErrNoCurrentSession)
+	for _, tt := range testsTable {
+		t.Run(tt.name, func(t *testing.T) {
+			f := tests.GetSessionFixture(t)
+			f.GivenSomeSessions(tt.givenSessions)
+			f.GivenNowIs(tt.givenNow)
+			f.WhenUserSeesTheCurrentSessionStatus()
+			if tt.expectedError != nil {
+				f.ThenErrorShouldBe(tt.expectedError)
+			} else {
+				f.ThenUserShouldSee(tt.expectedSession, 1*time.Hour)
+			}
+		})
+	}
 }
