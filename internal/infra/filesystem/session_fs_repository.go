@@ -114,7 +114,7 @@ func (r *FileSystemSessionRepository) FindAllSessions() []session.Session {
 	return sessions
 }
 
-func (r *FileSystemSessionRepository) FindAllByProject(project string) ([]session.Session, error) {
+func (r *FileSystemSessionRepository) FindAllByProject(project string) []session.Session {
 	allSessions := r.FindAllSessions()
 
 	sessions := []session.Session{}
@@ -125,7 +125,7 @@ func (r *FileSystemSessionRepository) FindAllByProject(project string) ([]sessio
 		}
 	}
 
-	return sessions, nil
+	return sessions
 }
 
 func (r *FileSystemSessionRepository) FindLastSession() (*session.Session, error) {
@@ -193,7 +193,7 @@ func (r *FileSystemSessionRepository) FindAllProjects() ([]string, error) {
 }
 
 func (r *FileSystemSessionRepository) FindAllProjectTags(project string) ([]string, error) {
-	sessionsForProject, _ := r.FindAllByProject(project)
+	sessionsForProject := r.FindAllByProject(project)
 
 	tags := []string{}
 
@@ -210,7 +210,7 @@ func (r *FileSystemSessionRepository) FindAllProjectTags(project string) ([]stri
 	return tags, nil
 }
 
-func (r *FileSystemSessionRepository) FindInTimeRange(timeRange application.TimeRange) ([]session.Session, error) {
+func (r *FileSystemSessionRepository) FindInTimeRange(timeRange application.TimeRange) []session.Session {
 	// TODO: Optimize this function by reading only the files that are in the time range
 	allSessions := r.FindAllSessions()
 
@@ -233,5 +233,5 @@ func (r *FileSystemSessionRepository) FindInTimeRange(timeRange application.Time
 			sessions = append(sessions, session)
 		}
 	}
-	return sessions, nil
+	return sessions
 }

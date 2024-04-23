@@ -17,20 +17,13 @@ func (s UseCase) Execute(
 	var sessions []session.Session
 
 	if !command.Since.IsZero() || !command.Until.IsZero() {
-		sessionsInTimeRange, err := s.sessionRepository.FindInTimeRange(application.TimeRange{
+		sessionsInTimeRange := s.sessionRepository.FindInTimeRange(application.TimeRange{
 			Since: command.Since,
 			Until: command.Until,
 		})
-		if err != nil {
-			return err
-		}
-
 		sessions = sessionsInTimeRange
 	} else if command.Project != "" {
-		sessionsForProject, err := s.sessionRepository.FindAllByProject(command.Project)
-		if err != nil {
-			return err
-		}
+		sessionsForProject := s.sessionRepository.FindAllByProject(command.Project)
 
 		sessions = sessionsForProject
 	} else {

@@ -185,8 +185,16 @@ func TestFindAllProjectsTags(t *testing.T) {
 	repository.Save(session.Session{
 		Id:        "2",
 		StartTime: time.Date(2024, 4, 17, 21, 0, 0, 0, time.UTC),
+		EndTime:   time.Date(2024, 4, 17, 22, 0, 0, 0, time.UTC),
 		Project:   "MyTodo",
 		Tags:      []string{"add-todo", "update-todo"},
+	})
+
+	repository.Save(session.Session{
+		Id:        "3",
+		StartTime: time.Date(2024, 4, 17, 23, 0, 0, 0, time.UTC),
+		Project:   "MyTodo",
+		Tags:      []string{"update-todo", "delete-todo"},
 	})
 
 	tests := []struct {
@@ -199,7 +207,7 @@ func TestFindAllProjectsTags(t *testing.T) {
 		},
 		{
 			name: "MyTodo",
-			want: []string{"add-todo", "update-todo"},
+			want: []string{"add-todo", "update-todo", "delete-todo"},
 		},
 	}
 	for _, tt := range tests {
@@ -329,7 +337,7 @@ func TestFindInTimeRange(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got, _ := repository.FindInTimeRange(tt.args); !reflect.DeepEqual(got, tt.want) {
+			if got := repository.FindInTimeRange(tt.args); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FileSystemSessionRepository.FindInTimeRange() = %v, want %v", got, tt.want)
 			}
 		})

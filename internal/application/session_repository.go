@@ -15,8 +15,8 @@ type SessionRepository interface {
 	Save(session session.Session) error
 	FindLastSession() (*session.Session, error)
 	FindAllSessions() []session.Session
-	FindAllByProject(project string) ([]session.Session, error)
+	FindAllByProject(project string) []session.Session
 	FindAllProjects() ([]string, error)
 	FindAllProjectTags(project string) ([]string, error)
-	FindInTimeRange(timeRange TimeRange) ([]session.Session, error)
+	FindInTimeRange(timeRange TimeRange) []session.Session
 }

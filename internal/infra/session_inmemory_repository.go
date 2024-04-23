@@ -25,7 +25,7 @@ func (r *InMemorySessionRepository) Save(s session.Session) error {
 	return nil
 }
 
-func (r *InMemorySessionRepository) FindAllByProject(project string) ([]session.Session, error) {
+func (r *InMemorySessionRepository) FindAllByProject(project string) []session.Session {
 	sessions := []session.Session{}
 
 	for _, session := range r.Sessions {
@@ -34,7 +34,7 @@ func (r *InMemorySessionRepository) FindAllByProject(project string) ([]session.
 		}
 	}
 
-	return sessions, nil
+	return sessions
 }
 
 func (r *InMemorySessionRepository) FindLastSession() (*session.Session, error) {
@@ -66,7 +66,7 @@ func (r *InMemorySessionRepository) FindAllProjects() ([]string, error) {
 }
 
 func (r *InMemorySessionRepository) FindAllProjectTags(project string) ([]string, error) {
-	sessionsForProject, _ := r.FindAllByProject(project)
+	sessionsForProject := r.FindAllByProject(project)
 
 	tags := []string{}
 
@@ -83,7 +83,7 @@ func (r *InMemorySessionRepository) FindAllProjectTags(project string) ([]string
 	return tags, nil
 }
 
-func (r *InMemorySessionRepository) FindInTimeRange(timeRange application.TimeRange) ([]session.Session, error) {
+func (r *InMemorySessionRepository) FindInTimeRange(timeRange application.TimeRange) []session.Session {
 	sessions := []session.Session{}
 
 	for _, session := range r.Sessions {
@@ -101,5 +101,5 @@ func (r *InMemorySessionRepository) FindInTimeRange(timeRange application.TimeRa
 			}
 		}
 	}
-	return sessions, nil
+	return sessions
 }
