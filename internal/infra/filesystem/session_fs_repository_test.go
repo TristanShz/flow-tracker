@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TristanSch1/flow/internal/application"
 	"github.com/TristanSch1/flow/internal/domain/session"
 	"github.com/TristanSch1/flow/internal/infra/filesystem"
+	"github.com/TristanSch1/flow/pkg/timerange"
 )
 
 const (
@@ -245,12 +245,12 @@ func TestFindInTimeRange(t *testing.T) {
 
 	tests := []struct {
 		name string
-		args application.TimeRange
+		args timerange.TimeRange
 		want []session.Session
 	}{
 		{
 			name: "All",
-			args: application.TimeRange{},
+			args: timerange.TimeRange{},
 			want: []session.Session{
 				{
 					Id:        "1",
@@ -276,7 +276,7 @@ func TestFindInTimeRange(t *testing.T) {
 		},
 		{
 			name: "Since",
-			args: application.TimeRange{
+			args: timerange.TimeRange{
 				Since: time.Date(2024, 4, 17, 20, 0, 0, 0, time.UTC),
 			},
 			want: []session.Session{
@@ -297,7 +297,7 @@ func TestFindInTimeRange(t *testing.T) {
 		},
 		{
 			name: "Until",
-			args: application.TimeRange{
+			args: timerange.TimeRange{
 				Until: time.Date(2024, 4, 17, 20, 1, 0, 0, time.UTC),
 			},
 			want: []session.Session{
@@ -312,7 +312,7 @@ func TestFindInTimeRange(t *testing.T) {
 		},
 		{
 			name: "Since and Until",
-			args: application.TimeRange{
+			args: timerange.TimeRange{
 				Since: time.Date(2024, 4, 17, 17, 0, 0, 0, time.UTC),
 				Until: time.Date(2024, 4, 17, 22, 0, 0, 0, time.UTC),
 			},

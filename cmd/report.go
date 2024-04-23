@@ -9,6 +9,7 @@ import (
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/viewsessionsreport"
 	"github.com/TristanSch1/flow/internal/domain/sessionsreport"
 	"github.com/TristanSch1/flow/internal/infra/presenter"
+	"github.com/TristanSch1/flow/pkg/timerange"
 	"github.com/spf13/cobra"
 )
 
@@ -39,18 +40,17 @@ func reportCmd(app *app.App) *cobra.Command {
 			}
 
 			if dayFlag {
-				now := time.Now()
+				timeRange := timerange.NewDayTimeRange(time.Now())
 
-				command.Since = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
-				command.Until = time.Now()
+				command.Since = timeRange.Since
+				command.Until = timeRange.Until
 			}
 
 			if weekFlag {
-				now := time.Now()
-				weekStart := now.AddDate(0, 0, -int(now.Weekday()))
-				weekEnd := weekStart.AddDate(0, 0, 6)
-				command.Since = weekStart
-				command.Until = weekEnd
+				timeRange := timerange.NewWeekTimeRange(time.Now())
+
+				command.Since = timeRange.Since
+				command.Until = timeRange.Until
 			}
 
 			err := app.ViewSessionsReportUseCase.Execute(command, presenter)

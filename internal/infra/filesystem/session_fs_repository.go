@@ -11,8 +11,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/TristanSch1/flow/internal/application"
 	"github.com/TristanSch1/flow/internal/domain/session"
+	"github.com/TristanSch1/flow/pkg/timerange"
 )
 
 const (
@@ -210,22 +210,22 @@ func (r *FileSystemSessionRepository) FindAllProjectTags(project string) ([]stri
 	return tags, nil
 }
 
-func (r *FileSystemSessionRepository) FindInTimeRange(timeRange application.TimeRange) []session.Session {
+func (r *FileSystemSessionRepository) FindInTimeRange(timeRange timerange.TimeRange) []session.Session {
 	// TODO: Optimize this function by reading only the files that are in the time range
 	allSessions := r.FindAllSessions()
 
 	sessions := []session.Session{}
 
 	for _, session := range allSessions {
-		if timeRange.Since.IsZero() && !timeRange.Until.IsZero() {
+		if timeRange.JustUntil() {
 			if session.StartTime.Before(timeRange.Until) {
 				sessions = append(sessions, session)
 			}
-		} else if !timeRange.Since.IsZero() && timeRange.Until.IsZero() {
+		} else if timeRange.JustSince() {
 			if session.StartTime.After(timeRange.Since) {
 				sessions = append(sessions, session)
 			}
-		} else if !timeRange.Since.IsZero() && !timeRange.Until.IsZero() {
+		} else if timeRange.SinceAndUntil() {
 			if session.StartTime.After(timeRange.Since) && session.StartTime.Before(timeRange.Until) {
 				sessions = append(sessions, session)
 			}

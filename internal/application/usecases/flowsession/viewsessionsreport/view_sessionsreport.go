@@ -4,6 +4,7 @@ import (
 	"github.com/TristanSch1/flow/internal/application"
 	"github.com/TristanSch1/flow/internal/domain/session"
 	"github.com/TristanSch1/flow/internal/domain/sessionsreport"
+	"github.com/TristanSch1/flow/pkg/timerange"
 )
 
 type UseCase struct {
@@ -17,7 +18,7 @@ func (s UseCase) Execute(
 	var sessions []session.Session
 
 	if !command.Since.IsZero() || !command.Until.IsZero() {
-		sessionsInTimeRange := s.sessionRepository.FindInTimeRange(application.TimeRange{
+		sessionsInTimeRange := s.sessionRepository.FindInTimeRange(timerange.TimeRange{
 			Since: command.Since,
 			Until: command.Until,
 		})

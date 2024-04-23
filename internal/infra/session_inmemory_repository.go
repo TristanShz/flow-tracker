@@ -3,8 +3,8 @@ package infra
 import (
 	"slices"
 
-	"github.com/TristanSch1/flow/internal/application"
 	"github.com/TristanSch1/flow/internal/domain/session"
+	"github.com/TristanSch1/flow/pkg/timerange"
 )
 
 type InMemorySessionRepository struct {
@@ -83,7 +83,7 @@ func (r *InMemorySessionRepository) FindAllProjectTags(project string) ([]string
 	return tags, nil
 }
 
-func (r *InMemorySessionRepository) FindInTimeRange(timeRange application.TimeRange) []session.Session {
+func (r *InMemorySessionRepository) FindInTimeRange(timeRange timerange.TimeRange) []session.Session {
 	sessions := []session.Session{}
 
 	for _, session := range r.Sessions {
