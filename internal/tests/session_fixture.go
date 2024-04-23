@@ -3,6 +3,7 @@ package tests
 import (
 	"errors"
 	"slices"
+	"strings"
 	"testing"
 	"time"
 
@@ -104,8 +105,17 @@ func (s SessionFixture) ThenUserShouldSeeSessionsReport(expectedReport sessionsr
 	}
 
 	if !got.Equals(expectedReport) {
-		s.T.Errorf("Expected report '%v', but got '%v'", expectedReport, got)
+		s.T.Errorf("Expected report with session ids '%v', but got '%v'", s.formatReportForError(expectedReport), s.formatReportForError(got))
 	}
+}
+
+func (s SessionFixture) formatReportForError(expectedReport sessionsreport.SessionsReport) string {
+	ids := make([]string, len(expectedReport.Sessions))
+	for i, session := range expectedReport.Sessions {
+		ids[i] = session.Id
+	}
+
+	return strings.Join(ids, ", ")
 }
 
 func (s *SessionFixture) ThenProjectsShouldBe(projects []string) {

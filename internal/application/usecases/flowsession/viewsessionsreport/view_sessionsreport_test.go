@@ -12,34 +12,74 @@ import (
 
 var sessionsForTest = []session.Session{
 	{
+		Id:        "1",
 		StartTime: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
 		EndTime:   time.Date(2024, time.April, 14, 13, 12, 0, 0, time.UTC),
 		Project:   "MyTodo",
 		Tags:      []string{"add-todo"},
 	},
 	{
+		Id:        "2",
 		StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
 		EndTime:   time.Date(2024, time.April, 14, 15, 12, 0, 0, time.UTC),
 		Project:   "Flow",
 		Tags:      []string{"start-usecase"},
 	},
 	{
+		Id:        "3",
 		StartTime: time.Date(2024, time.April, 14, 16, 24, 0, 0, time.UTC),
 		EndTime:   time.Date(2024, time.April, 14, 18, 24, 30, 0, time.UTC),
 		Project:   "Flow",
 		Tags:      []string{"report-usecase"},
 	},
 	{
+		Id:        "4",
 		StartTime: time.Date(2024, time.April, 15, 8, 0, 0, 0, time.UTC),
 		EndTime:   time.Date(2024, time.April, 15, 12, 0, 0, 0, time.UTC),
 		Project:   "MyTodo",
 		Tags:      []string{"edit-todo"},
 	},
 	{
+		Id:        "5",
 		StartTime: time.Date(2024, time.April, 15, 14, 0, 0, 0, time.UTC),
 		EndTime:   time.Date(2024, time.April, 15, 16, 0, 0, 0, time.UTC),
 		Project:   "Flow",
 		Tags:      []string{"start-usecase"},
+	},
+	{
+		Id:        "6",
+		StartTime: time.Date(2024, time.April, 16, 10, 12, 0, 0, time.UTC),
+		EndTime:   time.Date(2024, time.April, 16, 13, 12, 0, 0, time.UTC),
+		Project:   "MyTodo",
+		Tags:      []string{"delete-todo"},
+	},
+	{
+		Id:        "7",
+		StartTime: time.Date(2024, time.April, 16, 14, 12, 0, 0, time.UTC),
+		EndTime:   time.Date(2024, time.April, 16, 15, 12, 0, 0, time.UTC),
+		Project:   "Pomodoro",
+		Tags:      []string{"start-pomodoro"},
+	},
+	{
+		Id:        "8",
+		StartTime: time.Date(2024, time.April, 18, 16, 24, 0, 0, time.UTC),
+		EndTime:   time.Date(2024, time.April, 18, 18, 24, 30, 0, time.UTC),
+		Project:   "Pomodoro",
+		Tags:      []string{"report-pomodoro"},
+	},
+	{
+		Id:        "9",
+		StartTime: time.Date(2024, time.April, 20, 8, 0, 0, 0, time.UTC),
+		EndTime:   time.Date(2024, time.April, 20, 12, 0, 0, 0, time.UTC),
+		Project:   "MyTodo",
+		Tags:      []string{"deploy"},
+	},
+	{
+		Id:        "10",
+		StartTime: time.Date(2024, time.April, 20, 14, 0, 0, 0, time.UTC),
+		EndTime:   time.Date(2024, time.April, 20, 16, 0, 0, 0, time.UTC),
+		Project:   "Pomodoro",
+		Tags:      []string{"pause-pomodoro"},
 	},
 }
 
@@ -52,41 +92,10 @@ func TestViewSessionsReport(t *testing.T) {
 		want           sessionsreport.SessionsReport
 	}{
 		{
-			name:          "No arguments given",
-			command:       viewsessionsreport.Command{},
-			givenSessions: sessionsForTest,
-			want: sessionsreport.NewSessionsReport([]session.Session{
-				{
-					StartTime: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
-					EndTime:   time.Date(2024, time.April, 14, 13, 12, 0, 0, time.UTC),
-					Project:   "MyTodo",
-					Tags:      []string{"add-todo"},
-				},
-				{
-					StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
-					EndTime:   time.Date(2024, time.April, 14, 15, 12, 0, 0, time.UTC),
-					Project:   "Flow",
-					Tags:      []string{"start-usecase"},
-				},
-				{
-					StartTime: time.Date(2024, time.April, 14, 16, 24, 0, 0, time.UTC),
-					EndTime:   time.Date(2024, time.April, 14, 18, 24, 30, 0, time.UTC),
-					Project:   "Flow",
-					Tags:      []string{"report-usecase"},
-				},
-				{
-					StartTime: time.Date(2024, time.April, 15, 8, 0, 0, 0, time.UTC),
-					EndTime:   time.Date(2024, time.April, 15, 12, 0, 0, 0, time.UTC),
-					Project:   "MyTodo",
-					Tags:      []string{"edit-todo"},
-				},
-				{
-					StartTime: time.Date(2024, time.April, 15, 14, 0, 0, 0, time.UTC),
-					EndTime:   time.Date(2024, time.April, 15, 16, 0, 0, 0, time.UTC),
-					Project:   "Flow",
-					Tags:      []string{"start-usecase"},
-				},
-			}),
+			name:           "No arguments given",
+			command:        viewsessionsreport.Command{},
+			givenSessions:  sessionsForTest,
+			want:           sessionsreport.NewSessionsReport(sessionsForTest),
 			expectedFormat: sessionsreport.FormatByProject,
 		},
 		{
@@ -104,18 +113,21 @@ func TestViewSessionsReport(t *testing.T) {
 			givenSessions: sessionsForTest,
 			want: sessionsreport.NewSessionsReport([]session.Session{
 				{
+					Id:        "2",
 					StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
 					EndTime:   time.Date(2024, time.April, 14, 15, 12, 0, 0, time.UTC),
 					Project:   "Flow",
 					Tags:      []string{"start-usecase"},
 				},
 				{
+					Id:        "3",
 					StartTime: time.Date(2024, time.April, 14, 16, 24, 0, 0, time.UTC),
 					EndTime:   time.Date(2024, time.April, 14, 18, 24, 30, 0, time.UTC),
 					Project:   "Flow",
 					Tags:      []string{"report-usecase"},
 				},
 				{
+					Id:        "5",
 					StartTime: time.Date(2024, time.April, 15, 14, 0, 0, 0, time.UTC),
 					EndTime:   time.Date(2024, time.April, 15, 16, 0, 0, 0, time.UTC),
 					Project:   "Flow",
@@ -129,39 +141,8 @@ func TestViewSessionsReport(t *testing.T) {
 			command: viewsessionsreport.Command{
 				Format: sessionsreport.FormatByDay,
 			},
-			givenSessions: sessionsForTest,
-			want: sessionsreport.NewSessionsReport([]session.Session{
-				{
-					StartTime: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
-					EndTime:   time.Date(2024, time.April, 14, 13, 12, 0, 0, time.UTC),
-					Project:   "MyTodo",
-					Tags:      []string{"add-todo"},
-				},
-				{
-					StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
-					EndTime:   time.Date(2024, time.April, 14, 15, 12, 0, 0, time.UTC),
-					Project:   "Flow",
-					Tags:      []string{"start-usecase"},
-				},
-				{
-					StartTime: time.Date(2024, time.April, 14, 16, 24, 0, 0, time.UTC),
-					EndTime:   time.Date(2024, time.April, 14, 18, 24, 30, 0, time.UTC),
-					Project:   "Flow",
-					Tags:      []string{"report-usecase"},
-				},
-				{
-					StartTime: time.Date(2024, time.April, 15, 8, 0, 0, 0, time.UTC),
-					EndTime:   time.Date(2024, time.April, 15, 12, 0, 0, 0, time.UTC),
-					Project:   "MyTodo",
-					Tags:      []string{"edit-todo"},
-				},
-				{
-					StartTime: time.Date(2024, time.April, 15, 14, 0, 0, 0, time.UTC),
-					EndTime:   time.Date(2024, time.April, 15, 16, 0, 0, 0, time.UTC),
-					Project:   "Flow",
-					Tags:      []string{"start-usecase"},
-				},
-			}),
+			givenSessions:  sessionsForTest,
+			want:           sessionsreport.NewSessionsReport(sessionsForTest),
 			expectedFormat: sessionsreport.FormatByDay,
 		},
 		{
@@ -173,18 +154,83 @@ func TestViewSessionsReport(t *testing.T) {
 			givenSessions: sessionsForTest,
 			want: sessionsreport.NewSessionsReport([]session.Session{
 				{
+					Id:        "1",
 					StartTime: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
 					EndTime:   time.Date(2024, time.April, 14, 13, 12, 0, 0, time.UTC),
 					Project:   "MyTodo",
 					Tags:      []string{"add-todo"},
 				},
 				{
+					Id:        "2",
 					StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
 					EndTime:   time.Date(2024, time.April, 14, 15, 12, 0, 0, time.UTC),
 					Project:   "Flow",
 					Tags:      []string{"start-usecase"},
 				},
 				{
+					Id:        "3",
+					StartTime: time.Date(2024, time.April, 14, 16, 24, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 18, 24, 30, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"report-usecase"},
+				},
+			}),
+			expectedFormat: sessionsreport.FormatByProject,
+		},
+		{
+			name: "View sessions since a given day",
+			command: viewsessionsreport.Command{
+				Since: time.Date(2024, time.April, 18, 0, 0, 0, 0, time.UTC),
+			},
+			givenSessions: sessionsForTest,
+			want: sessionsreport.NewSessionsReport([]session.Session{
+				{
+					Id:        "8",
+					StartTime: time.Date(2024, time.April, 18, 16, 24, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 18, 18, 24, 30, 0, time.UTC),
+					Project:   "Pomodoro",
+					Tags:      []string{"report-pomodoro"},
+				},
+				{
+					Id:        "9",
+					StartTime: time.Date(2024, time.April, 20, 8, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 20, 12, 0, 0, 0, time.UTC),
+					Project:   "MyTodo",
+					Tags:      []string{"deploy"},
+				},
+				{
+					Id:        "10",
+					StartTime: time.Date(2024, time.April, 20, 14, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 20, 16, 0, 0, 0, time.UTC),
+					Project:   "Pomodoro",
+					Tags:      []string{"pause-pomodoro"},
+				},
+			}),
+			expectedFormat: sessionsreport.FormatByProject,
+		},
+		{
+			name: "View sessions until a given day",
+			command: viewsessionsreport.Command{
+				Until: time.Date(2024, time.April, 15, 0, 0, 0, 0, time.UTC),
+			},
+			givenSessions: sessionsForTest,
+			want: sessionsreport.NewSessionsReport([]session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 13, 12, 0, 0, time.UTC),
+					Project:   "MyTodo",
+					Tags:      []string{"add-todo"},
+				},
+				{
+					Id:        "2",
+					StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 15, 12, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"start-usecase"},
+				},
+				{
+					Id:        "3",
 					StartTime: time.Date(2024, time.April, 14, 16, 24, 0, 0, time.UTC),
 					EndTime:   time.Date(2024, time.April, 14, 18, 24, 30, 0, time.UTC),
 					Project:   "Flow",

@@ -16,7 +16,7 @@ func (s UseCase) Execute(
 ) error {
 	var sessions []session.Session
 
-	if !command.Since.IsZero() && !command.Until.IsZero() {
+	if !command.Since.IsZero() || !command.Until.IsZero() {
 		sessionsInTimeRange, err := s.sessionRepository.FindInTimeRange(application.TimeRange{
 			Since: command.Since,
 			Until: command.Until,
