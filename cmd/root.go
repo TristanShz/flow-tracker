@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/TristanSch1/flow/cmd/report"
 	app "github.com/TristanSch1/flow/internal/application/usecases"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/status"
@@ -60,7 +61,7 @@ func Execute() {
 	rootCmd.AddCommand(startCmd(app))
 	rootCmd.AddCommand(stopCmd(app))
 	rootCmd.AddCommand(statusCmd(app))
-	rootCmd.AddCommand(reportCmd(app))
+	rootCmd.AddCommand(report.ReportCmd(app))
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

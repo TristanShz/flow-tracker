@@ -1,8 +1,8 @@
-package cmd
+package report
 
 import (
-	"fmt"
-	"os"
+	"errors"
+	"log"
 	"time"
 
 	app "github.com/TristanSch1/flow/internal/application/usecases"
@@ -17,22 +17,23 @@ func checkFormatFlag(flag string) bool {
 	return flag == sessionsreport.FormatByDay || flag == sessionsreport.FormatByProject
 }
 
-func reportCmd(app *app.App) *cobra.Command {
-	command := &cobra.Command{
+func ReportCmd(app *app.App) *cobra.Command {
+	cmd := &cobra.Command{
 		Use:   "report",
 		Short: "Report",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			logger := log.New(cmd.OutOrStdout(), "", 0)
+
 			projectFlag, _ := cmd.Flags().GetString("project")
 			formatFlag, _ := cmd.Flags().GetString("format")
 			dayFlag, _ := cmd.Flags().GetBool("day")
 			weekFlag, _ := cmd.Flags().GetBool("week")
 
 			if formatFlag != "" && !checkFormatFlag(formatFlag) {
-				fmt.Printf("Invalid format flag. Possible values: by-day, by-project")
-				os.Exit(1)
+				return errors.New("invalid format flag. possible values: by-day, by-project")
 			}
 
-			presenter := presenter.SessionsReportCLIPresenter{}
+			presenter := presenter.SessionsReportCLIPresenter{Logger: logger}
 
 			command := viewsessionsreport.Command{
 				Project: projectFlag,
@@ -55,16 +56,23 @@ func reportCmd(app *app.App) *cobra.Command {
 
 			err := app.ViewSessionsReportUseCase.Execute(command, presenter)
 			if err != nil {
-				fmt.Printf("%v", err)
-				os.Exit(1)
+				return err
 			}
+
+			return nil
 		},
 	}
 
-	command.Flags().StringP("project", "p", "", "get a report for all flow sessions of given project")
-	command.Flags().StringP("format", "f", "by-day", "Specify the format of the report. Possible values: by-day, by-project, total-duration")
-	command.Flags().BoolP("day", "d", false, "Get a report for all flow sessions of the day")
-	command.Flags().BoolP("week", "w", false, "Get a report for all flow sessions of the week")
+	cmd.Flags().StringP("project", "p", "", "get a report for all flow sessions of given project")
+	cmd.Flags().StringP("format", "f", "by-day", "Specify the format of the report. Possible values: by-day, by-project, total-duration")
+	cmd.Flags().StringP("since", "s", "", "Specify the start date of the report")
+	cmd.Flags().StringP("until", "u", "", "Specify the end date of the report")
+	cmd.Flags().BoolP("day", "d", false, "Get a report for all flow sessions of the day")
+	cmd.Flags().BoolP("week", "w", false, "Get a report for all flow sessions of the week")
 
-	return command
+	return cmd
+}
+
+func Execute(cmd *cobra.Command) error {
+	return cmd.Execute()
 }

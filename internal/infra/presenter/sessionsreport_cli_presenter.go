@@ -2,13 +2,16 @@ package presenter
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/TristanSch1/flow/internal/domain/sessionsreport"
 	"github.com/TristanSch1/flow/utils"
 )
 
-type SessionsReportCLIPresenter struct{}
+type SessionsReportCLIPresenter struct {
+	Logger *log.Logger
+}
 
 func (s SessionsReportCLIPresenter) ShowByDay(sessionsReport sessionsreport.SessionsReport) {
 	byDayReport := sessionsReport.GetByDayReport()
@@ -39,7 +42,7 @@ func (s SessionsReportCLIPresenter) ShowByDay(sessionsReport sessionsreport.Sess
 		text += "\n"
 	}
 
-	fmt.Println(text)
+	s.Logger.Println(text)
 }
 
 func (s SessionsReportCLIPresenter) ShowByProject(sessionsReport sessionsreport.SessionsReport) {
@@ -55,5 +58,5 @@ func (s SessionsReportCLIPresenter) ShowByProject(sessionsReport sessionsreport.
 		text += "\n"
 	}
 
-	fmt.Println(text)
+	s.Logger.Println(text)
 }
