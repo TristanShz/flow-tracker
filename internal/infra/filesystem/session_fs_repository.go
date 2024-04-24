@@ -176,7 +176,7 @@ func (r *FileSystemSessionRepository) FindLastSession() *session.Session {
 	return session
 }
 
-func (r *FileSystemSessionRepository) FindAllProjects() ([]string, error) {
+func (r *FileSystemSessionRepository) FindAllProjects() []string {
 	sessions := r.FindAllSessions()
 
 	projects := []string{}
@@ -189,10 +189,10 @@ func (r *FileSystemSessionRepository) FindAllProjects() ([]string, error) {
 		projects = append(projects, session.Project)
 	}
 
-	return projects, nil
+	return projects
 }
 
-func (r *FileSystemSessionRepository) FindAllProjectTags(project string) ([]string, error) {
+func (r *FileSystemSessionRepository) FindAllProjectTags(project string) []string {
 	sessionsForProject := r.FindAllByProject(project)
 
 	tags := []string{}
@@ -207,7 +207,7 @@ func (r *FileSystemSessionRepository) FindAllProjectTags(project string) ([]stri
 		}
 	}
 
-	return tags, nil
+	return tags
 }
 
 func (r *FileSystemSessionRepository) FindInTimeRange(timeRange timerange.TimeRange) []session.Session {

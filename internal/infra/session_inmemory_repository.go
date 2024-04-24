@@ -49,7 +49,7 @@ func (r *InMemorySessionRepository) FindAllSessions() []session.Session {
 	return r.Sessions
 }
 
-func (r *InMemorySessionRepository) FindAllProjects() ([]string, error) {
+func (r *InMemorySessionRepository) FindAllProjects() []string {
 	sessions := r.FindAllSessions()
 
 	projects := []string{}
@@ -62,10 +62,10 @@ func (r *InMemorySessionRepository) FindAllProjects() ([]string, error) {
 		projects = append(projects, session.Project)
 	}
 
-	return projects, nil
+	return projects
 }
 
-func (r *InMemorySessionRepository) FindAllProjectTags(project string) ([]string, error) {
+func (r *InMemorySessionRepository) FindAllProjectTags(project string) []string {
 	sessionsForProject := r.FindAllByProject(project)
 
 	tags := []string{}
@@ -80,7 +80,7 @@ func (r *InMemorySessionRepository) FindAllProjectTags(project string) ([]string
 		}
 	}
 
-	return tags, nil
+	return tags
 }
 
 func (r *InMemorySessionRepository) FindInTimeRange(timeRange timerange.TimeRange) []session.Session {

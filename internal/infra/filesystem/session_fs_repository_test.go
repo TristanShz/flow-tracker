@@ -161,7 +161,7 @@ func TestFindAllProjects(t *testing.T) {
 		Project:   "MyTodo",
 	})
 
-	got, _ := repository.FindAllProjects()
+	got := repository.FindAllProjects()
 
 	want := []string{"Flow", "MyTodo"}
 	if !reflect.DeepEqual(got, want) {
@@ -212,7 +212,7 @@ func TestFindAllProjectsTags(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got, _ := repository.FindAllProjectTags(tt.name); !reflect.DeepEqual(got, tt.want) {
+			if got := repository.FindAllProjectTags(tt.name); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FileSystemSessionRepository.FindAllProjectTags() = %v, want %v", got, tt.want)
 			}
 		})

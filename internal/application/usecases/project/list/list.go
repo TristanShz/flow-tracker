@@ -7,10 +7,7 @@ type UseCase struct {
 }
 
 func (s UseCase) Execute() ([]string, error) {
-	projects, err := s.sessionRepository.FindAllProjects()
-	if err != nil {
-		return []string{}, err
-	}
+	projects := s.sessionRepository.FindAllProjects()
 
 	return projects, nil
 }

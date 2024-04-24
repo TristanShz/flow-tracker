@@ -10,7 +10,7 @@ type SessionRepository interface {
 	FindLastSession() *session.Session
 	FindAllSessions() []session.Session
 	FindAllByProject(project string) []session.Session
-	FindAllProjects() ([]string, error)
-	FindAllProjectTags(project string) ([]string, error)
+	FindAllProjects() []string
+	FindAllProjectTags(project string) []string
 	FindInTimeRange(timeRange timerange.TimeRange) []session.Session
 }
