@@ -1,10 +1,10 @@
-package status_test
+package sessionstatus_test
 
 import (
 	"testing"
 	"time"
 
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/status"
+	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/sessionstatus"
 	"github.com/TristanSch1/flow/internal/domain/session"
 	"github.com/TristanSch1/flow/internal/tests"
 )
@@ -44,7 +44,7 @@ func TestFlowSessionStatus(t *testing.T) {
 			givenNow:         time.Date(2024, time.April, 14, 12, 26, 0, 0, time.UTC),
 			expectedSession:  session.Session{},
 			expectedDuration: 0,
-			expectedError:    status.ErrNoCurrentSession,
+			expectedError:    sessionstatus.ErrNoCurrentSession,
 		},
 		{
 			name: "No current session",
@@ -60,7 +60,7 @@ func TestFlowSessionStatus(t *testing.T) {
 			givenNow:         time.Date(2024, time.April, 14, 13, 26, 0, 0, time.UTC),
 			expectedSession:  session.Session{},
 			expectedDuration: 0,
-			expectedError:    status.ErrNoCurrentSession,
+			expectedError:    sessionstatus.ErrNoCurrentSession,
 		},
 	}
 

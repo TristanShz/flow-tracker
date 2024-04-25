@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/sessionstatus"
 	startsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/status"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stopsession"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/viewsessionsreport"
 	"github.com/TristanSch1/flow/internal/application/usecases/project/list"
@@ -36,11 +36,11 @@ type SessionFixture struct {
 	DateProvider              *infra.StubDateProvider
 	StartFlowSessionUseCase   startsession.UseCase
 	StopFlowSessionUseCase    stopsession.UseCase
-	FlowSessionStatusUseCase  status.UseCase
+	FlowSessionStatusUseCase  sessionstatus.UseCase
 	ListProjectsUseCase       list.UseCase
 	ViewSessionsReportUseCase viewsessionsreport.UseCase
 	ThrownError               error
-	FlowSessionStatus         status.SessionStatus
+	FlowSessionStatus         sessionstatus.SessionStatus
 	Projects                  []string
 	SessionsReport            sessionsreport.SessionsReport
 	SessionsReportPresenter   TestPresenter
@@ -167,7 +167,7 @@ func GetSessionFixture(t *testing.T) SessionFixture {
 
 	startFlowSession := startsession.NewStartFlowSessionUseCase(sessionRepository, dateProvider, idProvider)
 	stopFlowSession := stopsession.NewStopSessionUseCase(sessionRepository, dateProvider)
-	flowSessionStatus := status.NewFlowSessionStatusUseCase(sessionRepository, dateProvider)
+	flowSessionStatus := sessionstatus.NewFlowSessionStatusUseCase(sessionRepository, dateProvider)
 
 	viewSessionsReport := viewsessionsreport.NewViewSessionsReportUseCase(sessionRepository)
 	sessionsReportPresenter := TestPresenter{}

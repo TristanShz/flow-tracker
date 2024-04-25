@@ -7,8 +7,8 @@ import (
 
 	"github.com/TristanSch1/flow/internal/application"
 	app "github.com/TristanSch1/flow/internal/application/usecases"
+	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/sessionstatus"
 	startsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/status"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stopsession"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/viewsessionsreport"
 	"github.com/TristanSch1/flow/internal/application/usecases/project/list"
@@ -36,7 +36,7 @@ func InitializeApp(
 
 	startFlowSessionUseCase := startsession.NewStartFlowSessionUseCase(sessionRepository, dateProvider, idProvider)
 	stopFlowSessionUseCase := stopsession.NewStopSessionUseCase(sessionRepository, dateProvider)
-	flowSessionStatusUseCase := status.NewFlowSessionStatusUseCase(sessionRepository, dateProvider)
+	flowSessionStatusUseCase := sessionstatus.NewFlowSessionStatusUseCase(sessionRepository, dateProvider)
 
 	viewSessionsReportUseCase := viewsessionsreport.NewViewSessionsReportUseCase(sessionRepository)
 
