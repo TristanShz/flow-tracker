@@ -3,7 +3,6 @@ package report
 import (
 	"errors"
 	"log"
-	"time"
 
 	app "github.com/TristanSch1/flow/internal/application/usecases"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/viewsessionsreport"
@@ -41,14 +40,14 @@ func Command(app *app.App) *cobra.Command {
 			}
 
 			if dayFlag {
-				timeRange := timerange.NewDayTimeRange(time.Now())
+				timeRange := timerange.NewDayTimeRange(app.DateProvider.GetNow())
 
 				command.Since = timeRange.Since
 				command.Until = timeRange.Until
 			}
 
 			if weekFlag {
-				timeRange := timerange.NewWeekTimeRange(time.Now())
+				timeRange := timerange.NewWeekTimeRange(app.DateProvider.GetNow())
 
 				command.Since = timeRange.Since
 				command.Until = timeRange.Until
@@ -64,7 +63,7 @@ func Command(app *app.App) *cobra.Command {
 	}
 
 	cmd.Flags().StringP("project", "p", "", "get a report for all flow sessions of given project")
-	cmd.Flags().StringP("format", "f", "by-day", "Specify the format of the report. Possible values: by-day, by-project, total-duration")
+	cmd.Flags().StringP("format", "f", "", "Specify the format of the report. Possible values: by-day, by-project, total-duration")
 	cmd.Flags().StringP("since", "s", "", "Specify the start date of the report")
 	cmd.Flags().StringP("until", "u", "", "Specify the end date of the report")
 	cmd.Flags().BoolP("day", "d", false, "Get a report for all flow sessions of the day")

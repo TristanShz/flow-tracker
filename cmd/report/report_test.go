@@ -17,46 +17,148 @@ func TestReportCommand(t *testing.T) {
 
 	sessionRepository := &infra.InMemorySessionRepository{}
 	dateProvider := infra.NewStubDateProvider()
-	sessionRepository.Sessions = []session.Session{
-		{
-			Id:        "1",
-			StartTime: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
-			EndTime:   time.Date(2024, time.April, 14, 13, 10, 0, 0, time.UTC),
-			Project:   "MyTodo",
-			Tags:      []string{"add-todo"},
-		},
-		{
-			Id:        "2",
-			StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
-			EndTime:   time.Date(2024, time.April, 14, 15, 12, 0, 0, time.UTC),
-			Project:   "Flow",
-			Tags:      []string{"start-usecase"},
-		},
-	}
 	app := test.InitializeApp(sessionRepository, dateProvider)
 
 	tt := []struct {
-		error error
-		name  string
-		want  string
-		args  []string
+		error         error
+		name          string
+		want          string
+		givenSessions []session.Session
+		givenNow      time.Time
+		args          []string
 	}{
 		{
-			name:  "No args",
-			args:  []string{"report"},
-			want:  "Sessions Report\n\nSun, 14 Apr 2024 :\n    From 10:12:00 to 13:10:00 2h58m0s MyTodo [add-todo]\n    From 14:12:00 to 15:12:00 1h0m0s Flow [start-usecase]",
-			error: nil,
+			name: "No args",
+			args: []string{},
+			givenSessions: []session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 13, 10, 0, 0, time.UTC),
+					Project:   "MyTodo",
+					Tags:      []string{"add-todo"},
+				},
+				{
+					Id:        "2",
+					StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 15, 12, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"start-usecase"},
+				},
+			},
+			want: "Sessions Report\n\nSun, 14 Apr 2024 :\n    From 10:12:00 to 13:10:00 2h58m0s MyTodo [add-todo]\n    From 14:12:00 to 15:12:00 1h0m0s Flow [start-usecase]",
 		},
 		{
 			name:  "Invalid format flag",
-			args:  []string{"report", "--format", "invalid"},
-			want:  "",
+			args:  []string{"--format", "invalid"},
 			error: errors.New("invalid format flag. possible values: by-day, by-project"),
+		},
+		{
+			name: "By day",
+			args: []string{"--format", "by-day"},
+			givenSessions: []session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 13, 10, 0, 0, time.UTC),
+					Project:   "MyTodo",
+					Tags:      []string{"add-todo"},
+				},
+				{
+					Id:        "2",
+					StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 15, 12, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"start-usecase"},
+				},
+			},
+			want: "Sessions Report\n\nSun, 14 Apr 2024 :\n    From 10:12:00 to 13:10:00 2h58m0s MyTodo [add-todo]\n    From 14:12:00 to 15:12:00 1h0m0s Flow [start-usecase]",
+		},
+		{
+			name: "By project",
+			args: []string{"--format", "by-project"},
+			givenSessions: []session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 13, 10, 0, 0, time.UTC),
+					Project:   "MyTodo",
+					Tags:      []string{"add-todo"},
+				},
+				{
+					Id:        "2",
+					StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 15, 12, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"start-usecase"},
+				},
+			},
+			want: "Sessions Report\n\nMyTodo - 2h58m0s\n    [add-todo] -> 2h58m0s\n\nFlow - 1h0m0s\n    [start-usecase] -> 1h0m0s",
+		},
+		{
+			name:     "Sessions of the day",
+			args:     []string{"--day"},
+			givenNow: time.Date(2024, time.April, 14, 18, 0, 0, 0, time.UTC),
+			givenSessions: []session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 13, 10, 0, 0, time.UTC),
+					Project:   "MyTodo",
+					Tags:      []string{"add-todo"},
+				},
+				{
+					Id:        "2",
+					StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 15, 12, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"start-usecase"},
+				},
+				{
+					Id:        "3",
+					StartTime: time.Date(2024, time.April, 15, 16, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 15, 17, 12, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"start-usecase"},
+				},
+			},
+			want: "Sessions Report\n\nSun, 14 Apr 2024 :\n    From 10:12:00 to 13:10:00 2h58m0s MyTodo [add-todo]\n    From 14:12:00 to 15:12:00 1h0m0s Flow [start-usecase]",
+		},
+		{
+			name:     "Sessions of the week",
+			args:     []string{"--week"},
+			givenNow: time.Date(2024, time.April, 16, 18, 0, 0, 0, time.UTC),
+			givenSessions: []session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 13, 10, 0, 0, time.UTC),
+					Project:   "MyTodo",
+					Tags:      []string{"add-todo"},
+				},
+				{
+					Id:        "2",
+					StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 15, 12, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"start-usecase"},
+				},
+				{
+					Id:        "3",
+					StartTime: time.Date(2024, time.April, 15, 16, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 15, 17, 12, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"start-usecase"},
+				},
+			},
+			want: "Sessions Report\n\nMon, 15 Apr 2024 :\n    From 16:12:00 to 17:12:00 1h0m0s Flow [start-usecase]",
 		},
 	}
 
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
+			sessionRepository.Sessions = tc.givenSessions
+			dateProvider.Now = tc.givenNow
 			c := report.Command(app)
 
 			got, err := test.ExecuteCmd(t, c, tc.args...)

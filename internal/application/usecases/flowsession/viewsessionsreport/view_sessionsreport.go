@@ -37,10 +37,10 @@ func (s UseCase) Execute(
 		Sessions: sessions,
 	}
 
-	if command.Format == sessionsreport.FormatByDay {
-		presenter.ShowByDay(sessionsReport)
-	} else {
+	if command.Format == sessionsreport.FormatByProject {
 		presenter.ShowByProject(sessionsReport)
+	} else {
+		presenter.ShowByDay(sessionsReport)
 	}
 
 	return nil
