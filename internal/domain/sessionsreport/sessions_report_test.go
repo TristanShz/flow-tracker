@@ -62,7 +62,7 @@ var sessionsReportTest = sessionsreport.NewSessionsReport([]session.Session{
 })
 
 func TestSessionsReport_Formats(t *testing.T) {
-	tests := []struct {
+	tt := []struct {
 		wantByDays     []sessionsreport.DayReport
 		wantByProjects []sessionsreport.ProjectReport
 		name           string
@@ -247,14 +247,14 @@ func TestSessionsReport_Formats(t *testing.T) {
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.e.GetByDayReport(); !reflect.DeepEqual(got, tt.wantByDays) {
-				t.Errorf("SessionsReport.GetByDayReport() = %v, want %v", got, tt.wantByDays)
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := tc.e.GetByDayReport(); !reflect.DeepEqual(got, tc.wantByDays) {
+				t.Errorf("SessionsReport.GetByDayReport() = %v, want %v", got, tc.wantByDays)
 			}
 
-			if got := tt.e.GetByProjectReport(); !reflect.DeepEqual(got, tt.wantByProjects) {
-				t.Errorf("SessionsReport.GetByProjectReport() = %v, want %v", got, tt.wantByProjects)
+			if got := tc.e.GetByProjectReport(); !reflect.DeepEqual(got, tc.wantByProjects) {
+				t.Errorf("SessionsReport.GetByProjectReport() = %v, want %v", got, tc.wantByProjects)
 			}
 		})
 	}

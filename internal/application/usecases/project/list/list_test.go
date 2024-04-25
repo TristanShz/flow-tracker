@@ -10,7 +10,7 @@ import (
 
 func TestListProjects_Success(t *testing.T) {
 	f := tests.GetSessionFixture(t)
-	tests := []struct {
+	tt := []struct {
 		name          string
 		givenSessions []session.Session
 		want          []string
@@ -60,13 +60,13 @@ func TestListProjects_Success(t *testing.T) {
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			f.GivenSomeSessions(tt.givenSessions)
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			f.GivenSomeSessions(tc.givenSessions)
 
 			f.WhenGettingListOfProjects()
 
-			f.ThenProjectsShouldBe(tt.want)
+			f.ThenProjectsShouldBe(tc.want)
 		})
 	}
 }

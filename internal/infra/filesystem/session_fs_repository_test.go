@@ -197,7 +197,7 @@ func TestFindAllProjectsTags(t *testing.T) {
 		Tags:      []string{"update-todo", "delete-todo"},
 	})
 
-	tests := []struct {
+	tt := []struct {
 		name string
 		want []string
 	}{
@@ -210,10 +210,10 @@ func TestFindAllProjectsTags(t *testing.T) {
 			want: []string{"add-todo", "update-todo", "delete-todo"},
 		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := repository.FindAllProjectTags(tt.name); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FileSystemSessionRepository.FindAllProjectTags() = %v, want %v", got, tt.want)
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := repository.FindAllProjectTags(tc.name); !reflect.DeepEqual(got, tc.want) {
+				t.Errorf("FileSystemSessionRepository.FindAllProjectTags() = %v, want %v", got, tc.want)
 			}
 		})
 	}
@@ -243,7 +243,7 @@ func TestFindInTimeRange(t *testing.T) {
 		Tags:      []string{"delete-todo"},
 	})
 
-	tests := []struct {
+	tt := []struct {
 		name string
 		args timerange.TimeRange
 		want []session.Session
@@ -335,10 +335,10 @@ func TestFindInTimeRange(t *testing.T) {
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := repository.FindInTimeRange(tt.args); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FileSystemSessionRepository.FindInTimeRange() = %v, want %v", got, tt.want)
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := repository.FindInTimeRange(tc.args); !reflect.DeepEqual(got, tc.want) {
+				t.Errorf("FileSystemSessionRepository.FindInTimeRange() = %v, want %v", got, tc.want)
 			}
 		})
 	}

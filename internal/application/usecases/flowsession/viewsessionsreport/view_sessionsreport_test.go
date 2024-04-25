@@ -83,7 +83,7 @@ var sessionsForTest = []session.Session{
 }
 
 func TestViewSessionsReport(t *testing.T) {
-	testsTable := []struct {
+	tt := []struct {
 		command        viewsessionsreport.Command
 		name           string
 		expectedFormat string
@@ -143,6 +143,15 @@ func TestViewSessionsReport(t *testing.T) {
 			givenSessions:  sessionsForTest,
 			want:           sessionsreport.NewSessionsReport(sessionsForTest),
 			expectedFormat: sessionsreport.FormatByDay,
+		},
+		{
+			name: "Format by project",
+			command: viewsessionsreport.Command{
+				Format: sessionsreport.FormatByProject,
+			},
+			givenSessions:  sessionsForTest,
+			want:           sessionsreport.NewSessionsReport(sessionsForTest),
+			expectedFormat: sessionsreport.FormatByProject,
 		},
 		{
 			name: "View sessions of a given day",
@@ -239,15 +248,15 @@ func TestViewSessionsReport(t *testing.T) {
 		},
 	}
 
-	for _, tt := range testsTable {
-		t.Run(tt.name, func(t *testing.T) {
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
 			f := tests.GetSessionFixture(t)
 
-			f.GivenSomeSessions(tt.givenSessions)
+			f.GivenSomeSessions(tc.givenSessions)
 
-			f.WhenUserSeesSessionsReport(tt.command)
+			f.WhenUserSeesSessionsReport(tc.command)
 
-			f.ThenUserShouldSeeSessionsReport(tt.want, tt.expectedFormat)
+			f.ThenUserShouldSeeSessionsReport(tc.want, tc.expectedFormat)
 		})
 	}
 }

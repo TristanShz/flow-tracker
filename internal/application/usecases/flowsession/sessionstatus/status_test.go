@@ -10,7 +10,7 @@ import (
 )
 
 func TestFlowSessionStatus(t *testing.T) {
-	testsTable := []struct {
+	tt := []struct {
 		name             string
 		givenSessions    []session.Session
 		givenNow         time.Time
@@ -64,16 +64,16 @@ func TestFlowSessionStatus(t *testing.T) {
 		},
 	}
 
-	for _, tt := range testsTable {
-		t.Run(tt.name, func(t *testing.T) {
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
 			f := tests.GetSessionFixture(t)
-			f.GivenSomeSessions(tt.givenSessions)
-			f.GivenNowIs(tt.givenNow)
+			f.GivenSomeSessions(tc.givenSessions)
+			f.GivenNowIs(tc.givenNow)
 			f.WhenUserSeesTheCurrentSessionStatus()
-			if tt.expectedError != nil {
-				f.ThenErrorShouldBe(tt.expectedError)
+			if tc.expectedError != nil {
+				f.ThenErrorShouldBe(tc.expectedError)
 			} else {
-				f.ThenUserShouldSee(tt.expectedSession, 1*time.Hour)
+				f.ThenUserShouldSee(tc.expectedSession, 1*time.Hour)
 			}
 		})
 	}

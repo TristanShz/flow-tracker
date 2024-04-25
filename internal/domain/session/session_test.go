@@ -8,7 +8,7 @@ import (
 )
 
 func TestSession_Duration(t *testing.T) {
-	tests := []struct {
+	tt := []struct {
 		name string
 		e    session.Session
 		want time.Duration
@@ -29,17 +29,17 @@ func TestSession_Duration(t *testing.T) {
 			want: 0,
 		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.e.Duration(); got != tt.want {
-				t.Errorf("Entry.Duration() = %v, want %v", got, tt.want)
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := tc.e.Duration(); got != tc.want {
+				t.Errorf("Entry.Duration() = %v, want %v", got, tc.want)
 			}
 		})
 	}
 }
 
 func TestSession_Status(t *testing.T) {
-	tests := []struct {
+	tt := []struct {
 		name string
 		want string
 		e    session.Session
@@ -63,17 +63,17 @@ func TestSession_Status(t *testing.T) {
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.e.Status(); got != tt.want {
-				t.Errorf("Entry.Status() = %v, want %v", got, tt.want)
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := tc.e.Status(); got != tc.want {
+				t.Errorf("Entry.Status() = %v, want %v", got, tc.want)
 			}
 		})
 	}
 }
 
 func TestSession_GetFormattedEndTime(t *testing.T) {
-	tests := []struct {
+	tt := []struct {
 		name string
 		want string
 		e    session.Session
@@ -97,10 +97,10 @@ func TestSession_GetFormattedEndTime(t *testing.T) {
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.e.GetFormattedEndTime(); got != tt.want {
-				t.Errorf("Entry.GetFormattedEndTime() = %v, want %v", got, tt.want)
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := tc.e.GetFormattedEndTime(); got != tc.want {
+				t.Errorf("Entry.GetFormattedEndTime() = %v, want %v", got, tc.want)
 			}
 		})
 	}
@@ -119,7 +119,7 @@ func TestSession_GetFormattedStartTime(t *testing.T) {
 }
 
 func TestSession_HasTag(t *testing.T) {
-	tests := []struct {
+	tt := []struct {
 		name string
 		e    session.Session
 		want bool
@@ -155,17 +155,17 @@ func TestSession_HasTag(t *testing.T) {
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.e.HasTag("tag"); got != tt.want {
-				t.Errorf("Entry.HasTag() = %v, want %v", got, tt.want)
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := tc.e.HasTag("tag"); got != tc.want {
+				t.Errorf("Entry.HasTag() = %v, want %v", got, tc.want)
 			}
 		})
 	}
 }
 
 func TestSession_Equals(t *testing.T) {
-	tests := []struct {
+	tt := []struct {
 		name  string
 		e     session.Session
 		given session.Session
@@ -201,10 +201,10 @@ func TestSession_Equals(t *testing.T) {
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.e.Equals(tt.given); got != tt.want {
-				t.Errorf("Entry.Equals() = %v, want %v", got, tt.want)
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := tc.e.Equals(tc.given); got != tc.want {
+				t.Errorf("Entry.Equals() = %v, want %v", got, tc.want)
 			}
 		})
 	}
