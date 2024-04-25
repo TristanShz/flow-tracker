@@ -17,7 +17,7 @@ func checkFormatFlag(flag string) bool {
 	return flag == sessionsreport.FormatByDay || flag == sessionsreport.FormatByProject
 }
 
-func ReportCmd(app *app.App) *cobra.Command {
+func Command(app *app.App) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "report",
 		Short: "Report",

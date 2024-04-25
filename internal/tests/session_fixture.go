@@ -9,7 +9,7 @@ import (
 
 	startsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/status"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stop"
+	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stopsession"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/viewsessionsreport"
 	"github.com/TristanSch1/flow/internal/application/usecases/project/list"
 	"github.com/TristanSch1/flow/internal/domain/session"
@@ -35,7 +35,7 @@ type SessionFixture struct {
 	SessionRepository         *infra.InMemorySessionRepository
 	DateProvider              *infra.StubDateProvider
 	StartFlowSessionUseCase   startsession.UseCase
-	StopFlowSessionUseCase    stop.UseCase
+	StopFlowSessionUseCase    stopsession.UseCase
 	FlowSessionStatusUseCase  status.UseCase
 	ListProjectsUseCase       list.UseCase
 	ViewSessionsReportUseCase viewsessionsreport.UseCase
@@ -166,7 +166,7 @@ func GetSessionFixture(t *testing.T) SessionFixture {
 	idProvider := &infra.StubIDProvider{}
 
 	startFlowSession := startsession.NewStartFlowSessionUseCase(sessionRepository, dateProvider, idProvider)
-	stopFlowSession := stop.NewStopSessionUseCase(sessionRepository, dateProvider)
+	stopFlowSession := stopsession.NewStopSessionUseCase(sessionRepository, dateProvider)
 	flowSessionStatus := status.NewFlowSessionStatusUseCase(sessionRepository, dateProvider)
 
 	viewSessionsReport := viewsessionsreport.NewViewSessionsReportUseCase(sessionRepository)

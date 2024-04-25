@@ -1,4 +1,4 @@
-package stop
+package stopsession
 
 import (
 	"errors"

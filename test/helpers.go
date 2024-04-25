@@ -9,7 +9,7 @@ import (
 	app "github.com/TristanSch1/flow/internal/application/usecases"
 	startsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/status"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stop"
+	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stopsession"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/viewsessionsreport"
 	"github.com/TristanSch1/flow/internal/application/usecases/project/list"
 	"github.com/TristanSch1/flow/internal/infra"
@@ -35,7 +35,7 @@ func InitializeApp(
 	idProvider := &infra.StubIDProvider{}
 
 	startFlowSessionUseCase := startsession.NewStartFlowSessionUseCase(sessionRepository, dateProvider, idProvider)
-	stopFlowSessionUseCase := stop.NewStopSessionUseCase(sessionRepository, dateProvider)
+	stopFlowSessionUseCase := stopsession.NewStopSessionUseCase(sessionRepository, dateProvider)
 	flowSessionStatusUseCase := status.NewFlowSessionStatusUseCase(sessionRepository, dateProvider)
 
 	viewSessionsReportUseCase := viewsessionsreport.NewViewSessionsReportUseCase(sessionRepository)

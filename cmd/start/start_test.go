@@ -12,7 +12,7 @@ import (
 	"github.com/matryer/is"
 )
 
-func TestStarTCommand(t *testing.T) {
+func TestStartCommand(t *testing.T) {
 	is := is.New(t)
 
 	sessionRepository := &infra.InMemorySessionRepository{}

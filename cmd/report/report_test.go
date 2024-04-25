@@ -57,7 +57,7 @@ func TestReportCommand(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			c := report.ReportCmd(app)
+			c := report.Command(app)
 
 			got, err := test.ExecuteCmd(t, c, tc.args...)
 

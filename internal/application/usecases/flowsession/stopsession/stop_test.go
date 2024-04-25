@@ -1,10 +1,10 @@
-package stop_test
+package stopsession_test
 
 import (
 	"testing"
 	"time"
 
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stop"
+	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stopsession"
 	"github.com/TristanSch1/flow/internal/domain/session"
 	"github.com/TristanSch1/flow/internal/tests"
 )
@@ -28,5 +28,5 @@ func TestStopFlowSession_NoCurrentSession(t *testing.T) {
 
 	f.WhenStoppingFlowSession()
 
-	f.ThenErrorShouldBe(stop.ErrNoCurrentSession)
+	f.ThenErrorShouldBe(stopsession.ErrNoCurrentSession)
 }
