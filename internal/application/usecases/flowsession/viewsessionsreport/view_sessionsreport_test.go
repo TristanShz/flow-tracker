@@ -95,14 +95,14 @@ func TestViewSessionsReport(t *testing.T) {
 			command:        viewsessionsreport.Command{},
 			givenSessions:  sessionsForTest,
 			want:           sessionsreport.NewSessionsReport(sessionsForTest),
-			expectedFormat: sessionsreport.FormatByProject,
+			expectedFormat: sessionsreport.FormatByDay,
 		},
 		{
 			name:           "No arguments and no sessions",
 			command:        viewsessionsreport.Command{},
 			givenSessions:  []session.Session{},
 			want:           sessionsreport.NewSessionsReport([]session.Session{}),
-			expectedFormat: sessionsreport.FormatByProject,
+			expectedFormat: sessionsreport.FormatByDay,
 		},
 		{
 			name: "Project argument given",
@@ -133,7 +133,7 @@ func TestViewSessionsReport(t *testing.T) {
 					Tags:      []string{"start-usecase"},
 				},
 			}),
-			expectedFormat: sessionsreport.FormatByProject,
+			expectedFormat: sessionsreport.FormatByDay,
 		},
 		{
 			name: "Format by day",
@@ -174,7 +174,7 @@ func TestViewSessionsReport(t *testing.T) {
 					Tags:      []string{"report-usecase"},
 				},
 			}),
-			expectedFormat: sessionsreport.FormatByProject,
+			expectedFormat: sessionsreport.FormatByDay,
 		},
 		{
 			name: "View sessions since a given day",
@@ -204,7 +204,7 @@ func TestViewSessionsReport(t *testing.T) {
 					Tags:      []string{"pause-pomodoro"},
 				},
 			}),
-			expectedFormat: sessionsreport.FormatByProject,
+			expectedFormat: sessionsreport.FormatByDay,
 		},
 		{
 			name: "View sessions until a given day",
@@ -235,7 +235,7 @@ func TestViewSessionsReport(t *testing.T) {
 					Tags:      []string{"report-usecase"},
 				},
 			}),
-			expectedFormat: sessionsreport.FormatByProject,
+			expectedFormat: sessionsreport.FormatByDay,
 		},
 	}
 
