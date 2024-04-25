@@ -1,58 +1,16 @@
 package report_test
 
 import (
-	"bytes"
 	"errors"
-	"strings"
 	"testing"
 	"time"
 
 	"github.com/TristanSch1/flow/cmd/report"
-	"github.com/TristanSch1/flow/internal/application"
-	app "github.com/TristanSch1/flow/internal/application/usecases"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/status"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stop"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/viewsessionsreport"
-	"github.com/TristanSch1/flow/internal/application/usecases/project/list"
 	"github.com/TristanSch1/flow/internal/domain/session"
 	"github.com/TristanSch1/flow/internal/infra"
+	"github.com/TristanSch1/flow/test"
 	is "github.com/matryer/is"
-	"github.com/spf13/cobra"
 )
-
-func execute(t *testing.T, c *cobra.Command, args ...string) (string, error) {
-	t.Helper()
-
-	buf := new(bytes.Buffer)
-	c.SetOut(buf)
-	c.SetErr(buf)
-	c.SetArgs(args)
-
-	err := c.Execute()
-	return strings.TrimSpace(buf.String()), err
-}
-
-func initializeApp(sessionRepository application.SessionRepository) *app.App {
-	dateProvider := &infra.StubDateProvider{}
-	idProvider := &infra.StubIDProvider{}
-
-	startFlowSessionUseCase := start.NewStartFlowSessionUseCase(sessionRepository, dateProvider, idProvider)
-	stopFlowSessionUseCase := stop.NewStopSessionUseCase(sessionRepository, dateProvider)
-	flowSessionStatusUseCase := status.NewFlowSessionStatusUseCase(sessionRepository, dateProvider)
-
-	viewSessionsReportUseCase := viewsessionsreport.NewViewSessionsReportUseCase(sessionRepository)
-
-	listProjectsUseCase := list.NewListProjectsUseCase(sessionRepository)
-
-	return app.NewApp(
-		startFlowSessionUseCase,
-		stopFlowSessionUseCase,
-		flowSessionStatusUseCase,
-		listProjectsUseCase,
-		viewSessionsReportUseCase,
-	)
-}
 
 func TestReportCommand(t *testing.T) {
 	is := is.New(t)
@@ -74,7 +32,7 @@ func TestReportCommand(t *testing.T) {
 			Tags:      []string{"start-usecase"},
 		},
 	}
-	app := initializeApp(sessionRepository)
+	app := test.InitializeApp(sessionRepository)
 
 	tt := []struct {
 		error error
@@ -100,7 +58,7 @@ func TestReportCommand(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			c := report.ReportCmd(app)
 
-			got, err := execute(t, c, tc.args...)
+			got, err := test.ExecuteCmd(t, c, tc.args...)
 
 			is.Equal(tc.error, err)
 

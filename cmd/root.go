@@ -6,8 +6,9 @@ import (
 	"os"
 
 	"github.com/TristanSch1/flow/cmd/report"
+	"github.com/TristanSch1/flow/cmd/start"
 	app "github.com/TristanSch1/flow/internal/application/usecases"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
+	startsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/status"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stop"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/viewsessionsreport"
@@ -38,7 +39,7 @@ func initializeApp() *app.App {
 	dateProvider := &infra.RealDateProvider{}
 	idProvider := &infra.RealIDProvider{}
 
-	startFlowSessionUseCase := start.NewStartFlowSessionUseCase(&sessionRepository, dateProvider, idProvider)
+	startFlowSessionUseCase := startsession.NewStartFlowSessionUseCase(&sessionRepository, dateProvider, idProvider)
 	stopFlowSessionUseCase := stop.NewStopSessionUseCase(&sessionRepository, dateProvider)
 	flowSessionStatusUseCase := status.NewFlowSessionStatusUseCase(&sessionRepository, dateProvider)
 
@@ -58,7 +59,7 @@ func initializeApp() *app.App {
 func Execute() {
 	app := initializeApp()
 
-	rootCmd.AddCommand(startCmd(app))
+	rootCmd.AddCommand(start.Command(app))
 	rootCmd.AddCommand(stopCmd(app))
 	rootCmd.AddCommand(statusCmd(app))
 	rootCmd.AddCommand(report.ReportCmd(app))

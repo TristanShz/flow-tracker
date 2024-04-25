@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
+	startsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/status"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stop"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/viewsessionsreport"
@@ -34,7 +34,7 @@ type SessionFixture struct {
 	T                         *testing.T
 	SessionRepository         *infra.InMemorySessionRepository
 	DateProvider              *infra.StubDateProvider
-	StartFlowSessionUseCase   start.UseCase
+	StartFlowSessionUseCase   startsession.UseCase
 	StopFlowSessionUseCase    stop.UseCase
 	FlowSessionStatusUseCase  status.UseCase
 	ListProjectsUseCase       list.UseCase
@@ -54,7 +54,7 @@ func (s *SessionFixture) GivenSomeSessions(sessions []session.Session) {
 	s.SessionRepository.Sessions = sessions
 }
 
-func (s *SessionFixture) WhenStartingFlowSession(command start.Command) {
+func (s *SessionFixture) WhenStartingFlowSession(command startsession.Command) {
 	err := s.StartFlowSessionUseCase.Execute(command)
 	if err != nil {
 		s.ThrownError = err
@@ -165,7 +165,7 @@ func GetSessionFixture(t *testing.T) SessionFixture {
 	dateProvider := infra.NewStubDateProvider()
 	idProvider := &infra.StubIDProvider{}
 
-	startFlowSession := start.NewStartFlowSessionUseCase(sessionRepository, dateProvider, idProvider)
+	startFlowSession := startsession.NewStartFlowSessionUseCase(sessionRepository, dateProvider, idProvider)
 	stopFlowSession := stop.NewStopSessionUseCase(sessionRepository, dateProvider)
 	flowSessionStatus := status.NewFlowSessionStatusUseCase(sessionRepository, dateProvider)
 

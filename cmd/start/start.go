@@ -1,14 +1,14 @@
-package cmd
+package start
 
 import (
 	"errors"
 	"fmt"
-	"os"
+	"log"
 	"strings"
 	"time"
 
 	app "github.com/TristanSch1/flow/internal/application/usecases"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
+	startsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
 	"github.com/TristanSch1/flow/utils"
 	"github.com/spf13/cobra"
 )
@@ -17,7 +17,7 @@ func isTag(arg string) bool {
 	return strings.HasPrefix(arg, "+")
 }
 
-func startCmd(app *app.App) *cobra.Command {
+func Command(app *app.App) *cobra.Command {
 	return &cobra.Command{
 		Use:                   "start [project] [+tag1 +tag2...]",
 		Example:               "start my-todo +add-todo +update-todo",
@@ -40,16 +40,22 @@ func startCmd(app *app.App) *cobra.Command {
 
 			return nil
 		},
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			logger := log.New(cmd.OutOrStdout(), "", 0)
 			// no args -> show list of existing projects
 			if len(args) == 0 {
 				projects, err := app.ListProjectsUseCase.Execute()
 				if err != nil {
-					fmt.Printf("%v", err)
-					os.Exit(1)
+					return err
 				}
-				fmt.Printf("Existing projects : %v", strings.Join(projects, ", "))
-				os.Exit(0)
+				msg := "Please provide a project name"
+
+				if len(projects) > 0 {
+					msg += fmt.Sprintf(", existing projects: %v", strings.Join(projects, ", "))
+				}
+
+				logger.Println(msg)
+				return nil
 			}
 
 			tags := []string{}
@@ -58,15 +64,14 @@ func startCmd(app *app.App) *cobra.Command {
 				tagWithoutPrefix, _ := strings.CutPrefix(tag, "+")
 				tags = append(tags, tagWithoutPrefix)
 			}
-			command := start.Command{
+			command := startsession.Command{
 				Project: args[0],
 				Tags:    tags,
 			}
 
 			err := app.StartFlowSessionUseCase.Execute(command)
 			if err != nil {
-				fmt.Printf("%v", err)
-				os.Exit(1)
+				return err
 			}
 
 			text := fmt.Sprintf("Starting flow session for the project %v", utils.ProjectColor(command.Project))
@@ -77,7 +82,13 @@ func startCmd(app *app.App) *cobra.Command {
 
 			text += fmt.Sprintf(" at %v", utils.TimeColor(time.Now().Format(time.Kitchen)))
 
-			fmt.Println(text)
+			logger.Println(text)
+
+			return nil
 		},
 	}
+}
+
+func Execute(cmd *cobra.Command) error {
+	return cmd.Execute()
 }

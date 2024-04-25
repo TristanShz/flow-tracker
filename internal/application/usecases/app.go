@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
+	startsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/status"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stop"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/viewsessionsreport"
@@ -9,7 +9,7 @@ import (
 )
 
 type App struct {
-	StartFlowSessionUseCase   start.UseCase
+	StartFlowSessionUseCase   startsession.UseCase
 	StopFlowSessionUseCase    stop.UseCase
 	FlowSessionStatusUseCase  status.UseCase
 	ListProjectsUseCase       list.UseCase
@@ -17,7 +17,7 @@ type App struct {
 }
 
 func NewApp(
-	startFlowSessionUseCase start.UseCase,
+	startFlowSessionUseCase startsession.UseCase,
 	stopFlowSessionUseCase stop.UseCase,
 	flowSessionStatusUseCase status.UseCase,
 	listProjectsUseCase list.UseCase,
