@@ -28,8 +28,10 @@ func ExecuteCmd(t *testing.T, c *cobra.Command, args ...string) (string, error) 
 	return strings.TrimSpace(buf.String()), err
 }
 
-func InitializeApp(sessionRepository application.SessionRepository) *app.App {
-	dateProvider := &infra.StubDateProvider{}
+func InitializeApp(
+	sessionRepository application.SessionRepository,
+	dateProvider application.DateProvider,
+) *app.App {
 	idProvider := &infra.StubIDProvider{}
 
 	startFlowSessionUseCase := startsession.NewStartFlowSessionUseCase(sessionRepository, dateProvider, idProvider)
@@ -41,6 +43,7 @@ func InitializeApp(sessionRepository application.SessionRepository) *app.App {
 	listProjectsUseCase := list.NewListProjectsUseCase(sessionRepository)
 
 	return app.NewApp(
+		dateProvider,
 		startFlowSessionUseCase,
 		stopFlowSessionUseCase,
 		flowSessionStatusUseCase,

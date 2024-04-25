@@ -16,6 +16,7 @@ func TestReportCommand(t *testing.T) {
 	is := is.New(t)
 
 	sessionRepository := &infra.InMemorySessionRepository{}
+	dateProvider := infra.NewStubDateProvider()
 	sessionRepository.Sessions = []session.Session{
 		{
 			Id:        "1",
@@ -32,7 +33,7 @@ func TestReportCommand(t *testing.T) {
 			Tags:      []string{"start-usecase"},
 		},
 	}
-	app := test.InitializeApp(sessionRepository)
+	app := test.InitializeApp(sessionRepository, dateProvider)
 
 	tt := []struct {
 		error error

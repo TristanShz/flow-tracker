@@ -80,7 +80,7 @@ func Command(app *app.App) *cobra.Command {
 				text += fmt.Sprintf(" [%v]", utils.TagColor(strings.Join(command.Tags, ", ")))
 			}
 
-			text += fmt.Sprintf(" at %v", utils.TimeColor(time.Now().Format(time.Kitchen)))
+			text += fmt.Sprintf(" at %v", utils.TimeColor(app.DateProvider.GetNow().Format(time.Kitchen)))
 
 			logger.Println(text)
 

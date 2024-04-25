@@ -48,6 +48,7 @@ func initializeApp() *app.App {
 	listProjectsUseCase := list.NewListProjectsUseCase(&sessionRepository)
 
 	return app.NewApp(
+		dateProvider,
 		startFlowSessionUseCase,
 		stopFlowSessionUseCase,
 		flowSessionStatusUseCase,

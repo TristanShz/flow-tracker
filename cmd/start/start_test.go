@@ -1,6 +1,7 @@
 package start_test
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -15,7 +16,8 @@ func TestStarTCommand(t *testing.T) {
 	is := is.New(t)
 
 	sessionRepository := &infra.InMemorySessionRepository{}
-	app := test.InitializeApp(sessionRepository)
+	dateProvider := infra.NewStubDateProvider()
+	app := test.InitializeApp(sessionRepository, dateProvider)
 
 	tt := []struct {
 		name          string
@@ -23,6 +25,7 @@ func TestStarTCommand(t *testing.T) {
 		args          []string
 		error         error
 		givenSessions []session.Session
+		givenNow      time.Time
 	}{
 		{
 			name:          "No args and no existing project",
@@ -46,11 +49,48 @@ func TestStarTCommand(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:  "First arg is a tag",
+			args:  []string{"+add-todo"},
+			error: errors.New("the first argument must be the project name"),
+		},
+		{
+			name:  "Invalid tag",
+			args:  []string{"my-todo", "add-todo"},
+			error: errors.New("invalid tag add-todo (must start with '+')"),
+		},
+		{
+			name:     "Valid command with project",
+			args:     []string{"my-todo"},
+			givenNow: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
+			want:     "Starting flow session for the project my-todo at 10:12AM",
+		},
+		{
+			name:     "Valid command with project and tags",
+			args:     []string{"my-todo", "+add-todo", "+update-todo"},
+			givenNow: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
+			want:     "Starting flow session for the project my-todo [add-todo, update-todo] at 10:12AM",
+		},
+		{
+			name:     "Session already started",
+			args:     []string{"my-todo"},
+			error:    errors.New("there is already a session in progress"),
+			givenNow: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
+			givenSessions: []session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
+					Project:   "my-todo",
+					Tags:      []string{"add-todo"},
+				},
+			},
+		},
 	}
 
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
 			sessionRepository.Sessions = tc.givenSessions
+			dateProvider.Now = tc.givenNow
 			c := start.Command(app)
 
 			got, err := test.ExecuteCmd(t, c, tc.args...)
