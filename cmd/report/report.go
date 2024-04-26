@@ -2,7 +2,9 @@ package report
 
 import (
 	"errors"
+	"fmt"
 	"log"
+	"time"
 
 	app "github.com/TristanSch1/flow/internal/application/usecases"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/viewsessionsreport"
@@ -12,8 +14,43 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func checkFormatFlag(flag string) bool {
+func isFormatFlagValid(flag string) bool {
 	return flag == sessionsreport.FormatByDay || flag == sessionsreport.FormatByProject
+}
+
+func parseTimeFlag(flag string) (time.Time, error) {
+	parsedTime, err := time.Parse("2006-01-02", flag)
+
+	if err == nil {
+		return parsedTime, nil
+	}
+
+	return time.Time{}, fmt.Errorf("%v is not a valid time format", flag)
+}
+
+func parseSinceFlag(cmd *cobra.Command) (time.Time, error) {
+	sinceFlag, _ := cmd.Flags().GetString("since")
+	if sinceFlag != "" {
+		since, err := parseTimeFlag(sinceFlag)
+		if err != nil {
+			return time.Time{}, err
+		}
+		return since, nil
+	}
+	return time.Time{}, nil
+}
+
+func parseUntilFlag(cmd *cobra.Command) (time.Time, error) {
+	untilFlag, _ := cmd.Flags().GetString("until")
+	fmt.Println(untilFlag)
+	if untilFlag != "" {
+		until, err := parseTimeFlag(untilFlag)
+		if err != nil {
+			return time.Time{}, err
+		}
+		return until, nil
+	}
+	return time.Time{}, nil
 }
 
 func Command(app *app.App) *cobra.Command {
@@ -23,22 +60,21 @@ func Command(app *app.App) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger := log.New(cmd.OutOrStdout(), "", 0)
 
-			projectFlag, _ := cmd.Flags().GetString("project")
-			formatFlag, _ := cmd.Flags().GetString("format")
-			dayFlag, _ := cmd.Flags().GetBool("day")
-			weekFlag, _ := cmd.Flags().GetBool("week")
+			presenter := presenter.SessionsReportCLIPresenter{Logger: logger}
 
-			if formatFlag != "" && !checkFormatFlag(formatFlag) {
+			formatFlag, _ := cmd.Flags().GetString("format")
+
+			if formatFlag != "" && !isFormatFlagValid(formatFlag) {
 				return errors.New("invalid format flag. possible values: by-day, by-project")
 			}
 
-			presenter := presenter.SessionsReportCLIPresenter{Logger: logger}
-
+			projectFlag, _ := cmd.Flags().GetString("project")
 			command := viewsessionsreport.Command{
 				Project: projectFlag,
 				Format:  formatFlag,
 			}
 
+			dayFlag, _ := cmd.Flags().GetBool("day")
 			if dayFlag {
 				timeRange := timerange.NewDayTimeRange(app.DateProvider.GetNow())
 
@@ -46,6 +82,7 @@ func Command(app *app.App) *cobra.Command {
 				command.Until = timeRange.Until
 			}
 
+			weekFlag, _ := cmd.Flags().GetBool("week")
 			if weekFlag {
 				timeRange := timerange.NewWeekTimeRange(app.DateProvider.GetNow())
 
@@ -53,6 +90,25 @@ func Command(app *app.App) *cobra.Command {
 				command.Until = timeRange.Until
 			}
 
+			sinceFlag, sinceFlagErr := parseSinceFlag(cmd)
+			if sinceFlagErr != nil {
+				return sinceFlagErr
+			}
+
+			if !sinceFlag.IsZero() {
+				command.Since = sinceFlag
+			}
+
+			untilFlag, untilFlagErr := parseUntilFlag(cmd)
+			if untilFlagErr != nil {
+				return untilFlagErr
+			}
+
+			if !untilFlag.IsZero() {
+				command.Until = untilFlag
+			}
+
+			fmt.Println(command)
 			err := app.ViewSessionsReportUseCase.Execute(command, presenter)
 			if err != nil {
 				return err
