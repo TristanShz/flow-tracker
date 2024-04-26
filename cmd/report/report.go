@@ -108,7 +108,6 @@ func Command(app *app.App) *cobra.Command {
 				command.Until = untilFlag
 			}
 
-			fmt.Println(command)
 			err := app.ViewSessionsReportUseCase.Execute(command, presenter)
 			if err != nil {
 				return err
