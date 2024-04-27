@@ -3,7 +3,7 @@ package utils
 import "math/rand"
 
 const (
-	chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	chars = "abcdefghijklmnopqrstuvwxyz0123456789"
 )
 
 func GenerateID(length int) string {

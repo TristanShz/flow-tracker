@@ -41,7 +41,7 @@ func (r *FileSystemSessionRepository) getFlowPath() string {
 }
 
 func (r *FileSystemSessionRepository) getSessionFileName(s session.Session) string {
-	return s.Id + ".json"
+	return strconv.FormatInt(s.StartTime.Unix(), 10) + ".json"
 }
 
 func (r *FileSystemSessionRepository) readFlowFolder() ([]fs.FileInfo, error) {

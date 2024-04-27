@@ -2,7 +2,6 @@ package startsession
 
 import (
 	"errors"
-	"strconv"
 
 	"github.com/TristanSch1/flow/internal/application"
 	"github.com/TristanSch1/flow/internal/domain/session"
@@ -23,7 +22,7 @@ func (s UseCase) Execute(command Command) error {
 
 	startTime := s.dateProvider.GetNow()
 	session := session.Session{
-		Id:        strconv.FormatInt(startTime.Unix(), 10),
+		Id:        s.idProvider.Provide(),
 		StartTime: startTime,
 		Project:   command.Project,
 		Tags:      command.Tags,
