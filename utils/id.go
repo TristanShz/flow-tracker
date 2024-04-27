@@ -13,3 +13,19 @@ func GenerateID(length int) string {
 	}
 	return string(id)
 }
+
+func isCharValid(char rune) bool {
+	return char >= 'a' && char <= 'z' || char >= '0' && char <= '9'
+}
+
+func IsIDValid(id string) bool {
+	if len(id) != 7 {
+		return false
+	}
+	for _, char := range id {
+		if !isCharValid(char) {
+			return false
+		}
+	}
+	return true
+}

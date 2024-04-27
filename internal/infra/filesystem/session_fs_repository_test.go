@@ -4,16 +4,19 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"sort"
+	"strconv"
 	"testing"
 	"time"
 
 	"github.com/TristanSch1/flow/internal/domain/session"
 	"github.com/TristanSch1/flow/internal/infra/filesystem"
 	"github.com/TristanSch1/flow/pkg/timerange"
+	"github.com/matryer/is"
 )
 
 const (
-	TestFolderPath = "./"
+	TestFolderPath = "./.flow"
 )
 
 func setup() {
@@ -25,30 +28,31 @@ func TestConstructorCreateFolder_Success(t *testing.T) {
 
 	filesystem.NewFileSystemSessionRepository(TestFolderPath)
 
-	path := filepath.Join(TestFolderPath, filesystem.FlowFolderName)
+	path := filepath.Join(TestFolderPath)
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		t.Errorf("File %v not found at location %v", filesystem.FlowFolderName, path)
+		t.Errorf("File not found at location %v", path)
 	}
 }
 
-func TestSave_Success(t *testing.T) {
+func TestFileSystemSessionRepository_Save(t *testing.T) {
 	setup()
 
 	repository := filesystem.NewFileSystemSessionRepository(TestFolderPath)
 
+	startTime := time.Date(2024, 4, 17, 19, 0, 0, 0, time.UTC)
 	repository.Save(session.Session{
 		Id:        "1",
-		StartTime: time.Now(),
+		StartTime: startTime,
 		Project:   "Flow",
 	})
 
-	path := filepath.Join(TestFolderPath, filesystem.FlowFolderName)
-	if _, err := os.Stat(filepath.Join(path, "1.json")); os.IsNotExist(err) {
+	expectedFilename := strconv.FormatInt(startTime.Unix(), 10) + ".json"
+	if _, err := os.Stat(filepath.Join(TestFolderPath, expectedFilename)); os.IsNotExist(err) {
 		t.Errorf("Session with ID id1 is not correctly saved")
 	}
 }
 
-func TestFindAllSessions_Success(t *testing.T) {
+func TestFileSystemSessionRepository_FindAllSessions(t *testing.T) {
 	setup()
 
 	repository := filesystem.NewFileSystemSessionRepository(TestFolderPath)
@@ -103,7 +107,7 @@ func TestFindAllSessions_NoSessions_Success(t *testing.T) {
 	}
 }
 
-func TestFindLastSession_Success(t *testing.T) {
+func TestFileSystemSessionRepository_FindLastSession(t *testing.T) {
 	setup()
 
 	repository := filesystem.NewFileSystemSessionRepository(TestFolderPath)
@@ -135,7 +139,7 @@ func TestFindLastSession_Success(t *testing.T) {
 	}
 }
 
-func TestFindAllProjects(t *testing.T) {
+func TestFileSystemSessionRepository_FindAllProjects(t *testing.T) {
 	setup()
 
 	repository := filesystem.NewFileSystemSessionRepository(TestFolderPath)
@@ -169,7 +173,8 @@ func TestFindAllProjects(t *testing.T) {
 	}
 }
 
-func TestFindAllProjectsTags(t *testing.T) {
+func TestFileSystemSessionRepository_FindAllProjectTags(t *testing.T) {
+	is := is.New(t)
 	setup()
 
 	repository := filesystem.NewFileSystemSessionRepository(TestFolderPath)
@@ -212,14 +217,15 @@ func TestFindAllProjectsTags(t *testing.T) {
 	}
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			if got := repository.FindAllProjectTags(tc.name); !reflect.DeepEqual(got, tc.want) {
-				t.Errorf("FileSystemSessionRepository.FindAllProjectTags() = %v, want %v", got, tc.want)
-			}
+			got := repository.FindAllProjectTags(tc.name)
+			sort.Strings(got)
+			sort.Strings(tc.want)
+			is.Equal(got, tc.want)
 		})
 	}
 }
 
-func TestFindInTimeRange(t *testing.T) {
+func TestFileSystemSessionRepository_FindInTimeRange(t *testing.T) {
 	setup()
 	repository := filesystem.NewFileSystemSessionRepository(TestFolderPath)
 	repository.Save(session.Session{
@@ -339,6 +345,54 @@ func TestFindInTimeRange(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			if got := repository.FindInTimeRange(tc.args); !reflect.DeepEqual(got, tc.want) {
 				t.Errorf("FileSystemSessionRepository.FindInTimeRange() = %v, want %v", got, tc.want)
+			}
+		})
+	}
+}
+
+func TestFileSystemSessionRepository_FindById(t *testing.T) {
+	setup()
+	repository := filesystem.NewFileSystemSessionRepository(TestFolderPath)
+	repository.Save(session.Session{
+		Id:        "1",
+		StartTime: time.Date(2024, 4, 17, 19, 0, 0, 0, time.UTC),
+		EndTime:   time.Date(2024, 4, 17, 20, 0, 0, 0, time.UTC),
+		Project:   "Flow",
+		Tags:      []string{"test-save"},
+	})
+	repository.Save(session.Session{
+		Id:        "2",
+		StartTime: time.Date(2024, 4, 17, 21, 0, 0, 0, time.UTC),
+		Project:   "Flow",
+	})
+
+	tt := []struct {
+		name string
+		id   string
+		want *session.Session
+	}{
+		{
+			name: "Existing session",
+			id:   "1",
+			want: &session.Session{
+				Id:        "1",
+				StartTime: time.Date(2024, 4, 17, 19, 0, 0, 0, time.UTC),
+				EndTime:   time.Date(2024, 4, 17, 20, 0, 0, 0, time.UTC),
+				Project:   "Flow",
+				Tags:      []string{"test-save"},
+			},
+		},
+		{
+			name: "Non-existing session",
+			id:   "3",
+			want: nil,
+		},
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := repository.FindById(tc.id); !reflect.DeepEqual(got, tc.want) {
+				t.Errorf("FileSystemSessionRepository.FindById() = %v, want %v", got, tc.want)
 			}
 		})
 	}

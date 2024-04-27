@@ -15,18 +15,27 @@ import (
 	"github.com/TristanSch1/flow/pkg/timerange"
 )
 
-const (
-	FlowFolderName = ".flow"
-)
+type Sessions []session.Session
+
+func (s Sessions) Len() int {
+	return len(s)
+}
+
+func (s Sessions) Less(i, j int) bool {
+	return s[i].StartTime.Before(s[j].StartTime)
+}
+
+func (s Sessions) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
 
 type FileSystemSessionRepository struct {
 	FlowFolderPath string
 }
 
 func NewFileSystemSessionRepository(flowFolderPath string) FileSystemSessionRepository {
-	path := filepath.Join(flowFolderPath, FlowFolderName)
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		if err := os.MkdirAll(path, 0777); err != nil {
+	if _, err := os.Stat(flowFolderPath); os.IsNotExist(err) {
+		if err := os.MkdirAll(flowFolderPath, 0777); err != nil {
 			log.Fatal("Error while creating .flow folder : ", err)
 		}
 	}
@@ -36,16 +45,12 @@ func NewFileSystemSessionRepository(flowFolderPath string) FileSystemSessionRepo
 	}
 }
 
-func (r *FileSystemSessionRepository) getFlowPath() string {
-	return filepath.Join(r.FlowFolderPath, FlowFolderName)
-}
-
 func (r *FileSystemSessionRepository) getSessionFileName(s session.Session) string {
 	return strconv.FormatInt(s.StartTime.Unix(), 10) + ".json"
 }
 
 func (r *FileSystemSessionRepository) readFlowFolder() ([]fs.FileInfo, error) {
-	dir, err := os.Open(r.getFlowPath())
+	dir, err := os.Open(r.FlowFolderPath)
 	if err != nil {
 		return nil, err
 	}
@@ -59,6 +64,36 @@ func (r *FileSystemSessionRepository) readFlowFolder() ([]fs.FileInfo, error) {
 	return fileInfos, nil
 }
 
+func (r *FileSystemSessionRepository) FindById(id string) *session.Session {
+	fileInfos, err := r.readFlowFolder()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, fileInfo := range fileInfos {
+		if fileInfo.IsDir() {
+			continue
+		}
+
+		filePath := filepath.Join(r.FlowFolderPath, fileInfo.Name())
+		file, err := os.ReadFile(filePath)
+		if err != nil {
+			log.Fatalf("Error while reading file %v : '%v'", fileInfo.Name(), err)
+		}
+
+		session, convertErr := r.rawFileToSession(file)
+		if convertErr != nil {
+			log.Fatalf("Invalid session data for file : %v", fileInfo.Name())
+		}
+
+		if session.Id == id {
+			return session
+		}
+	}
+
+	return nil
+}
+
 func (r *FileSystemSessionRepository) Save(sessionToSave session.Session) error {
 	marshaled, marshaledErr := json.Marshal(sessionToSave)
 
@@ -66,7 +101,7 @@ func (r *FileSystemSessionRepository) Save(sessionToSave session.Session) error 
 		return marshaledErr
 	}
 
-	fullPath := filepath.Join(r.getFlowPath(), r.getSessionFileName(sessionToSave))
+	fullPath := filepath.Join(r.FlowFolderPath, r.getSessionFileName(sessionToSave))
 	saveErr := os.WriteFile(fullPath, marshaled, 0666)
 
 	if saveErr != nil {
@@ -91,14 +126,14 @@ func (r *FileSystemSessionRepository) FindAllSessions() []session.Session {
 		log.Fatal(err)
 	}
 
-	sessions := []session.Session{}
+	sessions := Sessions{}
 
 	for _, fileInfo := range fileInfos {
 		if fileInfo.IsDir() {
 			continue
 		}
 
-		filePath := filepath.Join(r.getFlowPath(), fileInfo.Name())
+		filePath := filepath.Join(r.FlowFolderPath, fileInfo.Name())
 		file, err := os.ReadFile(filePath)
 		if err != nil {
 			log.Fatalf("Error while reading file %v : '%v'", fileInfo.Name(), err)
@@ -110,6 +145,8 @@ func (r *FileSystemSessionRepository) FindAllSessions() []session.Session {
 		}
 		sessions = append(sessions, *session)
 	}
+
+	sort.Sort(sessions)
 
 	return sessions
 }
@@ -160,7 +197,7 @@ func (r *FileSystemSessionRepository) FindLastSession() *session.Session {
 	})
 	lastSessionFile := fileNames[0] + ".json"
 
-	lastSessionFilePath := filepath.Join(r.getFlowPath(), lastSessionFile)
+	lastSessionFilePath := filepath.Join(r.FlowFolderPath, lastSessionFile)
 
 	fileData, err := os.ReadFile(lastSessionFilePath)
 	if err != nil {

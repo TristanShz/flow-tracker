@@ -10,6 +10,7 @@ import (
 )
 
 type App struct {
+	SessionRepository         application.SessionRepository
 	DateProvider              application.DateProvider
 	StartFlowSessionUseCase   startsession.UseCase
 	StopFlowSessionUseCase    stopsession.UseCase
@@ -19,6 +20,7 @@ type App struct {
 }
 
 func NewApp(
+	sessionRepository application.SessionRepository,
 	dateProvider application.DateProvider,
 	startFlowSessionUseCase startsession.UseCase,
 	stopFlowSessionUseCase stopsession.UseCase,
@@ -27,6 +29,7 @@ func NewApp(
 	viewSessionsReportUseCase viewsessionsreport.UseCase,
 ) *App {
 	return &App{
+		SessionRepository:         sessionRepository,
 		DateProvider:              dateProvider,
 		StartFlowSessionUseCase:   startFlowSessionUseCase,
 		StopFlowSessionUseCase:    stopFlowSessionUseCase,

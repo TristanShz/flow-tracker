@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
+	"github.com/TristanSch1/flow/cmd/edit"
 	"github.com/TristanSch1/flow/cmd/report"
 	"github.com/TristanSch1/flow/cmd/start"
 	"github.com/TristanSch1/flow/cmd/status"
@@ -28,16 +30,9 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-func initializeApp() *app.App {
-	homePath, err := os.UserHomeDir()
-	if err != nil {
-		log.Fatal(err)
-	}
+func initializeApp(path string) *app.App {
+	sessionRepository := filesystem.NewFileSystemSessionRepository(path)
 
-	sessionRepository := filesystem.NewFileSystemSessionRepository(homePath)
-	if err != nil {
-		log.Fatal(err)
-	}
 	dateProvider := &infra.RealDateProvider{}
 	idProvider := &infra.RealIDProvider{}
 
@@ -50,6 +45,7 @@ func initializeApp() *app.App {
 	listProjectsUseCase := list.NewListProjectsUseCase(&sessionRepository)
 
 	return app.NewApp(
+		&sessionRepository,
 		dateProvider,
 		startFlowSessionUseCase,
 		stopFlowSessionUseCase,
@@ -60,12 +56,20 @@ func initializeApp() *app.App {
 }
 
 func Execute() {
-	app := initializeApp()
+	homePath, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	sessionsPath := filepath.Join(homePath, ".flow")
+
+	app := initializeApp(sessionsPath)
 
 	rootCmd.AddCommand(start.Command(app))
 	rootCmd.AddCommand(stop.Command(app))
 	rootCmd.AddCommand(status.Command(app))
 	rootCmd.AddCommand(report.Command(app))
+	rootCmd.AddCommand(edit.Command(app, sessionsPath))
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

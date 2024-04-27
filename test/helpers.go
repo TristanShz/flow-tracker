@@ -43,6 +43,7 @@ func InitializeApp(
 	listProjectsUseCase := list.NewListProjectsUseCase(sessionRepository)
 
 	return app.NewApp(
+		sessionRepository,
 		dateProvider,
 		startFlowSessionUseCase,
 		stopFlowSessionUseCase,

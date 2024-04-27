@@ -11,6 +11,15 @@ type InMemorySessionRepository struct {
 	Sessions []session.Session
 }
 
+func (r *InMemorySessionRepository) FindById(id string) *session.Session {
+	for _, session := range r.Sessions {
+		if session.Id == id {
+			return &session
+		}
+	}
+	return nil
+}
+
 func (r *InMemorySessionRepository) Save(s session.Session) error {
 	startedSessionIndex := slices.IndexFunc(r.Sessions, func(s session.Session) bool {
 		return s.StartTime.Equal(s.StartTime)
