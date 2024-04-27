@@ -22,7 +22,7 @@ func (s SessionsReportCLIPresenter) ShowByDay(sessionsReport sessionsreport.Sess
 		for _, session := range dayReport.Sessions {
 			if session.EndTime.IsZero() {
 				text += fmt.Sprintf(
-					"    (%v) From %v %v [%v]\n",
+					"    %v %v %v [%v]\n",
 					session.Id,
 					utils.TimeColor(session.StartTime.Format("15:04:05")),
 					utils.ProjectColor(session.Project),
@@ -30,8 +30,8 @@ func (s SessionsReportCLIPresenter) ShowByDay(sessionsReport sessionsreport.Sess
 				)
 			} else {
 				text += fmt.Sprintf(
-					"    (%v) From %v to %v %v %v [%v]\n",
-					session.Id,
+					"    %v %v to %v %v %v [%v]\n",
+					utils.Faint(session.Id),
 					utils.TimeColor(session.StartTime.Format("15:04:05")),
 					utils.TimeColor(session.EndTime.Format("15:04:05")),
 					session.Duration().String(),

@@ -23,3 +23,7 @@ func TimeColor(text string) string {
 func TagColor(text string) string {
 	return lipgloss.NewStyle().Foreground(Yellow).Render(text)
 }
+
+func Faint(text string) string {
+	return lipgloss.NewStyle().Faint(true).Render(text)
+}
