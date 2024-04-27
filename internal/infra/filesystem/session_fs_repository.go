@@ -95,7 +95,7 @@ func (r *FileSystemSessionRepository) FindById(id string) *session.Session {
 }
 
 func (r *FileSystemSessionRepository) Save(sessionToSave session.Session) error {
-	marshaled, marshaledErr := json.Marshal(sessionToSave)
+	marshaled, marshaledErr := json.MarshalIndent(sessionToSave, "", "  ")
 
 	if marshaledErr != nil {
 		return marshaledErr
