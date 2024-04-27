@@ -50,6 +50,19 @@ func TestStartCommand(t *testing.T) {
 			},
 		},
 		{
+			name: "No args and existig project with active session",
+			args: []string{"Flow"},
+			want: "There is already a session in progress",
+			givenSessions: []session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
+					Project:   "MyTodo",
+					Tags:      []string{"add-todo"},
+				},
+			},
+		},
+		{
 			name:  "First arg is a tag",
 			args:  []string{"+add-todo"},
 			error: errors.New("the first argument must be the project name"),
@@ -74,7 +87,7 @@ func TestStartCommand(t *testing.T) {
 		{
 			name:     "Session already started",
 			args:     []string{"my-todo"},
-			error:    errors.New("there is already a session in progress"),
+			want:     "There is already a session in progress",
 			givenNow: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
 			givenSessions: []session.Session{
 				{

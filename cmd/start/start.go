@@ -42,6 +42,7 @@ func Command(app *app.App) *cobra.Command {
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger := log.New(cmd.OutOrStdout(), "", 0)
+
 			// no args -> show list of existing projects
 			if len(args) == 0 {
 				projects, err := app.ListProjectsUseCase.Execute()
@@ -78,6 +79,11 @@ func Command(app *app.App) *cobra.Command {
 
 			err := app.StartFlowSessionUseCase.Execute(command)
 			if err != nil {
+				if err == startsession.ErrSessionAlreadyStarted {
+					logger.Println("There is already a session in progress")
+					return nil
+				}
+
 				return err
 			}
 
