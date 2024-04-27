@@ -16,7 +16,7 @@ The project is in its early stages and is still under development.
 - [x] List all projects
 - [x] View a report of all sessions
 - [x] View a report of all sessions for a given project
-- [ ] View a report of sessions in a given time range
+- [x] View a report of sessions in a given time range
 - [ ] Edit a session
 - [ ] Export report to CSV
 - [ ] Export report to JSON

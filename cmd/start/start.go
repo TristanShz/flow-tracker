@@ -51,7 +51,14 @@ func Command(app *app.App) *cobra.Command {
 				msg := "Please provide a project name"
 
 				if len(projects) > 0 {
-					msg += fmt.Sprintf(", existing projects: %v", strings.Join(projects, ", "))
+					msg += ", existing projects: "
+
+					for i, project := range projects {
+						msg += utils.ProjectColor(project)
+						if i < len(projects)-1 {
+							msg += ", "
+						}
+					}
 				}
 
 				logger.Println(msg)

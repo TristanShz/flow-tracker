@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/TristanSch1/flow/cmd/status"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/sessionstatus"
 	"github.com/TristanSch1/flow/internal/domain/session"
 	"github.com/TristanSch1/flow/internal/infra"
 	"github.com/TristanSch1/flow/test"
@@ -30,7 +29,7 @@ func TestStatusCommand(t *testing.T) {
 		{
 			name:          "No current session",
 			givenSessions: []session.Session{},
-			error:         sessionstatus.ErrNoCurrentSession,
+			want:          "No active flow session",
 		},
 		{
 			name: "Current session",

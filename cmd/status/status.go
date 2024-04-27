@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	app "github.com/TristanSch1/flow/internal/application/usecases"
+	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/sessionstatus"
 	"github.com/TristanSch1/flow/utils"
 	"github.com/spf13/cobra"
 )
@@ -18,6 +19,11 @@ func Command(app *app.App) *cobra.Command {
 			logger := log.New(cmd.OutOrStdout(), "", 0)
 			status, err := app.FlowSessionStatusUseCase.Execute()
 			if err != nil {
+				if err == sessionstatus.ErrNoCurrentSession {
+					logger.Printf("No active flow session")
+					return nil
+				}
+
 				return err
 			}
 
