@@ -34,6 +34,7 @@ type SessionFixture struct {
 	T                         *testing.T
 	SessionRepository         *infra.InMemorySessionRepository
 	DateProvider              *infra.StubDateProvider
+	IdProvider                *infra.StubIDProvider
 	StartFlowSessionUseCase   startsession.UseCase
 	StopFlowSessionUseCase    stopsession.UseCase
 	FlowSessionStatusUseCase  sessionstatus.UseCase
@@ -48,6 +49,10 @@ type SessionFixture struct {
 
 func (s *SessionFixture) GivenNowIs(t time.Time) {
 	s.DateProvider.Now = t
+}
+
+func (s *SessionFixture) GivenPredefinedIdentifier(id string) {
+	s.IdProvider.Id = id
 }
 
 func (s *SessionFixture) GivenSomeSessions(sessions []session.Session) {
@@ -177,6 +182,7 @@ func GetSessionFixture(t *testing.T) SessionFixture {
 	return SessionFixture{
 		T:                         t,
 		SessionRepository:         sessionRepository,
+		IdProvider:                idProvider,
 		DateProvider:              dateProvider,
 		StartFlowSessionUseCase:   startFlowSession,
 		StopFlowSessionUseCase:    stopFlowSession,
