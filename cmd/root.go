@@ -72,7 +72,6 @@ func Execute() {
 	rootCmd.AddCommand(edit.Command(app, sessionsPath))
 
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
 		os.Exit(1)
 	}
 }

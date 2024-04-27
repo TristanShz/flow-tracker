@@ -20,7 +20,7 @@ func Command(app *app.App, sessionsPath string) *cobra.Command {
 		Short: "Open the flow session in the default editor",
 		Args: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 0 {
-				return nil
+				return fmt.Errorf("missing session ID")
 			}
 
 			if len(args) == 1 {
