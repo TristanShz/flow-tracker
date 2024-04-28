@@ -1,7 +1,6 @@
 package sessionsreport
 
 import (
-	"reflect"
 	"sort"
 	"time"
 
@@ -34,10 +33,6 @@ func NewSessionsReport(sessions []session.Session) SessionsReport {
 		return sessions[i].StartTime.Before(sessions[j].StartTime)
 	})
 	return SessionsReport{Sessions: sessions}
-}
-
-func (s SessionsReport) Equals(report SessionsReport) bool {
-	return reflect.DeepEqual(s.Sessions, report.Sessions)
 }
 
 func (s SessionsReport) GetByDayReport() []DayReport {
@@ -79,10 +74,6 @@ func (s SessionsReport) duration(sessions []session.Session) time.Duration {
 		totalDuration += session.Duration()
 	}
 	return totalDuration
-}
-
-func (s SessionsReport) totalDuration() time.Duration {
-	return s.duration(s.Sessions)
 }
 
 func (s SessionsReport) splitSessionsByProject() map[string][]session.Session {

@@ -101,7 +101,3 @@ func Command(app *app.App) *cobra.Command {
 		},
 	}
 }
-
-func Execute(cmd *cobra.Command) error {
-	return cmd.Execute()
-}

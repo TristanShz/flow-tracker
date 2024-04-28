@@ -37,7 +37,7 @@ func TestStartCommand(t *testing.T) {
 		{
 			name:  "No args and existing project",
 			args:  []string{},
-			want:  "Please provide a project name, existing projects: MyTodo",
+			want:  "Please provide a project name, existing projects: MyTodo, Flow",
 			error: nil,
 			givenSessions: []session.Session{
 				{
@@ -46,6 +46,13 @@ func TestStartCommand(t *testing.T) {
 					EndTime:   time.Date(2024, time.April, 14, 13, 10, 0, 0, time.UTC),
 					Project:   "MyTodo",
 					Tags:      []string{"add-todo"},
+				},
+				{
+					Id:        "2",
+					StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 16, 10, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"start-session"},
 				},
 			},
 		},

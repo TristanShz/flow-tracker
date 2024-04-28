@@ -2,6 +2,7 @@ package tests
 
 import (
 	"errors"
+	"reflect"
 	"slices"
 	"strings"
 	"testing"
@@ -109,7 +110,7 @@ func (s SessionFixture) ThenUserShouldSeeSessionsReport(expectedReport sessionsr
 		got = s.SessionsReportPresenter.SessionsReportByProject
 	}
 
-	if !got.Equals(expectedReport) {
+	if !reflect.DeepEqual(got, expectedReport) {
 		s.T.Errorf("Expected report with session ids '%v', but got '%v'", s.formatReportForError(expectedReport), s.formatReportForError(got))
 	}
 }
