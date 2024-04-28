@@ -1,6 +1,7 @@
 package status
 
 import (
+	"fmt"
 	"log"
 	"strings"
 
@@ -27,12 +28,17 @@ func Command(app *app.App) *cobra.Command {
 				return err
 			}
 
-			logger.Printf(
-				"You're in the flow for %v on project %v with tags: %v",
+			msg := fmt.Sprintf(
+				"You're in the flow for %v on project %v",
 				utils.TimeColor(status.Duration.String()),
 				utils.ProjectColor(status.Session.Project),
-				utils.TagColor(strings.Join(status.Session.Tags, ", ")),
 			)
+
+			if len(status.Session.Tags) > 0 {
+				msg += fmt.Sprintf(" with tags: %v", utils.TagColor(strings.Join(status.Session.Tags, ", ")))
+			}
+
+			logger.Println(msg)
 
 			return nil
 		},

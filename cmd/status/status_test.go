@@ -57,6 +57,18 @@ func TestStatusCommand(t *testing.T) {
 			givenNow: time.Date(2024, time.April, 13, 18, 30, 0, 0, time.UTC),
 			want:     "You're in the flow for 1h10m0s on project Flow with tags: status, stop",
 		},
+		{
+			name: "Current session with no tags",
+			givenSessions: []session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, time.April, 13, 17, 20, 0, 0, time.UTC),
+					Project:   "Flow",
+				},
+			},
+			givenNow: time.Date(2024, time.April, 13, 17, 30, 0, 0, time.UTC),
+			want:     "You're in the flow for 10m0s on project Flow",
+		},
 	}
 
 	for _, tc := range tt {
