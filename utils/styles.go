@@ -3,9 +3,9 @@ package utils
 import "github.com/charmbracelet/lipgloss"
 
 const (
-	Purple = lipgloss.Color("#B97AEE")
-	Green  = lipgloss.Color("#00A6A3")
-	Yellow = lipgloss.Color("#F2B263")
+	Blue   = lipgloss.Color("#B97AEE")
+	Green  = lipgloss.Color("#9DF7E5")
+	Orange = lipgloss.Color("#F4E4BA")
 )
 
 var HeaderStyle = lipgloss.NewStyle().
@@ -13,7 +13,7 @@ var HeaderStyle = lipgloss.NewStyle().
 	Underline(true)
 
 func ProjectColor(text string) string {
-	return lipgloss.NewStyle().Foreground(Purple).Render(text)
+	return lipgloss.NewStyle().Foreground(Blue).Render(text)
 }
 
 func TimeColor(text string) string {
@@ -21,7 +21,7 @@ func TimeColor(text string) string {
 }
 
 func TagColor(text string) string {
-	return lipgloss.NewStyle().Foreground(Yellow).Render(text)
+	return lipgloss.NewStyle().Foreground(Orange).Render(text)
 }
 
 func Faint(text string) string {

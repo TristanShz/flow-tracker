@@ -51,7 +51,6 @@ func Command(app *app.App, sessionsPath string) *cobra.Command {
 
 			filePath := filepath.Join(sessionsPath, sessionFilename.String())
 
-			logger.Printf("Opening %v...", filePath)
 			var command *exec.Cmd
 			switch os := runtime.GOOS; os {
 			case "windows":
@@ -61,7 +60,7 @@ func Command(app *app.App, sessionsPath string) *cobra.Command {
 			case "linux":
 				command = exec.Command("nano", filePath)
 			default:
-				fmt.Printf("Impossible d'ouvrir le fichier sur ce système d'exploitation: %s\n", os)
+				fmt.Printf("Unsupported OS: %v\n", os)
 				return nil
 			}
 
@@ -71,7 +70,7 @@ func Command(app *app.App, sessionsPath string) *cobra.Command {
 
 			err := command.Run()
 			if err != nil {
-				fmt.Printf("Erreur lors de l'ouverture du fichier: %v\n", err)
+				fmt.Printf("Error whilte opening the file: %v\n", err)
 				return nil
 			}
 

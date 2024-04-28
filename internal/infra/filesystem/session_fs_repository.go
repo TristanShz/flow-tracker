@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"slices"
 	"sort"
 	"strconv"
@@ -57,8 +58,13 @@ type SessionFilename struct {
 	Project   string
 }
 
+func (s *SessionFilename) StrippedProject() string {
+	reg := regexp.MustCompile("[^a-zA-Z0-9]+")
+	return reg.ReplaceAllString(s.Project, "")
+}
+
 func (s *SessionFilename) String() string {
-	return s.Id + "-" + s.Project + "-" + strconv.FormatInt(s.StartTime.Unix(), 10) + ".json"
+	return s.Id + "-" + s.StrippedProject() + "-" + strconv.FormatInt(s.StartTime.Unix(), 10) + ".json"
 }
 
 func (r *FileSystemSessionRepository) getSessionFileName(s session.Session) string {
@@ -115,18 +121,23 @@ func (r *FileSystemSessionRepository) FindById(id string) *session.Session {
 			continue
 		}
 
-		filePath := filepath.Join(r.FlowFolderPath, fileInfo.Name())
-		file, err := os.ReadFile(filePath)
+		sessionFilename, err := r.parseSessionFileName(fileInfo.Name())
 		if err != nil {
-			log.Fatalf("Error while reading file %v : '%v'", fileInfo.Name(), err)
+			log.Fatalf("error while parsing file name %v : '%v'", fileInfo.Name(), err)
 		}
 
-		session, convertErr := r.rawFileToSession(file)
-		if convertErr != nil {
-			log.Fatalf("Invalid session data for file : %v", fileInfo.Name())
-		}
+		if sessionFilename.Id == id {
+			filePath := filepath.Join(r.FlowFolderPath, fileInfo.Name())
+			file, err := os.ReadFile(filePath)
+			if err != nil {
+				log.Fatalf("Error while reading file %v : '%v'", fileInfo.Name(), err)
+			}
 
-		if session.Id == id {
+			session, convertErr := r.rawFileToSession(file)
+			if convertErr != nil {
+				log.Fatalf("Invalid session data for file : %v", fileInfo.Name())
+			}
+
 			return session
 		}
 	}

@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 ---
 
 # Commands
@@ -33,3 +33,11 @@ View a user-friendly report of sessions.
 | name     | default | description                                           |
 | -------- | ------- | ----------------------------------------------------- |
 | --format | by-day  | Format of the report. Options: `by-day`, `by-project` |
+
+## `flow edit [session-id]`
+
+Open the session file in the default editor.
+
+## `flow abort`
+
+Abort the current session.
