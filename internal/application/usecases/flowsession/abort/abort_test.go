@@ -11,9 +11,9 @@ import (
 
 func TestAbort(t *testing.T) {
 	tt := []struct {
+		error         error
 		name          string
 		givenSessions []session.Session
-		error         error
 	}{
 		{
 			name: "Active session",

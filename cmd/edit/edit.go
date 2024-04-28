@@ -7,9 +7,9 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"strconv"
 
 	app "github.com/TristanSch1/flow/internal/application/usecases"
+	"github.com/TristanSch1/flow/internal/infra/filesystem"
 	"github.com/TristanSch1/flow/utils"
 	"github.com/spf13/cobra"
 )
@@ -43,8 +43,13 @@ func Command(app *app.App, sessionsPath string) *cobra.Command {
 				return nil
 			}
 
-			fileName := strconv.FormatInt(session.StartTime.Unix(), 10) + ".json"
-			filePath := filepath.Join(sessionsPath, fileName)
+			sessionFilename := filesystem.SessionFilename{
+				Id:        session.Id,
+				Project:   session.Project,
+				StartTime: session.StartTime,
+			}
+
+			filePath := filepath.Join(sessionsPath, sessionFilename.String())
 
 			logger.Printf("Opening %v...", filePath)
 			var command *exec.Cmd

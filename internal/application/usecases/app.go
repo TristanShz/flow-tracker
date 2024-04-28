@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/TristanSch1/flow/internal/application"
+	abortsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/abort"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/sessionstatus"
 	startsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stopsession"
@@ -14,6 +15,7 @@ type App struct {
 	DateProvider              application.DateProvider
 	StartFlowSessionUseCase   startsession.UseCase
 	StopFlowSessionUseCase    stopsession.UseCase
+	AbortFlowSessionUseCase   abortsession.UseCase
 	FlowSessionStatusUseCase  sessionstatus.UseCase
 	ListProjectsUseCase       list.UseCase
 	ViewSessionsReportUseCase viewsessionsreport.UseCase
@@ -24,6 +26,7 @@ func NewApp(
 	dateProvider application.DateProvider,
 	startFlowSessionUseCase startsession.UseCase,
 	stopFlowSessionUseCase stopsession.UseCase,
+	abortFlowSessionUseCase abortsession.UseCase,
 	flowSessionStatusUseCase sessionstatus.UseCase,
 	listProjectsUseCase list.UseCase,
 	viewSessionsReportUseCase viewsessionsreport.UseCase,
@@ -33,6 +36,7 @@ func NewApp(
 		DateProvider:              dateProvider,
 		StartFlowSessionUseCase:   startFlowSessionUseCase,
 		StopFlowSessionUseCase:    stopFlowSessionUseCase,
+		AbortFlowSessionUseCase:   abortFlowSessionUseCase,
 		FlowSessionStatusUseCase:  flowSessionStatusUseCase,
 		ListProjectsUseCase:       listProjectsUseCase,
 		ViewSessionsReportUseCase: viewSessionsReportUseCase,

@@ -2,7 +2,6 @@ package abortsession
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/TristanSch1/flow/internal/application"
 )
@@ -14,7 +13,6 @@ type UseCase struct {
 func (s UseCase) Execute() error {
 	lastSession := s.sessionRepository.FindLastSession()
 
-	fmt.Println(lastSession)
 	if lastSession == nil || !lastSession.EndTime.IsZero() {
 		return ErrNoActiveSession
 	}

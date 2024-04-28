@@ -6,12 +6,14 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/TristanSch1/flow/cmd/abort"
 	"github.com/TristanSch1/flow/cmd/edit"
 	"github.com/TristanSch1/flow/cmd/report"
 	"github.com/TristanSch1/flow/cmd/start"
 	"github.com/TristanSch1/flow/cmd/status"
 	"github.com/TristanSch1/flow/cmd/stop"
 	app "github.com/TristanSch1/flow/internal/application/usecases"
+	abortsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/abort"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/sessionstatus"
 	startsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stopsession"
@@ -38,6 +40,7 @@ func initializeApp(path string) *app.App {
 
 	startFlowSessionUseCase := startsession.NewStartFlowSessionUseCase(&sessionRepository, dateProvider, idProvider)
 	stopFlowSessionUseCase := stopsession.NewStopSessionUseCase(&sessionRepository, dateProvider)
+	abortFlowSessionUseCase := abortsession.NewAbortFlowSessionUseCase(&sessionRepository)
 	flowSessionStatusUseCase := sessionstatus.NewFlowSessionStatusUseCase(&sessionRepository, dateProvider)
 
 	viewSessionsReportUseCase := viewsessionsreport.NewViewSessionsReportUseCase(&sessionRepository)
@@ -49,6 +52,7 @@ func initializeApp(path string) *app.App {
 		dateProvider,
 		startFlowSessionUseCase,
 		stopFlowSessionUseCase,
+		abortFlowSessionUseCase,
 		flowSessionStatusUseCase,
 		listProjectsUseCase,
 		viewSessionsReportUseCase,
@@ -70,6 +74,7 @@ func Execute() {
 	rootCmd.AddCommand(status.Command(app))
 	rootCmd.AddCommand(report.Command(app))
 	rootCmd.AddCommand(edit.Command(app, sessionsPath))
+	rootCmd.AddCommand(abort.Command(app))
 
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
