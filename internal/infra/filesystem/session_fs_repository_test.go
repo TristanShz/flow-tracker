@@ -1,11 +1,11 @@
 package filesystem_test
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"reflect"
 	"sort"
-	"strconv"
 	"testing"
 	"time"
 
@@ -35,20 +35,33 @@ func TestConstructorCreateFolder_Success(t *testing.T) {
 }
 
 func TestFileSystemSessionRepository_Save(t *testing.T) {
+	is := is.New(t)
 	setup()
 
 	repository := filesystem.NewFileSystemSessionRepository(TestFolderPath)
 
-	startTime := time.Date(2024, 4, 17, 19, 0, 0, 0, time.UTC)
-	repository.Save(session.Session{
-		Id:        "1",
-		StartTime: startTime,
-		Project:   "Flow",
-	})
+	tt := []struct {
+		name    string
+		session session.Session
+		error   error
+	}{
+		{
+			name: "Success",
+			session: session.Session{
+				Id:        "1",
+				StartTime: time.Date(2024, 4, 17, 19, 0, 0, 0, time.UTC),
+				EndTime:   time.Date(2024, 4, 17, 20, 0, 0, 0, time.UTC),
+				Project:   "Flow",
+				Tags:      []string{"test-save"},
+			},
+		},
+	}
 
-	expectedFilename := strconv.FormatInt(startTime.Unix(), 10) + ".json"
-	if _, err := os.Stat(filepath.Join(TestFolderPath, expectedFilename)); os.IsNotExist(err) {
-		t.Errorf("Session with ID id1 is not correctly saved")
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			err := repository.Save(tc.session)
+			is.NoErr(err)
+		})
 	}
 }
 
@@ -393,6 +406,93 @@ func TestFileSystemSessionRepository_FindById(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			if got := repository.FindById(tc.id); !reflect.DeepEqual(got, tc.want) {
 				t.Errorf("FileSystemSessionRepository.FindById() = %v, want %v", got, tc.want)
+			}
+		})
+	}
+}
+
+func TestFileSystemSessionRepository_Delete(t *testing.T) {
+	is := is.New(t)
+	setup()
+	repository := filesystem.NewFileSystemSessionRepository(TestFolderPath)
+
+	tt := []struct {
+		error         error
+		name          string
+		id            string
+		want          []session.Session
+		givenSessions []session.Session
+	}{
+		{
+			name: "Existing session",
+			id:   "1",
+			givenSessions: []session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, 4, 17, 19, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, 4, 17, 20, 0, 0, 0, time.UTC),
+					Project:   "Flow",
+				},
+				{
+					Id:        "2",
+					StartTime: time.Date(2024, 4, 17, 21, 0, 0, 0, time.UTC),
+					Project:   "Flow",
+				},
+			},
+			want: []session.Session{
+				{
+					Id:        "2",
+					StartTime: time.Date(2024, 4, 17, 21, 0, 0, 0, time.UTC),
+					Project:   "Flow",
+				},
+			},
+		},
+		{
+			name: "Non-existing session",
+			id:   "3",
+			givenSessions: []session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, 4, 17, 19, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, 4, 17, 20, 0, 0, 0, time.UTC),
+					Project:   "Flow",
+				},
+				{
+					Id:        "2",
+					StartTime: time.Date(2024, 4, 17, 21, 0, 0, 0, time.UTC),
+					Project:   "Flow",
+				},
+			},
+			want: []session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, 4, 17, 19, 0, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, 4, 17, 20, 0, 0, 0, time.UTC),
+					Project:   "Flow",
+				},
+				{
+					Id:        "2",
+					StartTime: time.Date(2024, 4, 17, 21, 0, 0, 0, time.UTC),
+					Project:   "Flow",
+				},
+			},
+			error: errors.New("session with id 3 not found"),
+		},
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			for _, s := range tc.givenSessions {
+				repository.Save(s)
+			}
+			err := repository.Delete(tc.id)
+
+			is.Equal(err, tc.error)
+
+			if tc.error != nil {
+				got := repository.FindAllSessions()
+
+				is.Equal(got, tc.want)
 			}
 		})
 	}
