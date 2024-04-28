@@ -34,6 +34,17 @@ func (r *InMemorySessionRepository) Save(s session.Session) error {
 	return nil
 }
 
+func (r *InMemorySessionRepository) Delete(id string) error {
+	sessionIndex := slices.IndexFunc(r.Sessions, func(s session.Session) bool {
+		return s.Id == id
+	})
+	if sessionIndex == -1 {
+		return nil
+	}
+	r.Sessions = append(r.Sessions[:sessionIndex], r.Sessions[sessionIndex+1:]...)
+	return nil
+}
+
 func (r *InMemorySessionRepository) FindAllByProject(project string) []session.Session {
 	sessions := []session.Session{}
 

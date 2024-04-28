@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	abortsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/abort"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/sessionstatus"
 	startsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
 	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stopsession"
@@ -16,6 +17,7 @@ import (
 	"github.com/TristanSch1/flow/internal/domain/session"
 	"github.com/TristanSch1/flow/internal/domain/sessionsreport"
 	"github.com/TristanSch1/flow/internal/infra"
+	"github.com/matryer/is"
 )
 
 type TestPresenter struct {
@@ -32,20 +34,22 @@ func (tp *TestPresenter) ShowByProject(sessionReport sessionsreport.SessionsRepo
 }
 
 type SessionFixture struct {
-	T                         *testing.T
-	SessionRepository         *infra.InMemorySessionRepository
-	DateProvider              *infra.StubDateProvider
-	IdProvider                *infra.StubIDProvider
 	StartFlowSessionUseCase   startsession.UseCase
-	StopFlowSessionUseCase    stopsession.UseCase
 	FlowSessionStatusUseCase  sessionstatus.UseCase
+	StopFlowSessionUseCase    stopsession.UseCase
+	AbortFlowSessionUseCase   abortsession.UseCase
+	ThrownError               error
 	ListProjectsUseCase       list.UseCase
 	ViewSessionsReportUseCase viewsessionsreport.UseCase
-	ThrownError               error
-	FlowSessionStatus         sessionstatus.SessionStatus
+	IdProvider                *infra.StubIDProvider
+	DateProvider              *infra.StubDateProvider
+	SessionRepository         *infra.InMemorySessionRepository
+	T                         *testing.T
+	Is                        *is.I
+	SessionsReportPresenter   TestPresenter
 	Projects                  []string
 	SessionsReport            sessionsreport.SessionsReport
-	SessionsReportPresenter   TestPresenter
+	FlowSessionStatus         sessionstatus.SessionStatus
 }
 
 func (s *SessionFixture) GivenNowIs(t time.Time) {
@@ -98,6 +102,21 @@ func (s *SessionFixture) WhenUserSeesSessionsReport(
 	err := s.ViewSessionsReportUseCase.Execute(command, &s.SessionsReportPresenter)
 	if err != nil {
 		s.ThrownError = err
+	}
+}
+
+func (s *SessionFixture) WhenAbortingFlowSession() {
+	err := s.AbortFlowSessionUseCase.Execute()
+	if err != nil {
+		s.ThrownError = err
+	}
+}
+
+func (s *SessionFixture) ThenNoSessionShouldBeActive() {
+	got := s.SessionRepository.FindLastSession()
+
+	if got != nil {
+		s.Is.Equal(got.Status(), session.EndedStatus)
 	}
 }
 
@@ -167,12 +186,14 @@ func (s *SessionFixture) ThenErrorShouldBe(e error) {
 }
 
 func GetSessionFixture(t *testing.T) SessionFixture {
+	is := is.New(t)
 	sessionRepository := &infra.InMemorySessionRepository{}
 	dateProvider := infra.NewStubDateProvider()
 	idProvider := &infra.StubIDProvider{}
 
 	startFlowSession := startsession.NewStartFlowSessionUseCase(sessionRepository, dateProvider, idProvider)
 	stopFlowSession := stopsession.NewStopSessionUseCase(sessionRepository, dateProvider)
+	abortFlowSession := abortsession.NewAbortFlowSessionUseCase(sessionRepository)
 	flowSessionStatus := sessionstatus.NewFlowSessionStatusUseCase(sessionRepository, dateProvider)
 
 	viewSessionsReport := viewsessionsreport.NewViewSessionsReportUseCase(sessionRepository)
@@ -182,11 +203,13 @@ func GetSessionFixture(t *testing.T) SessionFixture {
 
 	return SessionFixture{
 		T:                         t,
+		Is:                        is,
 		SessionRepository:         sessionRepository,
 		IdProvider:                idProvider,
 		DateProvider:              dateProvider,
 		StartFlowSessionUseCase:   startFlowSession,
 		StopFlowSessionUseCase:    stopFlowSession,
+		AbortFlowSessionUseCase:   abortFlowSession,
 		FlowSessionStatusUseCase:  flowSessionStatus,
 		ListProjectsUseCase:       listProjects,
 		ViewSessionsReportUseCase: viewSessionsReport,
