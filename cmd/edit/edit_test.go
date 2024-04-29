@@ -7,6 +7,7 @@ import (
 	"github.com/TristanSch1/flow/cmd/edit"
 	"github.com/TristanSch1/flow/internal/domain/session"
 	"github.com/TristanSch1/flow/internal/infra"
+	"github.com/TristanSch1/flow/internal/infra/filesystem"
 	"github.com/TristanSch1/flow/test"
 	"github.com/matryer/is"
 )
@@ -14,9 +15,9 @@ import (
 func TestEditCommand(t *testing.T) {
 	is := is.New(t)
 
-	sessionRepository := &infra.InMemorySessionRepository{}
+	sessionRepository := filesystem.NewFileSystemSessionRepository("/tmp/flow")
 	dateProvider := infra.NewStubDateProvider()
-	app := test.InitializeApp(sessionRepository, dateProvider)
+	app := test.InitializeApp(&sessionRepository, dateProvider)
 
 	tt := []struct {
 		name          string
@@ -44,13 +45,29 @@ func TestEditCommand(t *testing.T) {
 			args: []string{"1234567"},
 			want: "Session not found",
 		},
+		{
+			name: "Edit session",
+			args: []string{"1234567"},
+			givenSessions: []session.Session{
+				{
+					Id:        "1234567",
+					Project:   "project",
+					StartTime: dateProvider.GetNow(),
+				},
+			},
+			want: "",
+		},
 	}
 
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
 			is := is.New(t)
 
-			c := edit.Command(app, "")
+			for _, s := range tc.givenSessions {
+				sessionRepository.Save(s)
+			}
+
+			c := edit.Command(app, "/tmp/flow")
 
 			got, err := test.ExecuteCmd(t, c, tc.args...)
 
