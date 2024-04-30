@@ -8,7 +8,7 @@ It is written in GO and uses File system to store the data.
 
 The project is in its early stages and is still under development.
 
-## Roadmap
+## v1.0 Roadmap
 
 - [x] Start a flow session
 - [x] Stop a flow session
