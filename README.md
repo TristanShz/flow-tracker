@@ -3,6 +3,7 @@
 <p align="center">
   <img src="assets/banner.png" />
 </p>
+
 ---
 
 Flow is a CLI tool that helps you manage your time spent developing your projects. It's designed to be simple, fast and easy to use.
