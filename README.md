@@ -1,11 +1,9 @@
 [![Coverage Status](https://coveralls.io/repos/github/TristanSch1/flow/badge.svg?branch=main)](https://coveralls.io/github/TristanSch1/flow?branch=main)
-# Flow
+
 <p align="center">
   <img src="assets/banner.png" />
 </p>
-
 ---
-
 Flow is a CLI tool that helps you manage your time spent developing your projects. It's designed to be simple, fast and easy to use.
 
 It is written in GO and uses File system to store the data.
