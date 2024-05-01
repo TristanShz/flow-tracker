@@ -9,7 +9,7 @@ import { themes as prismThemes } from "prism-react-renderer";
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "Flow",
-  tagline: "CLI tool here to help you manage your time spent on projects",
+  tagline: "Efortless time tracking in your terminal",
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
@@ -67,7 +67,7 @@ const config = {
         title: "Flow",
         logo: {
           alt: "Flow Logo",
-          src: "img/logo.svg",
+          src: "img/infinity.png",
         },
         items: [
           {
