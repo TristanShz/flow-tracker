@@ -32,7 +32,7 @@ brews:
     license: "MIT"
     repository:
       owner: TristanSch1
-      name: flow
+      name: flow-homebrew-tap
       branch: main
 
 archives:
