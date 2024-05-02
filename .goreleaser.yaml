@@ -21,6 +21,16 @@ builds:
       - windows
       - darwin
 
+brews:
+  - name: flow
+    commit_author:
+      name: TristanSch1
+      email: sch.tristan1@gmail.com
+    directory: Formula
+    homepage: https://tristansch1.github.io/flow/
+    description: Efortless time tracking CLI tool
+    license: "MIT"
+
 archives:
   - format: tar.gz
     # this name template makes the OS and Arch compatible with the results of `uname`.
