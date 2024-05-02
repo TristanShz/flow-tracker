@@ -30,6 +30,10 @@ brews:
     homepage: https://tristansch1.github.io/flow/
     description: Efortless time tracking CLI tool
     license: "MIT"
+    repository:
+      owner: TristanSch1
+      name: flow
+      branch: main
 
 archives:
   - format: tar.gz
