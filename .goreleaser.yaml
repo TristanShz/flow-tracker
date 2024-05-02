@@ -25,7 +25,7 @@ brews:
   - name: flow
     repository:
       owner: TristanSch1
-      name: flow-homebrew-tap
+      name: homebrew-flow
     folder: Formula
     homepage: https://github.com/TristanSch1/flow
     description: Efortless time tracking in your terminal
