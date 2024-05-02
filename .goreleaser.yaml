@@ -23,17 +23,12 @@ builds:
 
 brews:
   - name: flow
-    commit_author:
-      name: TristanSch1
-      email: sch.tristan1@gmail.com
-    directory: Formula
-    homepage: https://tristansch1.github.io/flow/
-    description: Efortless time tracking CLI tool
-    license: "MIT"
     repository:
       owner: TristanSch1
       name: flow-homebrew-tap
-      branch: main
+    folder: Formula
+    homepage: https://github.com/TristanSch1/flow
+    description: Efortless time tracking in your terminal
 
 archives:
   - format: tar.gz
