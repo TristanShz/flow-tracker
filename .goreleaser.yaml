@@ -22,10 +22,10 @@ builds:
       - darwin
 
 brews:
-  - name: flow
+  - name: flow-tracker
     repository:
       owner: TristanSch1
-      name: homebrew-flow
+      name: homebrew-flow-tracker
     folder: Formula
     homepage: https://github.com/TristanSch1/flow
     description: Efortless time tracking in your terminal
