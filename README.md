@@ -12,6 +12,20 @@ It is written in GO and uses File system to store the data.
 
 The project is in its early stages and is still under development.
 
+## Installation
+
+### Mac OS X
+
+```bash
+brew install flow-tracker
+```
+
+### Linux
+
+```bash
+curl -sSf https://raw.githubusercontent.com/TristanSch1/flow/main/install.sh | sh
+```
+
 ## v1.0 Roadmap
 
 - [x] Start a flow session
