@@ -45,12 +45,6 @@ const config = {
           // Remove this to remove the "edit this page" links.
           editUrl: "https://github.com/TristanSch1/flow/docs/docs",
         },
-        blog: {
-          showReadingTime: true,
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl: "https://github.com/TristanSch1/flow/docs/blog/",
-        },
         theme: {
           customCss: "./src/css/custom.css",
         },
@@ -76,7 +70,6 @@ const config = {
             position: "left",
             label: "Docs",
           },
-          { to: "/blog", label: "Blog", position: "left" },
           {
             href: "https://github.com/TristanSch1/flow",
             label: "GitHub",
@@ -99,10 +92,6 @@ const config = {
           {
             title: "More",
             items: [
-              {
-                label: "Blog",
-                to: "/blog",
-              },
               {
                 label: "GitHub",
                 href: "https://github.com/TristanSch1/flow",
