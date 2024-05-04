@@ -40,11 +40,13 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
+          routeBasePath: "/",
           sidebarPath: "./sidebars.js",
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl: "https://github.com/TristanSch1/flow/docs/docs",
         },
+        blog: false,
         theme: {
           customCss: "./src/css/custom.css",
         },
@@ -65,12 +67,6 @@ const config = {
         },
         items: [
           {
-            type: "docSidebar",
-            sidebarId: "tutorialSidebar",
-            position: "left",
-            label: "Docs",
-          },
-          {
             href: "https://github.com/TristanSch1/flow",
             label: "GitHub",
             position: "right",
@@ -80,15 +76,6 @@ const config = {
       footer: {
         style: "dark",
         links: [
-          {
-            title: "Docs",
-            items: [
-              {
-                label: "Overview",
-                to: "/docs/overview",
-              },
-            ],
-          },
           {
             title: "More",
             items: [
