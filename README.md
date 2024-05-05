@@ -81,6 +81,8 @@ Abort the current session.
 - [x] View a report of sessions in a given time range
 - [x] Edit a session
 - [x] Abort a session
+- [ ] Pause a session
+- [ ] Resume a session
 - [ ] Export report to CSV
 - [ ] Export report to JSON
 - [ ] VIM plugin
