@@ -17,6 +17,8 @@ The project is in its early stages and is still under development.
 ### Mac OS X
 
 ```bash
+brew tap tristansch1/flow-tracker
+
 brew install flow-tracker
 ```
 
