@@ -60,14 +60,14 @@ See the status of the current flow session.
 
 View a user-friendly report of sessions.
 
-| name      | default | description                                           |
-| --------- | ------- | ----------------------------------------------------- |
-| --format  | by-day  | Format of the report. Options: `by-day`, `by-project` |
-| --day     | /       | Get a report for all sessions of the current day      |
-| --week    | /       | Get a report for all sessions of the current week     |
-| --project | /       | Get a report for all sessions of the given project    |
-| --since   | /       | Get a report for all sessions since the given date    |
-| --until   | /       | Get a report for all sessions until the given date    |
+| name              | default | description                                           |
+| ----------------- | ------- | ----------------------------------------------------- |
+| --format [format] | by-day  | Format of the report. Options: `by-day`, `by-project` |
+| --day             | /       | Get a report for all sessions of the current day      |
+| --week            | /       | Get a report for all sessions of the current week     |
+| --project         | /       | Get a report for all sessions of the given project    |
+| --since [date]    | /       | Get a report for all sessions since the given date    |
+| --until [date]    | /       | Get a report for all sessions until the given date    |
 
 ### `flow edit [session-id]`
 
