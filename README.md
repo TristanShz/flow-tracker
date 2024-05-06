@@ -85,6 +85,7 @@ Abort the current session.
 - [x] Abort a session
 - [ ] Pause a session
 - [ ] Resume a session
+- [ ] Start session with attach mode
 - [ ] Export report to CSV
 - [ ] Export report to JSON
 - [ ] VIM plugin
