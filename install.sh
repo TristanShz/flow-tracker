@@ -16,11 +16,11 @@ case $ARCH in
 	exit 1
 	;;
 esac
-wget "https://github.com/TristanSch1/flow/releases/latest/download/$ARCHIVE" -O "$ARCHIVE"
+wget "https://github.com/TristanSch1/flow/releases/latest/download/$ARCHIVE" -O "/tmp/$ARCHIVE"
 
-tar -xzf "$ARCHIVE"
+tar -xzf "/tmp/$ARCHIVE" -C /tmp/flow
 
-mv flow /usr/local/bin/
+mv /tmp/flow/flow /usr/local/bin/
 
 rm "$ARCHIVE"
 
