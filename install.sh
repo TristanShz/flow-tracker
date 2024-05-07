@@ -18,11 +18,10 @@ case $ARCH in
 esac
 wget "https://github.com/TristanSch1/flow/releases/latest/download/$ARCHIVE" -O "/tmp/$ARCHIVE"
 
-tar -xzf "/tmp/$ARCHIVE" -C /tmp/flow
+tar --extract --file="/tmp/$ARCHIVE" flow
 
-mv /tmp/flow/flow /usr/local/bin/
+mv flow /usr/local/bin/
 
 rm "/tmp/$ARCHIVE"
-rm -rf "/tmp/flow"
 
 echo "Flow installation complete."
