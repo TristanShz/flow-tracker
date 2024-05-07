@@ -29,9 +29,6 @@ I'm working on a way to set up a package manager for Linux. For now, you can ins
 ```bash
 curl -sSf https://raw.githubusercontent.com/TristanSch1/flow/main/install.sh | sudo sh
 ```
-
-That's my first time releasing a package for Linux, so if someone want to help me to improve it, you can contact me by [email](mailto:sch.tristan1@gmail.com).
-
 ## Available commands
 
 ### `flow start [project] [tags]`
