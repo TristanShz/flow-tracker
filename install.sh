@@ -22,6 +22,7 @@ tar -xzf "/tmp/$ARCHIVE" -C /tmp/flow
 
 mv /tmp/flow/flow /usr/local/bin/
 
-rm "$ARCHIVE"
+rm "/tmp/$ARCHIVE"
+rm -rf "/tmp/flow"
 
 echo "Flow installation complete."
