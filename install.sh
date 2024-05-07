@@ -16,12 +16,12 @@ case $ARCH in
 	exit 1
 	;;
 esac
-wget "https://github.com/TristanSch1/flow/releases/latest/download/$ARCHIVE" -O "/tmp/$ARCHIVE"
+wget "https://github.com/TristanSch1/flow/releases/latest/download/$ARCHIVE" -O "$ARCHIVE"
 
-tar --extract --file="/tmp/$ARCHIVE" flow
+tar --extract --file="$ARCHIVE" flow
 
 mv flow /usr/local/bin/
 
-rm "/tmp/$ARCHIVE"
+rm "$ARCHIVE"
 
 echo "Flow installation complete."
