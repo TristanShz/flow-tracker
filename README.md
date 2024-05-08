@@ -66,9 +66,9 @@ View a user-friendly report of sessions.
 | --since [date]    | /       | Get a report for all sessions since the given date    |
 | --until [date]    | /       | Get a report for all sessions until the given date    |
 
-### `flow edit [session-id]`
+### `flow edit [session-id (optional)]`
 
-Open the session file in the default editor.
+Open the session with given ID in the default editor. If no ID is provided, it will open the last session
 
 ### `flow abort`
 
