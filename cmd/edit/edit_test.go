@@ -18,7 +18,8 @@ import (
 )
 
 type mockSessionRepository struct {
-	FindByIdFn func(id string) *session.Session
+	FindByIdFn        func(id string) *session.Session
+	FindLastSessionFn func() *session.Session
 }
 
 func (m *mockSessionRepository) Save(session session.Session) error {
@@ -26,10 +27,6 @@ func (m *mockSessionRepository) Save(session session.Session) error {
 }
 
 func (m *mockSessionRepository) Delete(id string) error {
-	return nil
-}
-
-func (m *mockSessionRepository) FindLastSession() *session.Session {
 	return nil
 }
 
@@ -57,6 +54,10 @@ func (m *mockSessionRepository) FindById(id string) *session.Session {
 	return m.FindByIdFn(id)
 }
 
+func (m *mockSessionRepository) FindLastSession() *session.Session {
+	return m.FindLastSessionFn()
+}
+
 func TestEditCommand(t *testing.T) {
 	is := is.New(t)
 
@@ -66,29 +67,43 @@ func TestEditCommand(t *testing.T) {
 
 	tmpDir := t.TempDir()
 
-	testSession := session.Session{
-		Id:        "1234567",
-		Project:   "project",
-		StartTime: dateProvider.GetNow(),
+	testSessions := []session.Session{
+		{
+			Id:        "1234567",
+			Project:   "project",
+			StartTime: time.Date(2021, 1, 1, 8, 0, 0, 0, time.UTC),
+			EndTime:   time.Date(2021, 1, 1, 10, 0, 0, 0, time.UTC),
+		},
+		{
+			Id:        "7654321",
+			Project:   "project",
+			StartTime: time.Date(2021, 1, 1, 10, 30, 0, 0, time.UTC),
+			EndTime:   time.Date(2021, 1, 1, 12, 0, 0, 0, time.UTC),
+		},
 	}
 
-	marshaled, _ := json.Marshal(testSession)
+	for _, testSession := range testSessions {
+		marshaled, _ := json.Marshal(testSession)
 
-	filename := filesystem.SessionFilename{
-		Id:        testSession.Id,
-		Project:   testSession.Project,
-		StartTime: testSession.StartTime,
+		filename := filesystem.SessionFilename{
+			Id:        testSession.Id,
+			Project:   testSession.Project,
+			StartTime: testSession.StartTime,
+		}
+
+		os.WriteFile(filepath.Join(tmpDir, filename.String()), marshaled, 0644)
 	}
-
-	os.WriteFile(filepath.Join(tmpDir, filename.String()), marshaled, 0644)
 
 	sessionRepository := &mockSessionRepository{
 		FindByIdFn: func(id string) *session.Session {
 			if id == "1234567" {
-				return &testSession
+				return &testSessions[0]
 			}
 
 			return nil
+		},
+		FindLastSessionFn: func() *session.Session {
+			return &testSessions[1]
 		},
 	}
 	app := test.InitializeApp(sessionRepository, dateProvider)
@@ -99,10 +114,6 @@ func TestEditCommand(t *testing.T) {
 		want  string
 		error error
 	}{
-		{
-			name:  "No args",
-			error: errors.New("missing session ID"),
-		},
 		{
 			name:  "Invalid ID",
 			args:  []string{"hello"},

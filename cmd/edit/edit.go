@@ -9,6 +9,7 @@ import (
 	"runtime"
 
 	app "github.com/TristanSch1/flow/internal/application/usecases"
+	"github.com/TristanSch1/flow/internal/domain/session"
 	"github.com/TristanSch1/flow/internal/infra/filesystem"
 	"github.com/TristanSch1/flow/utils"
 	"github.com/spf13/cobra"
@@ -37,13 +38,13 @@ func getOpenCommand(filePath string) *exec.Cmd {
 
 func Command(app *app.App, sessionsPath string) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "edit",
+		Use:   "edit [session_id (optional) (default: last session)]",
 		Short: "Open the flow session in the default editor",
+		Long:  "Open the flow session in the default editor, if no session_id is provided, the last session will be opened",
 		Args: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 0 {
-				return fmt.Errorf("missing session ID")
+				return nil
 			}
-
 			if len(args) == 1 {
 				if utils.IsIDValid(args[0]) {
 					return nil
@@ -57,7 +58,13 @@ func Command(app *app.App, sessionsPath string) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger := log.New(cmd.OutOrStdout(), "", 0)
 
-			session := app.SessionRepository.FindById(args[0])
+			var session *session.Session
+
+			if len(args) == 0 {
+				session = app.SessionRepository.FindLastSession()
+			} else {
+				session = app.SessionRepository.FindById(args[0])
+			}
 
 			if session == nil {
 				logger.Println("Session not found")
