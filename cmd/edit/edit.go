@@ -14,6 +14,27 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func getOpenCommand(filePath string) *exec.Cmd {
+	var command *exec.Cmd
+	switch os := runtime.GOOS; os {
+	case "windows":
+		command = exec.Command("notepad", filePath)
+	case "darwin":
+		command = exec.Command("nano", filePath)
+	case "linux":
+		command = exec.Command("nano", filePath)
+	default:
+		fmt.Printf("Unsupported OS: %v\n", os)
+		return nil
+	}
+
+	command.Stdin = os.Stdin
+	command.Stdout = os.Stdout
+	command.Stderr = os.Stderr
+
+	return command
+}
+
 func Command(app *app.App, sessionsPath string) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "edit",
@@ -51,22 +72,7 @@ func Command(app *app.App, sessionsPath string) *cobra.Command {
 
 			filePath := filepath.Join(sessionsPath, sessionFilename.String())
 
-			var command *exec.Cmd
-			switch os := runtime.GOOS; os {
-			case "windows":
-				command = exec.Command("notepad", filePath)
-			case "darwin":
-				command = exec.Command("nano", filePath)
-			case "linux":
-				command = exec.Command("nano", filePath)
-			default:
-				fmt.Printf("Unsupported OS: %v\n", os)
-				return nil
-			}
-
-			command.Stdin = os.Stdin
-			command.Stdout = os.Stdout
-			command.Stderr = os.Stderr
+			command := getOpenCommand(filePath)
 
 			err := command.Run()
 			if err != nil {
