@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/TristanSch1/flow/cmd/stop"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stopsession"
 	"github.com/TristanSch1/flow/internal/domain/session"
 	"github.com/TristanSch1/flow/internal/infra"
 	"github.com/TristanSch1/flow/test"
@@ -29,9 +28,9 @@ func TestStopCommand(t *testing.T) {
 		givenSessions []session.Session
 	}{
 		{
-			name:  "No sessions",
-			args:  []string{},
-			error: stopsession.ErrNoCurrentSession,
+			name: "No sessions",
+			args: []string{},
+			want: "No flow session to stop.",
 		},
 		{
 			name: "Session flowing",

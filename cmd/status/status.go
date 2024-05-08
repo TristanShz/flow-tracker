@@ -24,7 +24,6 @@ func Command(app *app.App) *cobra.Command {
 					logger.Printf("No active flow session")
 					return nil
 				}
-
 				return err
 			}
 
