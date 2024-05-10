@@ -6,11 +6,11 @@ import (
 	"log"
 	"time"
 
-	app "github.com/TristanSch1/flow/internal/application/usecases"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/viewsessionsreport"
-	"github.com/TristanSch1/flow/internal/domain/sessionsreport"
-	"github.com/TristanSch1/flow/internal/infra/presenter"
-	"github.com/TristanSch1/flow/pkg/timerange"
+	app "github.com/TristanShz/flow/internal/application/usecases"
+	"github.com/TristanShz/flow/internal/application/usecases/flowsession/viewsessionsreport"
+	"github.com/TristanShz/flow/internal/domain/sessionsreport"
+	"github.com/TristanShz/flow/internal/infra/presenter"
+	"github.com/TristanShz/flow/pkg/timerange"
 	"github.com/spf13/cobra"
 )
 

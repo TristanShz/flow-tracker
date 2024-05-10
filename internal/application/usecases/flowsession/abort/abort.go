@@ -3,7 +3,7 @@ package abortsession
 import (
 	"errors"
 
-	"github.com/TristanSch1/flow/internal/application"
+	"github.com/TristanShz/flow/internal/application"
 )
 
 type UseCase struct {

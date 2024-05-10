@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TristanSch1/flow/pkg/timerange"
+	"github.com/TristanShz/flow/pkg/timerange"
 )
 
 func TestTimeRange(t *testing.T) {

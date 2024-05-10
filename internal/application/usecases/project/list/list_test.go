@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TristanSch1/flow/internal/domain/session"
-	"github.com/TristanSch1/flow/internal/tests"
+	"github.com/TristanShz/flow/internal/domain/session"
+	"github.com/TristanShz/flow/internal/tests"
 )
 
 func TestListProjects_Success(t *testing.T) {

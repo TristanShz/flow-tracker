@@ -1,4 +1,4 @@
-[![Coverage Status](https://coveralls.io/repos/github/TristanSch1/flow/badge.svg?branch=main)](https://coveralls.io/github/TristanSch1/flow?branch=main)
+[![Coverage Status](https://coveralls.io/repos/github/TristanShz/flow/badge.svg?branch=main)](https://coveralls.io/github/TristanShz/flow?branch=main)
 
 <p align="center">
   <img src="assets/banner.png" />
@@ -17,7 +17,7 @@ The project is in its early stages and is still under development.
 ### Mac OS X
 
 ```bash
-brew tap tristansch1/flow-tracker
+brew tap TristanShz/flow-tracker
 
 brew install flow-tracker
 ```
@@ -27,7 +27,7 @@ brew install flow-tracker
 I'm working on a way to set up a package manager for Linux. For now, you can install it using the following command:
 
 ```bash
-curl -sSf https://raw.githubusercontent.com/TristanSch1/flow/main/install.sh | sudo sh
+curl -sSf https://raw.githubusercontent.com/TristanShz/flow/main/install.sh | sudo sh
 ```
 ## Available commands
 

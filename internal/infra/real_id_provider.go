@@ -1,6 +1,6 @@
 package infra
 
-import "github.com/TristanSch1/flow/utils"
+import "github.com/TristanShz/flow/utils"
 
 type RealIDProvider struct{}
 

@@ -4,7 +4,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/TristanSch1/flow/internal/domain/session"
+	"github.com/TristanShz/flow/internal/domain/session"
 )
 
 const (

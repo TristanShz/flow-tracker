@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	abortsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/abort"
-	"github.com/TristanSch1/flow/internal/domain/session"
-	"github.com/TristanSch1/flow/internal/tests"
+	abortsession "github.com/TristanShz/flow/internal/application/usecases/flowsession/abort"
+	"github.com/TristanShz/flow/internal/domain/session"
+	"github.com/TristanShz/flow/internal/tests"
 )
 
 func TestAbort(t *testing.T) {

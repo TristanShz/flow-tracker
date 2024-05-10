@@ -1,6 +1,6 @@
 package list
 
-import "github.com/TristanSch1/flow/internal/application"
+import "github.com/TristanShz/flow/internal/application"
 
 type UseCase struct {
 	sessionRepository application.SessionRepository

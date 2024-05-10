@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	app "github.com/TristanSch1/flow/internal/application/usecases"
-	startsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
-	"github.com/TristanSch1/flow/utils"
+	app "github.com/TristanShz/flow/internal/application/usecases"
+	startsession "github.com/TristanShz/flow/internal/application/usecases/flowsession/start"
+	"github.com/TristanShz/flow/utils"
 	"github.com/spf13/cobra"
 )
 

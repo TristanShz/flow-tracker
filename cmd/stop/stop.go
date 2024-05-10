@@ -3,9 +3,9 @@ package stop
 import (
 	"log"
 
-	app "github.com/TristanSch1/flow/internal/application/usecases"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stopsession"
-	"github.com/TristanSch1/flow/utils"
+	app "github.com/TristanShz/flow/internal/application/usecases"
+	"github.com/TristanShz/flow/internal/application/usecases/flowsession/stopsession"
+	"github.com/TristanShz/flow/utils"
 	"github.com/spf13/cobra"
 )
 

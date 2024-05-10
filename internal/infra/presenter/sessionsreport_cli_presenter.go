@@ -5,8 +5,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/TristanSch1/flow/internal/domain/sessionsreport"
-	"github.com/TristanSch1/flow/utils"
+	"github.com/TristanShz/flow/internal/domain/sessionsreport"
+	"github.com/TristanShz/flow/utils"
 )
 
 type SessionsReportCLIPresenter struct {

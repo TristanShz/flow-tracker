@@ -3,7 +3,7 @@ package abort
 import (
 	"log"
 
-	app "github.com/TristanSch1/flow/internal/application/usecases"
+	app "github.com/TristanShz/flow/internal/application/usecases"
 	"github.com/spf13/cobra"
 )
 

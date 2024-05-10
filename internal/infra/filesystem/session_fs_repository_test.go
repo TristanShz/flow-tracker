@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TristanSch1/flow/internal/domain/session"
-	"github.com/TristanSch1/flow/internal/infra/filesystem"
-	"github.com/TristanSch1/flow/pkg/timerange"
+	"github.com/TristanShz/flow/internal/domain/session"
+	"github.com/TristanShz/flow/internal/infra/filesystem"
+	"github.com/TristanShz/flow/pkg/timerange"
 	"github.com/matryer/is"
 )
 

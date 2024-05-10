@@ -8,12 +8,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TristanSch1/flow/cmd/edit"
-	"github.com/TristanSch1/flow/internal/domain/session"
-	"github.com/TristanSch1/flow/internal/infra"
-	"github.com/TristanSch1/flow/internal/infra/filesystem"
-	"github.com/TristanSch1/flow/pkg/timerange"
-	"github.com/TristanSch1/flow/test"
+	"github.com/TristanShz/flow/cmd/edit"
+	"github.com/TristanShz/flow/internal/domain/session"
+	"github.com/TristanShz/flow/internal/infra"
+	"github.com/TristanShz/flow/internal/infra/filesystem"
+	"github.com/TristanShz/flow/pkg/timerange"
+	"github.com/TristanShz/flow/test"
 	"github.com/matryer/is"
 )
 

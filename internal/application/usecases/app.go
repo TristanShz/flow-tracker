@@ -1,13 +1,13 @@
 package app
 
 import (
-	"github.com/TristanSch1/flow/internal/application"
-	abortsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/abort"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/sessionstatus"
-	startsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stopsession"
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/viewsessionsreport"
-	"github.com/TristanSch1/flow/internal/application/usecases/project/list"
+	"github.com/TristanShz/flow/internal/application"
+	abortsession "github.com/TristanShz/flow/internal/application/usecases/flowsession/abort"
+	"github.com/TristanShz/flow/internal/application/usecases/flowsession/sessionstatus"
+	startsession "github.com/TristanShz/flow/internal/application/usecases/flowsession/start"
+	"github.com/TristanShz/flow/internal/application/usecases/flowsession/stopsession"
+	"github.com/TristanShz/flow/internal/application/usecases/flowsession/viewsessionsreport"
+	"github.com/TristanShz/flow/internal/application/usecases/project/list"
 )
 
 type App struct {

@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 	"runtime"
 
-	app "github.com/TristanSch1/flow/internal/application/usecases"
-	"github.com/TristanSch1/flow/internal/domain/session"
-	"github.com/TristanSch1/flow/internal/infra/filesystem"
-	"github.com/TristanSch1/flow/utils"
+	app "github.com/TristanShz/flow/internal/application/usecases"
+	"github.com/TristanShz/flow/internal/domain/session"
+	"github.com/TristanShz/flow/internal/infra/filesystem"
+	"github.com/TristanShz/flow/utils"
 	"github.com/spf13/cobra"
 )
 

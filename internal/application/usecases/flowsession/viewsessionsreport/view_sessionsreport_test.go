@@ -4,10 +4,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/viewsessionsreport"
-	"github.com/TristanSch1/flow/internal/domain/session"
-	"github.com/TristanSch1/flow/internal/domain/sessionsreport"
-	"github.com/TristanSch1/flow/internal/tests"
+	"github.com/TristanShz/flow/internal/application/usecases/flowsession/viewsessionsreport"
+	"github.com/TristanShz/flow/internal/domain/session"
+	"github.com/TristanShz/flow/internal/domain/sessionsreport"
+	"github.com/TristanShz/flow/internal/tests"
 )
 
 var sessionsForTest = []session.Session{

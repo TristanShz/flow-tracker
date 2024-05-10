@@ -13,14 +13,14 @@ const config = {
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
-  url: "https://tristansch1.github.io",
+  url: "https://TristanShz.github.io",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: "/flow/",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: "TristanSch1", // Usually your GitHub org/user name.
+  organizationName: "TristanShz", // Usually your GitHub org/user name.
   projectName: "flow", // Usually your repo name.
 
   onBrokenLinks: "throw",
@@ -44,7 +44,7 @@ const config = {
           sidebarPath: "./sidebars.js",
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl: "https://github.com/TristanSch1/flow/edit/main/docs",
+          editUrl: "https://github.com/TristanShz/flow/edit/main/docs",
         },
         blog: false,
         theme: {
@@ -67,7 +67,7 @@ const config = {
         },
         items: [
           {
-            href: "https://github.com/TristanSch1/flow",
+            href: "https://github.com/TristanShz/flow",
             label: "GitHub",
             position: "right",
           },
@@ -81,7 +81,7 @@ const config = {
             items: [
               {
                 label: "GitHub",
-                href: "https://github.com/TristanSch1/flow",
+                href: "https://github.com/TristanShz/flow",
               },
             ],
           },

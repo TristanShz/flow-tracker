@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TristanSch1/flow/internal/domain/session"
+	"github.com/TristanShz/flow/internal/domain/session"
 )
 
 func TestSession_Duration(t *testing.T) {

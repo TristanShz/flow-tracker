@@ -16,7 +16,7 @@ case $ARCH in
 	exit 1
 	;;
 esac
-wget "https://github.com/TristanSch1/flow/releases/latest/download/$ARCHIVE" -O "/tmp/$ARCHIVE"
+wget "https://github.com/TristanShz/flow/releases/latest/download/$ARCHIVE" -O "/tmp/$ARCHIVE"
 
 tar --extract --file="/tmp/$ARCHIVE" flow
 

@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	startsession "github.com/TristanSch1/flow/internal/application/usecases/flowsession/start"
-	"github.com/TristanSch1/flow/internal/domain/session"
-	"github.com/TristanSch1/flow/internal/tests"
+	startsession "github.com/TristanShz/flow/internal/application/usecases/flowsession/start"
+	"github.com/TristanShz/flow/internal/domain/session"
+	"github.com/TristanShz/flow/internal/tests"
 )
 
 func TestStartFlowSession_Success(t *testing.T) {

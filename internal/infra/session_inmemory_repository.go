@@ -3,8 +3,8 @@ package infra
 import (
 	"slices"
 
-	"github.com/TristanSch1/flow/internal/domain/session"
-	"github.com/TristanSch1/flow/pkg/timerange"
+	"github.com/TristanShz/flow/internal/domain/session"
+	"github.com/TristanShz/flow/pkg/timerange"
 )
 
 type InMemorySessionRepository struct {

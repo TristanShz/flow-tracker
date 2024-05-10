@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/TristanSch1/flow/cmd"
+	"github.com/TristanShz/flow/cmd"
 )
 
 func main() {

@@ -3,8 +3,8 @@ package startsession
 import (
 	"errors"
 
-	"github.com/TristanSch1/flow/internal/application"
-	"github.com/TristanSch1/flow/internal/domain/session"
+	"github.com/TristanShz/flow/internal/application"
+	"github.com/TristanShz/flow/internal/domain/session"
 )
 
 type UseCase struct {

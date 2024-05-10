@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TristanSch1/flow/cmd/report"
-	"github.com/TristanSch1/flow/internal/domain/session"
-	"github.com/TristanSch1/flow/internal/infra"
-	"github.com/TristanSch1/flow/test"
+	"github.com/TristanShz/flow/cmd/report"
+	"github.com/TristanShz/flow/internal/domain/session"
+	"github.com/TristanShz/flow/internal/infra"
+	"github.com/TristanShz/flow/test"
 	is "github.com/matryer/is"
 )
 

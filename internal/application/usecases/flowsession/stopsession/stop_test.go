@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TristanSch1/flow/internal/application/usecases/flowsession/stopsession"
-	"github.com/TristanSch1/flow/internal/domain/session"
-	"github.com/TristanSch1/flow/internal/tests"
+	"github.com/TristanShz/flow/internal/application/usecases/flowsession/stopsession"
+	"github.com/TristanShz/flow/internal/domain/session"
+	"github.com/TristanShz/flow/internal/tests"
 )
 
 func TestStopFlowSession_Success(t *testing.T) {
