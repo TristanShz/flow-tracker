@@ -9,10 +9,10 @@ import (
 	"time"
 
 	"github.com/TristanShz/flow/cmd/edit"
+	"github.com/TristanShz/flow/internal/application"
 	"github.com/TristanShz/flow/internal/domain/session"
 	"github.com/TristanShz/flow/internal/infra"
 	"github.com/TristanShz/flow/internal/infra/filesystem"
-	"github.com/TristanShz/flow/pkg/timerange"
 	"github.com/TristanShz/flow/test"
 	"github.com/matryer/is"
 )
@@ -30,11 +30,7 @@ func (m *mockSessionRepository) Delete(id string) error {
 	return nil
 }
 
-func (m *mockSessionRepository) FindAllSessions() []session.Session {
-	return []session.Session{}
-}
-
-func (m *mockSessionRepository) FindAllByProject(project string) []session.Session {
+func (m *mockSessionRepository) FindAllSessions(filters *application.SessionsFilters) []session.Session {
 	return []session.Session{}
 }
 
@@ -44,10 +40,6 @@ func (m *mockSessionRepository) FindAllProjects() []string {
 
 func (m *mockSessionRepository) FindAllProjectTags(project string) []string {
 	return []string{}
-}
-
-func (m *mockSessionRepository) FindInTimeRange(timeRange timerange.TimeRange) []session.Session {
-	return []session.Session{}
 }
 
 func (m *mockSessionRepository) FindById(id string) *session.Session {

@@ -3,6 +3,7 @@ package infra
 import (
 	"slices"
 
+	"github.com/TristanShz/flow/internal/application"
 	"github.com/TristanShz/flow/internal/domain/session"
 	"github.com/TristanShz/flow/pkg/timerange"
 )
@@ -45,18 +46,6 @@ func (r *InMemorySessionRepository) Delete(id string) error {
 	return nil
 }
 
-func (r *InMemorySessionRepository) FindAllByProject(project string) []session.Session {
-	sessions := []session.Session{}
-
-	for _, session := range r.Sessions {
-		if session.Project == project {
-			sessions = append(sessions, session)
-		}
-	}
-
-	return sessions
-}
-
 func (r *InMemorySessionRepository) FindLastSession() *session.Session {
 	if len(r.Sessions) == 0 {
 		return nil
@@ -65,12 +54,24 @@ func (r *InMemorySessionRepository) FindLastSession() *session.Session {
 	return &r.Sessions[len(r.Sessions)-1]
 }
 
-func (r *InMemorySessionRepository) FindAllSessions() []session.Session {
-	return r.Sessions
+func (r *InMemorySessionRepository) FindAllSessions(filters *application.SessionsFilters) []session.Session {
+	filteredSessions := r.Sessions
+
+	if filters != nil {
+		if !filters.Timerange.IsZero() {
+			filteredSessions = r.filterByTimeRange(filteredSessions, filters.Timerange)
+		}
+
+		if filters.Project != "" {
+			filteredSessions = r.filterByProject(filteredSessions, filters.Project)
+		}
+	}
+
+	return filteredSessions
 }
 
 func (r *InMemorySessionRepository) FindAllProjects() []string {
-	sessions := r.FindAllSessions()
+	sessions := r.FindAllSessions(nil)
 
 	projects := []string{}
 
@@ -86,7 +87,7 @@ func (r *InMemorySessionRepository) FindAllProjects() []string {
 }
 
 func (r *InMemorySessionRepository) FindAllProjectTags(project string) []string {
-	sessionsForProject := r.FindAllByProject(project)
+	sessionsForProject := r.FindAllSessions(&application.SessionsFilters{Project: project})
 
 	tags := []string{}
 
@@ -103,25 +104,37 @@ func (r *InMemorySessionRepository) FindAllProjectTags(project string) []string 
 	return tags
 }
 
-func (r *InMemorySessionRepository) FindInTimeRange(timeRange timerange.TimeRange) []session.Session {
-	sessions := []session.Session{}
+func (r *InMemorySessionRepository) filterByTimeRange(sessions []session.Session, timeRange timerange.TimeRange) []session.Session {
+	filteredSessions := []session.Session{}
 
-	for _, session := range r.Sessions {
+	for _, session := range sessions {
 		if timeRange.Since.IsZero() && !timeRange.Until.IsZero() {
 			if session.StartTime.Before(timeRange.Until) {
-				sessions = append(sessions, session)
+				filteredSessions = append(filteredSessions, session)
 			}
 		} else if !timeRange.Since.IsZero() && timeRange.Until.IsZero() {
 			if session.StartTime.After(timeRange.Since) {
-				sessions = append(sessions, session)
+				filteredSessions = append(filteredSessions, session)
 			}
 		} else if !timeRange.Since.IsZero() && !timeRange.Until.IsZero() {
 			if session.StartTime.After(timeRange.Since) && session.StartTime.Before(timeRange.Until) {
-				sessions = append(sessions, session)
+				filteredSessions = append(filteredSessions, session)
 			}
 		} else {
-			sessions = append(sessions, session)
+			filteredSessions = append(filteredSessions, session)
 		}
 	}
-	return sessions
+	return filteredSessions
+}
+
+func (r *InMemorySessionRepository) filterByProject(sessions []session.Session, project string) []session.Session {
+	filteredSessions := []session.Session{}
+
+	for _, session := range sessions {
+		if session.Project == project {
+			filteredSessions = append(filteredSessions, session)
+		}
+	}
+
+	return filteredSessions
 }

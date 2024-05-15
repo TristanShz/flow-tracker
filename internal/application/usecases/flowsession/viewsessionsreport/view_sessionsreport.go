@@ -2,7 +2,6 @@ package viewsessionsreport
 
 import (
 	"github.com/TristanShz/flow/internal/application"
-	"github.com/TristanShz/flow/internal/domain/session"
 	"github.com/TristanShz/flow/internal/domain/sessionsreport"
 	"github.com/TristanShz/flow/pkg/timerange"
 )
@@ -15,23 +14,20 @@ func (s UseCase) Execute(
 	command Command,
 	presenter application.SessionsReportPresenter,
 ) error {
-	var sessions []session.Session
+	filters := &application.SessionsFilters{}
+
+	if command.Project != "" {
+		filters.Project = command.Project
+	}
 
 	if !command.Since.IsZero() || !command.Until.IsZero() {
-		sessionsInTimeRange := s.sessionRepository.FindInTimeRange(timerange.TimeRange{
+		filters.Timerange = timerange.TimeRange{
 			Since: command.Since,
 			Until: command.Until,
-		})
-		sessions = sessionsInTimeRange
-	} else if command.Project != "" {
-		sessionsForProject := s.sessionRepository.FindAllByProject(command.Project)
-
-		sessions = sessionsForProject
-	} else {
-		allSessions := s.sessionRepository.FindAllSessions()
-
-		sessions = allSessions
+		}
 	}
+
+	sessions := s.sessionRepository.FindAllSessions(filters)
 
 	sessionsReport := sessionsreport.SessionsReport{
 		Sessions: sessions,

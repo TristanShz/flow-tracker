@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/TristanShz/flow/internal/application"
 	"github.com/TristanShz/flow/internal/domain/session"
 	"github.com/TristanShz/flow/pkg/timerange"
 )
@@ -198,10 +199,20 @@ func (r *FileSystemSessionRepository) rawFileToSession(raw []byte) (*session.Ses
 	return &sessionData, nil
 }
 
-func (r *FileSystemSessionRepository) FindAllSessions() []session.Session {
+func (r *FileSystemSessionRepository) FindAllSessions(filters *application.SessionsFilters) []session.Session {
 	fileInfos, err := r.readFlowFolder()
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if filters != nil {
+		if !filters.Timerange.IsZero() {
+			fileInfos = r.filterByTimeRange(fileInfos, filters.Timerange)
+		}
+
+		if filters.Project != "" {
+			fileInfos = r.filterByProject(fileInfos, filters.Project)
+		}
 	}
 
 	sessions := Sessions{}
@@ -229,18 +240,44 @@ func (r *FileSystemSessionRepository) FindAllSessions() []session.Session {
 	return sessions
 }
 
-func (r *FileSystemSessionRepository) FindAllByProject(project string) []session.Session {
-	allSessions := r.FindAllSessions()
-
-	sessions := []session.Session{}
-
-	for _, session := range allSessions {
-		if session.Project == project {
-			sessions = append(sessions, session)
+func (r *FileSystemSessionRepository) filterByProject(fileInfos []fs.FileInfo, project string) []fs.FileInfo {
+	filteredFileInfos := []fs.FileInfo{}
+	for _, fileInfo := range fileInfos {
+		sessionFilename, err := r.parseSessionFileName(fileInfo.Name())
+		if err != nil {
+			log.Fatalf("error while parsing file name %v : '%v'", fileInfo.Name(), err)
+		}
+		if sessionFilename.Project == project {
+			filteredFileInfos = append(filteredFileInfos, fileInfo)
 		}
 	}
+	return filteredFileInfos
+}
 
-	return sessions
+func (r *FileSystemSessionRepository) filterByTimeRange(fileInfos []fs.FileInfo, timeRange timerange.TimeRange) []fs.FileInfo {
+	filteredFileInfos := []fs.FileInfo{}
+	for _, fileInfo := range fileInfos {
+		sessionFilename, err := r.parseSessionFileName(fileInfo.Name())
+		if err != nil {
+			log.Fatalf("error while parsing file name %v : '%v'", fileInfo.Name(), err)
+		}
+		if timeRange.JustUntil() {
+			if sessionFilename.StartTime.Before(timeRange.Until) {
+				filteredFileInfos = append(filteredFileInfos, fileInfo)
+			}
+		} else if timeRange.JustSince() {
+			if sessionFilename.StartTime.After(timeRange.Since) {
+				filteredFileInfos = append(filteredFileInfos, fileInfo)
+			}
+		} else if timeRange.SinceAndUntil() {
+			if sessionFilename.StartTime.After(timeRange.Since) && sessionFilename.StartTime.Before(timeRange.Until) {
+				filteredFileInfos = append(filteredFileInfos, fileInfo)
+			}
+		} else {
+			filteredFileInfos = append(filteredFileInfos, fileInfo)
+		}
+	}
+	return filteredFileInfos
 }
 
 func (r *FileSystemSessionRepository) FindLastSession() *session.Session {
@@ -288,7 +325,7 @@ func (r *FileSystemSessionRepository) FindLastSession() *session.Session {
 }
 
 func (r *FileSystemSessionRepository) FindAllProjects() []string {
-	sessions := r.FindAllSessions()
+	sessions := r.FindAllSessions(nil)
 
 	projects := []string{}
 
@@ -304,7 +341,7 @@ func (r *FileSystemSessionRepository) FindAllProjects() []string {
 }
 
 func (r *FileSystemSessionRepository) FindAllProjectTags(project string) []string {
-	sessionsForProject := r.FindAllByProject(project)
+	sessionsForProject := r.FindAllSessions(&application.SessionsFilters{Project: project})
 
 	tags := []string{}
 
@@ -319,30 +356,4 @@ func (r *FileSystemSessionRepository) FindAllProjectTags(project string) []strin
 	}
 
 	return tags
-}
-
-func (r *FileSystemSessionRepository) FindInTimeRange(timeRange timerange.TimeRange) []session.Session {
-	// TODO: Optimize this function by reading only the files that are in the time range
-	allSessions := r.FindAllSessions()
-
-	sessions := []session.Session{}
-
-	for _, session := range allSessions {
-		if timeRange.JustUntil() {
-			if session.StartTime.Before(timeRange.Until) {
-				sessions = append(sessions, session)
-			}
-		} else if timeRange.JustSince() {
-			if session.StartTime.After(timeRange.Since) {
-				sessions = append(sessions, session)
-			}
-		} else if timeRange.SinceAndUntil() {
-			if session.StartTime.After(timeRange.Since) && session.StartTime.Before(timeRange.Until) {
-				sessions = append(sessions, session)
-			}
-		} else {
-			sessions = append(sessions, session)
-		}
-	}
-	return sessions
 }

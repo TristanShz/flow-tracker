@@ -246,6 +246,55 @@ func TestViewSessionsReport(t *testing.T) {
 			}),
 			expectedFormat: sessionsreport.FormatByDay,
 		},
+		{
+			name: "View sessions by project since a given day",
+			command: viewsessionsreport.Command{
+				Since:   time.Date(2024, time.April, 18, 0, 0, 0, 0, time.UTC),
+				Project: "Pomodoro",
+			},
+			givenSessions: sessionsForTest,
+			want: sessionsreport.NewSessionsReport([]session.Session{
+				{
+					Id:        "8",
+					StartTime: time.Date(2024, time.April, 18, 16, 24, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 18, 18, 24, 30, 0, time.UTC),
+					Project:   "Pomodoro",
+					Tags:      []string{"report-pomodoro"},
+				},
+				{
+					Id:        "10",
+					StartTime: time.Date(2024, time.April, 20, 14, 0, 0, 0, time.UTC),
+					Project:   "Pomodoro",
+					Tags:      []string{"pause-pomodoro"},
+				},
+			}),
+			expectedFormat: sessionsreport.FormatByDay,
+		},
+		{
+			name: "View sessions by project until a given day",
+			command: viewsessionsreport.Command{
+				Until:   time.Date(2024, time.April, 15, 0, 0, 0, 0, time.UTC),
+				Project: "Flow",
+			},
+			givenSessions: sessionsForTest,
+			want: sessionsreport.NewSessionsReport([]session.Session{
+				{
+					Id:        "2",
+					StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 15, 12, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"start-usecase"},
+				},
+				{
+					Id:        "3",
+					StartTime: time.Date(2024, time.April, 14, 16, 24, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 18, 24, 30, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"report-usecase"},
+				},
+			}),
+			expectedFormat: sessionsreport.FormatByDay,
+		},
 	}
 
 	for _, tc := range tt {

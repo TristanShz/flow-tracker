@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/TristanShz/flow/internal/application"
 	"github.com/TristanShz/flow/internal/domain/session"
 	"github.com/TristanShz/flow/internal/infra/filesystem"
 	"github.com/TristanShz/flow/pkg/timerange"
@@ -84,7 +85,7 @@ func TestFileSystemSessionRepository_FindAllSessions(t *testing.T) {
 		Project:   "Flow",
 	})
 
-	got := repository.FindAllSessions()
+	got := repository.FindAllSessions(nil)
 
 	want := []session.Session{
 		{
@@ -111,7 +112,7 @@ func TestFindAllSessions_NoSessions_Success(t *testing.T) {
 
 	repository := filesystem.NewFileSystemSessionRepository(TestFolderPath)
 
-	got := repository.FindAllSessions()
+	got := repository.FindAllSessions(nil)
 
 	want := []session.Session{}
 
@@ -356,7 +357,7 @@ func TestFileSystemSessionRepository_FindInTimeRange(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			if got := repository.FindInTimeRange(tc.args); !reflect.DeepEqual(got, tc.want) {
+			if got := repository.FindAllSessions(&application.SessionsFilters{Timerange: tc.args}); !reflect.DeepEqual(got, tc.want) {
 				t.Errorf("FileSystemSessionRepository.FindInTimeRange() = %v, want %v", got, tc.want)
 			}
 		})
@@ -490,7 +491,7 @@ func TestFileSystemSessionRepository_Delete(t *testing.T) {
 			is.Equal(err, tc.error)
 
 			if tc.error != nil {
-				got := repository.FindAllSessions()
+				got := repository.FindAllSessions(nil)
 
 				is.Equal(got, tc.want)
 			}
