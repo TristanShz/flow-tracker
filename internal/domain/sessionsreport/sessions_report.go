@@ -13,8 +13,9 @@ const (
 )
 
 type DayReport struct {
-	Day      time.Time
-	Sessions []session.Session
+	Day           time.Time
+	Sessions      []session.Session
+	TotalDuration time.Duration
 }
 
 type ProjectReport struct {
@@ -39,7 +40,7 @@ func (s SessionsReport) GetByDayReport() []DayReport {
 	dayReports := []DayReport{}
 	sessionsByDay := s.splitSessionsByDay()
 	for day, sessions := range sessionsByDay {
-		dayReports = append(dayReports, DayReport{Day: day, Sessions: sessions})
+		dayReports = append(dayReports, DayReport{Day: day, Sessions: sessions, TotalDuration: s.Duration(sessions)})
 	}
 	sort.Slice(dayReports, func(i, j int) bool {
 		return dayReports[i].Day.Before(dayReports[j].Day)
@@ -56,7 +57,7 @@ func (s SessionsReport) GetByProjectReport() []ProjectReport {
 		projectReports = append(projectReports, ProjectReport{
 			Project:            project,
 			DurationByTag:      s.durationByTag(sessions),
-			TotalDuration:      s.duration(sessions),
+			TotalDuration:      s.Duration(sessions),
 			LastSessionEndTime: lastSession.EndTime,
 		})
 	}
@@ -68,7 +69,7 @@ func (s SessionsReport) GetByProjectReport() []ProjectReport {
 	return projectReports
 }
 
-func (s SessionsReport) duration(sessions []session.Session) time.Duration {
+func (s SessionsReport) Duration(sessions []session.Session) time.Duration {
 	totalDuration := time.Second * 0
 	for _, session := range sessions {
 		totalDuration += session.Duration()

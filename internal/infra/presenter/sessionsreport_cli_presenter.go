@@ -23,7 +23,7 @@ func (s SessionsReportCLIPresenter) ShowByDay(sessionsReport sessionsreport.Sess
 	text := "Sessions Report\n\n"
 
 	for _, dayReport := range byDayReport {
-		text += fmt.Sprintf("%v :\n", utils.HeaderStyle.Render(dayReport.Day.Format("Mon, 02 Jan 2006")))
+		text += fmt.Sprintf("%v - %v\n", utils.HeaderStyle.Render(dayReport.Day.Format("Mon, 02 Jan 2006")), utils.TimeColor(dayReport.TotalDuration.String()))
 		for _, session := range dayReport.Sessions {
 			if session.EndTime.IsZero() {
 				text += fmt.Sprintf(

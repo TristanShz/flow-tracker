@@ -46,7 +46,7 @@ func TestReportCommand(t *testing.T) {
 					Tags:      []string{"start-usecase"},
 				},
 			},
-			want: "Sessions Report\n\nSun, 14 Apr 2024 :\n    1 10:12:00 to 13:10:00 2h58m0s MyTodo [add-todo]\n    2 14:12:00 to 15:12:00 1h0m0s Flow [start-usecase]",
+			want: "Sessions Report\n\nSun, 14 Apr 2024 - 3h58m0s\n    1 10:12:00 to 13:10:00 2h58m0s MyTodo [add-todo]\n    2 14:12:00 to 15:12:00 1h0m0s Flow [start-usecase]",
 		},
 		{
 			name:  "Invalid format flag",
@@ -72,7 +72,7 @@ func TestReportCommand(t *testing.T) {
 					Tags:      []string{"start-usecase"},
 				},
 			},
-			want: "Sessions Report\n\nSun, 14 Apr 2024 :\n    1 10:12:00 to 13:10:00 2h58m0s MyTodo [add-todo]\n    2 14:12:00 to 15:12:00 1h0m0s Flow [start-usecase]",
+			want: "Sessions Report\n\nSun, 14 Apr 2024 - 3h58m0s\n    1 10:12:00 to 13:10:00 2h58m0s MyTodo [add-todo]\n    2 14:12:00 to 15:12:00 1h0m0s Flow [start-usecase]",
 		},
 		{
 			name: "By project",
@@ -121,7 +121,7 @@ func TestReportCommand(t *testing.T) {
 					Tags:      []string{"start-usecase"},
 				},
 			},
-			want: "Sessions Report\n\nSun, 14 Apr 2024 :\n    1 10:12:00 to 13:10:00 2h58m0s MyTodo [add-todo]",
+			want: "Sessions Report\n\nSun, 14 Apr 2024 - 2h58m0s\n    1 10:12:00 to 13:10:00 2h58m0s MyTodo [add-todo]",
 		},
 		{
 			name: "Sessions of project but project does not exist",
@@ -178,7 +178,7 @@ func TestReportCommand(t *testing.T) {
 					Tags:      []string{"start-usecase"},
 				},
 			},
-			want: "Sessions Report\n\nSun, 14 Apr 2024 :\n    1 10:12:00 to 13:10:00 2h58m0s MyTodo [add-todo]\n    2 14:12:00 to 15:12:00 1h0m0s Flow [start-usecase]",
+			want: "Sessions Report\n\nSun, 14 Apr 2024 - 3h58m0s\n    1 10:12:00 to 13:10:00 2h58m0s MyTodo [add-todo]\n    2 14:12:00 to 15:12:00 1h0m0s Flow [start-usecase]",
 		},
 		{
 			name:     "Sessions of the week",
@@ -207,7 +207,7 @@ func TestReportCommand(t *testing.T) {
 					Tags:      []string{"start-usecase"},
 				},
 			},
-			want: "Sessions Report\n\nMon, 15 Apr 2024 :\n    3 16:12:00 to 17:12:00 1h0m0s Flow [start-usecase]",
+			want: "Sessions Report\n\nMon, 15 Apr 2024 - 1h0m0s\n    3 16:12:00 to 17:12:00 1h0m0s Flow [start-usecase]",
 		},
 		{
 			name: "Since flag",
@@ -235,7 +235,7 @@ func TestReportCommand(t *testing.T) {
 					Tags:      []string{"start-usecase"},
 				},
 			},
-			want: "Sessions Report\n\nMon, 15 Apr 2024 :\n    3 16:12:00 to 17:12:00 1h0m0s Flow [start-usecase]",
+			want: "Sessions Report\n\nMon, 15 Apr 2024 - 1h0m0s\n    3 16:12:00 to 17:12:00 1h0m0s Flow [start-usecase]",
 		},
 		{
 			name:  "Invalid since flag",
@@ -268,7 +268,7 @@ func TestReportCommand(t *testing.T) {
 					Tags:      []string{"start-usecase"},
 				},
 			},
-			want: "Sessions Report\n\nSun, 14 Apr 2024 :\n    1 10:12:00 to 13:10:00 2h58m0s MyTodo [add-todo]\n    2 14:12:00 to 15:12:00 1h0m0s Flow [start-usecase]",
+			want: "Sessions Report\n\nSun, 14 Apr 2024 - 3h58m0s\n    1 10:12:00 to 13:10:00 2h58m0s MyTodo [add-todo]\n    2 14:12:00 to 15:12:00 1h0m0s Flow [start-usecase]",
 		},
 		{
 			name:  "Invalid until flag",
@@ -308,7 +308,7 @@ func TestReportCommand(t *testing.T) {
 					Tags:      []string{"start-usecase"},
 				},
 			},
-			want: "Sessions Report\n\nSun, 14 Apr 2024 :\n    1 10:12:00 to 13:10:00 2h58m0s MyTodo [add-todo]\n    2 14:12:00 to 15:12:00 1h0m0s Flow [start-usecase]\n\nMon, 15 Apr 2024 :\n    3 16:12:00 to 17:12:00 1h0m0s Flow [start-usecase]",
+			want: "Sessions Report\n\nSun, 14 Apr 2024 - 3h58m0s\n    1 10:12:00 to 13:10:00 2h58m0s MyTodo [add-todo]\n    2 14:12:00 to 15:12:00 1h0m0s Flow [start-usecase]\n\nMon, 15 Apr 2024 - 1h0m0s\n    3 16:12:00 to 17:12:00 1h0m0s Flow [start-usecase]",
 		},
 	}
 

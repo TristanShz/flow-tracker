@@ -1,12 +1,12 @@
 package sessionsreport_test
 
 import (
-	"reflect"
 	"testing"
 	"time"
 
 	"github.com/TristanShz/flow/internal/domain/session"
 	"github.com/TristanShz/flow/internal/domain/sessionsreport"
+	"github.com/matryer/is"
 )
 
 var sessionsReportTest = sessionsreport.NewSessionsReport([]session.Session{
@@ -62,6 +62,7 @@ var sessionsReportTest = sessionsreport.NewSessionsReport([]session.Session{
 })
 
 func TestSessionsReport_Formats(t *testing.T) {
+	is := is.New(t)
 	tt := []struct {
 		wantByDays     []sessionsreport.DayReport
 		wantByProjects []sessionsreport.ProjectReport
@@ -101,6 +102,7 @@ func TestSessionsReport_Formats(t *testing.T) {
 							Tags:      []string{"add-todo"},
 						},
 					},
+					TotalDuration: 2*time.Hour + 50*time.Minute,
 				},
 			},
 			wantByProjects: []sessionsreport.ProjectReport{
@@ -189,6 +191,7 @@ func TestSessionsReport_Formats(t *testing.T) {
 							Project:   "my-todo",
 						},
 					},
+					TotalDuration: 2 * time.Hour,
 				},
 				{
 					Day: time.Date(2020, 1, 2, 0, 0, 0, 0, time.UTC),
@@ -200,6 +203,7 @@ func TestSessionsReport_Formats(t *testing.T) {
 							Project:   "flow",
 						},
 					},
+					TotalDuration: 2 * time.Hour,
 				},
 				{
 					Day: time.Date(2020, 1, 3, 0, 0, 0, 0, time.UTC),
@@ -211,6 +215,7 @@ func TestSessionsReport_Formats(t *testing.T) {
 							Project:   "project",
 						},
 					},
+					TotalDuration: 6 * time.Hour,
 				},
 				{
 					Day: time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
@@ -222,6 +227,7 @@ func TestSessionsReport_Formats(t *testing.T) {
 							Project:   "flow",
 						},
 					},
+					TotalDuration: 2 * time.Hour,
 				},
 			},
 			wantByProjects: []sessionsreport.ProjectReport{
@@ -249,13 +255,8 @@ func TestSessionsReport_Formats(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			if got := tc.e.GetByDayReport(); !reflect.DeepEqual(got, tc.wantByDays) {
-				t.Errorf("SessionsReport.GetByDayReport() = %v, want %v", got, tc.wantByDays)
-			}
-
-			if got := tc.e.GetByProjectReport(); !reflect.DeepEqual(got, tc.wantByProjects) {
-				t.Errorf("SessionsReport.GetByProjectReport() = %v, want %v", got, tc.wantByProjects)
-			}
+			is.Equal(tc.e.GetByDayReport(), tc.wantByDays)
+			is.Equal(tc.e.GetByProjectReport(), tc.wantByProjects)
 		})
 	}
 }
