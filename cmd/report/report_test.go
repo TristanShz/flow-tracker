@@ -96,6 +96,62 @@ func TestReportCommand(t *testing.T) {
 			want: "Sessions Report\n\nMyTodo - 2h58m0s\n    [add-todo] -> 2h58m0s\n\nFlow - 1h0m0s\n    [start-usecase] -> 1h0m0s",
 		},
 		{
+			name: "Sessions of project",
+			args: []string{"--project", "MyTodo"},
+			givenSessions: []session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 13, 10, 0, 0, time.UTC),
+					Project:   "MyTodo",
+					Tags:      []string{"add-todo"},
+				},
+				{
+					Id:        "2",
+					StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 15, 12, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"start-usecase"},
+				},
+				{
+					Id:        "3",
+					StartTime: time.Date(2024, time.April, 15, 16, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 15, 17, 12, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"start-usecase"},
+				},
+			},
+			want: "Sessions Report\n\nSun, 14 Apr 2024 :\n    1 10:12:00 to 13:10:00 2h58m0s MyTodo [add-todo]",
+		},
+		{
+			name: "Sessions of project but project does not exist",
+			args: []string{"--project", "unknown-project"},
+			givenSessions: []session.Session{
+				{
+					Id:        "1",
+					StartTime: time.Date(2024, time.April, 14, 10, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 13, 10, 0, 0, time.UTC),
+					Project:   "MyTodo",
+					Tags:      []string{"add-todo"},
+				},
+				{
+					Id:        "2",
+					StartTime: time.Date(2024, time.April, 14, 14, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 14, 15, 12, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"start-usecase"},
+				},
+				{
+					Id:        "3",
+					StartTime: time.Date(2024, time.April, 15, 16, 12, 0, 0, time.UTC),
+					EndTime:   time.Date(2024, time.April, 15, 17, 12, 0, 0, time.UTC),
+					Project:   "Flow",
+					Tags:      []string{"start-usecase"},
+				},
+			},
+			want: "No sessions found",
+		},
+		{
 			name:     "Sessions of the day",
 			args:     []string{"--day"},
 			givenNow: time.Date(2024, time.April, 14, 18, 0, 0, 0, time.UTC),

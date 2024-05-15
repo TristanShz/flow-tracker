@@ -14,6 +14,11 @@ type SessionsReportCLIPresenter struct {
 }
 
 func (s SessionsReportCLIPresenter) ShowByDay(sessionsReport sessionsreport.SessionsReport) {
+	if len(sessionsReport.Sessions) == 0 {
+		s.Logger.Println("No sessions found")
+		return
+	}
+
 	byDayReport := sessionsReport.GetByDayReport()
 	text := "Sessions Report\n\n"
 
@@ -48,6 +53,11 @@ func (s SessionsReportCLIPresenter) ShowByDay(sessionsReport sessionsreport.Sess
 }
 
 func (s SessionsReportCLIPresenter) ShowByProject(sessionsReport sessionsreport.SessionsReport) {
+	if len(sessionsReport.Sessions) == 0 {
+		s.Logger.Println("No sessions found")
+		return
+	}
+
 	byProjectReport := sessionsReport.GetByProjectReport()
 	text := "Sessions Report\n\n"
 
